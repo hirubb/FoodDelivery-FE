@@ -1,11 +1,12 @@
 import React from 'react'
 
-function Header() {
+function Banner() {
   return (
     <div>
+        <h1>Banner</h1>
       
     </div>
   )
 }
 
-export default Header
+export default Banner
