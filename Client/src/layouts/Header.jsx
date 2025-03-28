@@ -9,11 +9,11 @@ function Header() {
       <div className="container mx-auto my-10 px-4 md:px-10 flex items-center justify-between h-28">
 
         <Link to="/" className="flex items-center">
-          <img src="/src/assets/logo-color.png" alt="FoodDelivery Logo" className="h-28 mr-2" />
+          <img src="/src/assets/logo-color.png" alt="FoodDelivery Logo" className="h-40 mr-2" />
         </Link>
 
  
-        <div className="hidden md:flex space-x-6">
+        <div className="hidden md:flex space-x-6 text-xl font-bold">
           <Link
             to="/"
             className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]"
@@ -55,7 +55,6 @@ function Header() {
           <Link to="#" className="text-white">
             <FaBars size={24} />
           </Link>
-
         </div>
       </div>
     </nav>
