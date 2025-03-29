@@ -6,6 +6,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import RestaurantRegister from './Pages/Restaurant/RestaurantRegister.jsx';
 
 
 
@@ -18,6 +19,8 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />,
   },
+
+  
 
 
 
@@ -38,6 +41,11 @@ const router = createBrowserRouter([
 
 
   // =============================  Restuarent Admin =============================
+
+  {
+    path: "/restaurant/register",
+    element: <RestaurantRegister/>
+  },
 
 
 ]);
