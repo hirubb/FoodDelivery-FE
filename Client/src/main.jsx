@@ -2,58 +2,28 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import RestaurantRegister from './Pages/Restaurant/RestaurantRegister.jsx';
-
-
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import Home from './Pages/Home'
+import OwnerRegister from './components/ResturantManagement/OwnerRegister'
+import RestaurantRegister from './components/ResturantManagement/RestaurantRegister'
 
 const router = createBrowserRouter([
-
-
-  // =============================  Customer ============================= 
-
   {
     path: "/",
-    element: <App />,
+    element: <App />,  // Set Home page as default
   },
-
-  
-
-
-
-  // =============================  Delivery personel ============================= 
-
-
-
-
-
-
-
-  // =============================  Admin ========================================
-
-
-
-
-
-
-
-  // =============================  Restuarent Admin =============================
-
   {
-    path: "/restaurant/register",
-    element: <RestaurantRegister/>
+    path: "/owner-register",
+    element: <OwnerRegister />,
   },
-
-
-]);
-
-
+  {
+    path: "/restaurant-register",
+    element: <RestaurantRegister />,
+  },
+])
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={router} />
-  </StrictMode>,
+  </StrictMode>
 )

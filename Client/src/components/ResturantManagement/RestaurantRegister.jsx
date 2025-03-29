@@ -1,23 +1,23 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
 import restaurantService from "../../services/restaurant-service";
 import logo from "../../assets/logo-color.png";
 
-const OwnerRegister = () => {
+const RestaurantRegister = () => {
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
+    name: "",
     email: "",
-    username: "",
-    password: "",
     phone: "",
-    profile_image: null,
+    address: "",
+    city: "",
+    country: "",
+    cuisine_type: "",
+    logo: null,
+    banner_image: null,
   });
-
-  const [preview, setPreview] = useState(null);
+  const [previewLogo, setPreviewLogo] = useState(null);
+  const [previewBanner, setPreviewBanner] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const navigate = useNavigate(); // Initialize navigate
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,9 +28,13 @@ const OwnerRegister = () => {
     if (file) {
       setFormData((prev) => ({
         ...prev,
-        profile_image: file,
+        [e.target.name]: file,
       }));
-      setPreview(URL.createObjectURL(file));
+      if (e.target.name === "logo") {
+        setPreviewLogo(URL.createObjectURL(file));
+      } else {
+        setPreviewBanner(URL.createObjectURL(file));
+      }
     }
   };
 
@@ -45,16 +49,10 @@ const OwnerRegister = () => {
         formDataToSend.append(key, formData[key]);
       });
 
-      const response = await restaurantService.registerRestaurantOwner(formDataToSend);
-
+      const response = await restaurantService.registerRestaurant(formDataToSend);
       if (response.status === 201) {
         setError(null);
-        setSuccess("Registration successful");
-
-        // Redirect to restaurant registration after 2 seconds
-        setTimeout(() => {
-          navigate("/restaurant-register");
-        }, 1000);
+        setSuccess("Restaurant registered successfully");
       }
     } catch (error) {
       setError(error.response?.data?.message || "Registration failed.");
@@ -70,22 +68,27 @@ const OwnerRegister = () => {
       <div className="w-full lg:w-1/2 flex justify-center items-center p-8 bg-[#565b6f94] backdrop-blur-lg">
         <div className="max-w-md w-full bg-[#03081F] p-6 shadow-md rounded-lg">
           <h2 className="text-2xl text-[#FC8A06] font-semibold text-center">
-            Register as a Restaurant Owner
+            Register Your Restaurant
           </h2>
           {error && <p className="text-red-500 text-center mt-2">{error}</p>}
           {success && <p className="text-green-500 text-center mt-2">{success}</p>}
 
           <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
-            <input type="text" name="first_name" placeholder="First Name" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
-            <input type="text" name="last_name" placeholder="Last Name" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
+            <input type="text" name="name" placeholder="Restaurant Name" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
             <input type="email" name="email" placeholder="Email" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
-            <input type="text" name="username" placeholder="Username" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
-            <input type="password" name="password" placeholder="Password" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
             <input type="text" name="phone" placeholder="Phone" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
+            <input type="text" name="address" placeholder="Address" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
+            <input type="text" name="city" placeholder="City" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
+            <input type="text" name="country" placeholder="Country" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
+            <input type="text" name="cuisine_type" placeholder="Cuisine Type (e.g., Italian, Chinese)" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
 
-            <label>Profile Image</label>
-            <input type="file" accept="image/*" name="profile_image" onChange={handleFileChange} className="w-full p-2 border rounded bg-[#565b6f94]" />
-            {preview && <img src={preview} alt="Profile Preview" className="w-20 h-20 rounded-full mx-auto mt-2" />}
+            <label>Logo</label>
+            <input type="file" accept="image/*" name="logo" onChange={handleFileChange} className="w-full p-2 border rounded bg-[#565b6f94]" />
+            {previewLogo && <img src={previewLogo} alt="Logo Preview" className="w-20 h-20 rounded-full mx-auto mt-2" />}
+
+            <label>Banner Image</label>
+            <input type="file" accept="image/*" name="banner_image" onChange={handleFileChange} className="w-full p-2 border rounded bg-[#565b6f94]" />
+            {previewBanner && <img src={previewBanner} alt="Banner Preview" className="w-full h-32 object-cover mt-2" />}
 
             <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
               Register
@@ -97,4 +100,4 @@ const OwnerRegister = () => {
   );
 };
 
-export default OwnerRegister;
+export default RestaurantRegister;
