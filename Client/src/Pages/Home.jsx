@@ -9,13 +9,13 @@ import DeliveryStats from './Home/DeliveryStats'
 export default function Home() {
     return (
         <div class="Home">
-             <Banner/>
-             <HighestRatings/>
-             <StartOrdering/>
-             <PartnerSignup/>
-             <DeliveryStats/>
+            <Banner />
+            <HighestRatings />
+            <StartOrdering />
+            <PartnerSignup />
+            <DeliveryStats />
         </div>
-       
+
     )
 }
 
