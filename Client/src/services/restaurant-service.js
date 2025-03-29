@@ -1,9 +1,9 @@
 import { HTTP } from "./httpCommon-service";
 
-class RestaurantOwnerService {
+class RestaurantService {
   registerRestaurantOwner(data) {
     return HTTP.post("/restaurant-owners/register", data);
   }
 }
 
-export default new RestaurantOwnerService();
+export default new RestaurantService();
