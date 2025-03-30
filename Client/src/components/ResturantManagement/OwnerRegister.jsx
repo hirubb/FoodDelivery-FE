@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import restaurantService from "../../services/restaurant-service";
-import logo from "../../assets/logo-color.png";
+import logo from "../../assets/ai-generated-8733795_1280.png";
+
 
 const OwnerRegister = () => {
   const [formData, setFormData] = useState({
@@ -38,20 +39,22 @@ const OwnerRegister = () => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-
+  
     try {
       const formDataToSend = new FormData();
       Object.keys(formData).forEach((key) => {
         formDataToSend.append(key, formData[key]);
       });
-
+  
       const response = await restaurantService.registerRestaurantOwner(formDataToSend);
-
+  
       if (response.status === 201) {
+        const token = response.data.token; // Get token from response
+        console.log("token  : ", token);
+        localStorage.setItem("token", token); // Store token in localStorage
+  
         setError(null);
         setSuccess("Registration successful");
-
-        // Redirect to restaurant registration after 2 seconds
         setTimeout(() => {
           navigate("/restaurant-register");
         }, 1000);
@@ -60,41 +63,101 @@ const OwnerRegister = () => {
       setError(error.response?.data?.message || "Registration failed.");
     }
   };
+  
 
   return (
-    <div className="flex h-screen">
-      <div className="w-1/2 hidden lg:block">
+  <div className="flex h-auto w-[50%] mx-auto shadow-lg rounded-lg mt-44 mb-40">
+
+
+      <div className="w-1/2 hidden lg:flex items-center justify-center bg-[#0B0E22]">
         <img src={logo} alt="Restaurant" className="w-full h-full object-cover" />
       </div>
 
-      <div className="w-full lg:w-1/2 flex justify-center items-center p-8 bg-[#565b6f94] backdrop-blur-lg">
-        <div className="max-w-md w-full bg-[#03081F] p-6 shadow-md rounded-lg">
-          <h2 className="text-2xl text-[#FC8A06] font-semibold text-center">
-            Register as a Restaurant Owner
-          </h2>
-          {error && <p className="text-red-500 text-center mt-2">{error}</p>}
-          {success && <p className="text-green-500 text-center mt-2">{success}</p>}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center p-12 bg-[#6b6e81]">
+        <h2 className="text-3xl text-[#FC8A06] font-bold text-center mb-4">
+          SIGN UP
+        </h2>
+        <p className="text-white text-center mb-6">
+          Note that you must be over 18 years old.
+        </p>
+
+        {error && <p className="text-red-500 text-center">{error}</p>}
+        {success && <p className="text-green-500 text-center">{success}</p>}
+
 
           <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
-            <input type="text" name="first_name" placeholder="First Name" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
-            <input type="text" name="last_name" placeholder="Last Name" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
-            <input type="email" name="email" placeholder="Email" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
-            <input type="text" name="username" placeholder="Username" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
-            <input type="password" name="password" placeholder="Password" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
-            <input type="text" name="phone" placeholder="Phone" className="w-full p-2 border rounded bg-[#565b6f94]" onChange={handleChange} required />
+          <div className="grid grid-cols-2 gap-4">
+          <input
+              type="text"
+              name="first_name"
+              placeholder="First Name"
+              className="w-full p-3 border rounded bg-gray-100 text-[#03081F]"
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="text"
+              name="last_name"
+              placeholder="Last Name"
+              className="w-full p-3 border rounded bg-gray-100"
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            className="w-full p-3 border rounded bg-gray-100"
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            className="w-full p-3 border rounded bg-gray-100"
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="w-full p-3 border rounded bg-gray-100"
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="phone"
+            placeholder="Mobile Number"
+            className="w-full p-3 border rounded bg-gray-100"
+            onChange={handleChange}
+            required
+          />
 
             <label>Profile Image</label>
             <input type="file" accept="image/*" name="profile_image" onChange={handleFileChange} className="w-full p-2 border rounded bg-[#565b6f94]" />
             {preview && <img src={preview} alt="Profile Preview" className="w-20 h-20 rounded-full mx-auto mt-2" />}
 
-            <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-              Register
-            </button>
+            {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-[#FC8A06] text-white font-bold p-3 rounded-md hover:bg-[#E67E22] flex items-center justify-center gap-2"
+          >
+            <span>Next Step</span>
+            ➜
+          </button>
           </form>
         </div>
-      </div>
-    </div>
+     </div>
   );
 };
 
+
 export default OwnerRegister;
+
+
+
