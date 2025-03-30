@@ -31,7 +31,7 @@ const RestaurantDetails = () => {
     name: 'Chinese Dragon Cafe',
     rating: 4.6,
     reviews: '40,000+',
-    deliveryFee: 'RS.64',
+    deliveryFee: '64.00 LKR',
     categories: ['Bakery', 'Desserts', 'Cakes'],
     address: '202 Galle Rd, Colombo, Sri Lanka, 06',
     openUntil: '10:00 PM',
@@ -93,7 +93,7 @@ const RestaurantDetails = () => {
       {/* Restaurant Header */}
       <div className="relative h-[450px] bg-black">
         <img
-          src="https://images.unsplash.com/photo-1552566626-52f8b828add9"
+          src="/src/assets/Cafe.png"
           alt={restaurant.name}
           className="w-full h-full object-cover opacity-75"
         />
@@ -105,7 +105,7 @@ const RestaurantDetails = () => {
               <span>•</span>
               <span>{restaurant.reviews} reviews</span>
               <span>•</span>
-              <span>{restaurant.deliveryFee} Delivery Fee</span>
+              <span>{restaurant.deliveryFee}</span>
             </div>
             <div className="flex items-center text-white gap-3 text-lg">
               <span>{restaurant.categories.join(' • ')}</span>
@@ -151,7 +151,7 @@ const RestaurantDetails = () => {
                     <div key={size} className="flex items-center gap-2">
                       <div className="text-center">
                         <div className="font-medium text-white">{size.charAt(0).toUpperCase() + size.slice(1)}</div>
-                        <div className="text-[#FC8A06]">£{price.toFixed(2)}</div>
+                        <div className="text-[#FC8A06]">{price.toFixed(2)} LKR</div>
                       </div>
                       <button
                         onClick={() => addToCart(item, size)}
