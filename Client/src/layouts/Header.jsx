@@ -27,7 +27,7 @@ function Header() {
             Browse Menu
           </Link>
           <Link
-            to="#"
+            to="/restaurants"
             className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]"
           >
             Restaurants
