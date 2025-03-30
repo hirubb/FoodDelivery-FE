@@ -61,7 +61,7 @@ const Cart = () => {
                   <button className="text-2xl text-gray-400 hover:text-[#FC8A06] transition-colors">+</button>
                 </div>
                 <div className="text-xl font-semibold text-white w-32 text-right">
-                  RS.{(item.price * item.quantity).toFixed(2)}
+                  {(item.price * item.quantity).toFixed(2)} LKR
                 </div>
                 <button className="text-gray-400 hover:text-red-500 transition-colors ml-4">
                   <span className="text-3xl">×</span>
@@ -76,16 +76,16 @@ const Cart = () => {
           <div className="space-y-4">
             <div className="flex justify-between text-lg">
               <span className="text-gray-300">Subtotal</span>
-              <span className="text-white font-medium">RS.{calculateSubtotal().toFixed(2)}</span>
+              <span className="text-white font-medium">{calculateSubtotal().toFixed(2)} LKR</span>
             </div>
             <div className="flex justify-between text-lg">
               <span className="text-gray-300">Delivery Fee</span>
-              <span className="text-white font-medium">RS.{deliveryFee.toFixed(2)}</span>
+              <span className="text-white font-medium">{deliveryFee.toFixed(2)} LKR</span>
             </div>
             <div className="border-t border-gray-800 pt-4 mt-4">
               <div className="flex justify-between text-xl font-bold">
                 <span className="text-white">Total</span>
-                <span className="text-[#FC8A06]">RS.{total.toFixed(2)}</span>
+                <span className="text-[#FC8A06]">{total.toFixed(2)} LKR</span>
               </div>
             </div>
           </div>
