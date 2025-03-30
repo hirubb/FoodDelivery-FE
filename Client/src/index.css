@@ -3,6 +3,28 @@
 @tailwind utilities;
 
 body {
-    background-color: #03081F;
-    color: white; /* Optional: Makes text readable on dark background */
-  }
+    @apply bg-[#03081F];
+
+    /* Set default padding and margins */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Responsive styles for various screen sizes */
+
+/* Small screens (e.g., phones) */
+@media (max-width: 640px) {
+    body {
+        @apply p-4;
+    }
+}
+
+/* Medium screens (e.g., tablets) */
+@media (min-width: 640px) and (max-width: 1024px) {
+    body {
+        @apply p-6;
+    }
+}
+
+
