@@ -1,0 +1,454 @@
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f7f7f7;
+}
+
+.auth-banner {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+}
+
+.auth-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+  z-index: 1;
+}
+
+.auth-banner-content {
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.auth-logo {
+  margin-bottom: 2rem;
+}
+
+.auth-logo img {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+}
+
+.auth-banner h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.auth-banner p {
+  font-size: 1.25rem;
+  opacity: 0.9;
+}
+
+.auth-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .auth-page {
+    flex-direction: column;
+  }
+  
+  .auth-banner {
+    padding: 3rem 1rem;
+    min-height: 300px;
+  }
+  
+  .auth-content {
+    padding: 2rem 1rem;
+    width: 100%;
+  }
+}
+
+:root {
+  --primary-color: #ff5a5f;
+  --primary-hover: #ff4146;
+  --secondary-color: #3a3a3a;
+  --light-gray: #f7f7f7;
+  --mid-gray: #e1e1e1;
+  --dark-gray: #717171;
+  --success-color: #36b37e;
+  --error-color: #ff4d4f;
+  --font-main: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius: 8px;
+}
+
+.auth-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: var(--light-gray);
+  background-image: linear-gradient(135deg, #f7f7f7 0%, #f0f0f0 100%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 450px;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 2.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.register-card {
+  max-width: 700px; /* Increased from 650px to provide more space */
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-header h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+  color: var(--dark-gray);
+  font-size: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Specific styling for step 2 form fields */
+form[data-step="2"] .form-group {
+  max-width: 100%;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--secondary-color);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--mid-gray);
+  border-radius: var(--border-radius);
+  background-color: white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  color: #000000; /* Added black text color for input fields */
+  box-sizing: border-box;
+}
+
+/* Make address textarea wider */
+textarea#address {
+  width: 100%;
+  min-height: 100px;
+}
+
+select {
+  color: #000000; /* Added black text color for dropdown options */
+}
+
+select option {
+  color: #000000; /* Added black text color for dropdown options */
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  color: #000000; /* Added black text color for textareas */
+}
+
+.input-with-icon {
+  position: relative;
+  width: 100%;
+}
+
+.input-with-icon i {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--dark-gray);
+}
+
+.input-with-icon input {
+  padding-left: 2.5rem;
+  width: 100%;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.2);
+}
+
+/* Added styling for placeholder text */
+::placeholder {
+  color: #757575;
+  opacity: 1;
+}
+
+:-ms-input-placeholder {
+  color: #757575;
+}
+
+::-ms-input-placeholder {
+  color: #757575;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+}
+
+.remember-me input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+.forgot-password {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.submit-button:disabled {
+  background-color: var(--dark-gray);
+  cursor: not-allowed;
+}
+
+.back-button {
+  padding: 0.875rem;
+  background-color: white;
+  color: var(--secondary-color);
+  border: 1px solid var(--mid-gray);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: var(--light-gray);
+}
+
+.form-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.form-buttons button {
+  flex: 1;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--dark-gray);
+}
+
+.auth-footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  background-color: rgba(255, 77, 79, 0.1);
+  color: var(--error-color);
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+
+.error-message i {
+  margin-right: 0.5rem;
+}
+
+.password-requirements {
+  font-size: 0.75rem;
+  color: var(--dark-gray);
+  margin-top: 0.5rem;
+}
+
+/* Step indicator for registration */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+}
+
+.step span {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--mid-gray);
+  color: var(--dark-gray);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.step p {
+  font-size: 0.75rem;
+  color: var(--dark-gray);
+}
+
+.step.active span {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.step.active p {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.step.completed span {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background-color: var(--mid-gray);
+  margin: 0 0.5rem;
+  position: relative;
+  top: -15px;
+}
+
+.role-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%233a3a3a' d='M6 9.5l-6-6 1.5-1.5L6 6.5 10.5 2 12 3.5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+  color: #000000; /* Added black text color for role select dropdown */
+  width: 100%;
+}
+
+/* Password field specific styling */
+#password, #confirmPassword {
+  width: 100%;
+}
+
+/* Media Queries */
+@media (max-width: 576px) {
+  .auth-card {
+    padding: 1.5rem;
+    
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .form-row .form-group {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .auth-content {
+    padding: 2rem;
+  }
+  
+  /* Increase width for account details form */
+  form[data-step="2"] .form-group,
+  form[data-step="2"] .input-with-icon {
+    width: 100%;
+  }
+}
