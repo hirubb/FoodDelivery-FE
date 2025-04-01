@@ -10,6 +10,9 @@ class RestaurantService {
   registerRestaurant(data) {
     return HTTP.post("/restaurant/register", data);
   }
+  getRestaurantOwner(){
+    return HTTP.get("/restaurant-owners/my-details");
+  }
 }
 
 export default new RestaurantService();
