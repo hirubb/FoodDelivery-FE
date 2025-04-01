@@ -99,7 +99,7 @@ const OwnerRegister = () => {
               type="text"
               name="last_name"
               placeholder="Last Name"
-              className="w-full p-3 border rounded bg-gray-100"
+              className="w-full p-3 border rounded bg-gray-100 text-[#03081F]"
               onChange={handleChange}
               required
             />
@@ -109,7 +109,7 @@ const OwnerRegister = () => {
             type="email"
             name="email"
             placeholder="Email"
-            className="w-full p-3 border rounded bg-gray-100"
+            className="w-full p-3 border rounded bg-gray-100 text-[#03081F]"
             onChange={handleChange}
             required
           />
@@ -117,7 +117,7 @@ const OwnerRegister = () => {
             type="text"
             name="username"
             placeholder="Username"
-            className="w-full p-3 border rounded bg-gray-100"
+            className="w-full p-3 border rounded bg-gray-100 text-[#03081F]"
             onChange={handleChange}
             required
           />
@@ -125,7 +125,7 @@ const OwnerRegister = () => {
             type="password"
             name="password"
             placeholder="Password"
-            className="w-full p-3 border rounded bg-gray-100"
+            className="w-full p-3 border rounded bg-gray-100 text-[#03081F]"
             onChange={handleChange}
             required
           />
@@ -133,7 +133,7 @@ const OwnerRegister = () => {
             type="text"
             name="phone"
             placeholder="Mobile Number"
-            className="w-full p-3 border rounded bg-gray-100"
+            className="w-full p-3 border rounded bg-gray-100 text-[#03081F]"
             onChange={handleChange}
             required
           />

@@ -7,16 +7,23 @@ import OwnerRegister from './components/ResturantManagement/OwnerRegister';
 import RestaurantRegister from './components/ResturantManagement/RestaurantRegister';
 import Restaurant from './Pages/Restaurant/Restaurant';
 
+import Profile from './Pages/Restaurant/profile/Profile';
+
 function App() {
   return (
+    
     <Router>
-      <Header />
+      <div>
+        <Header />
+      </div>
+     
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/owner-register" element={<OwnerRegister />} />
           <Route path="/restaurant-register" element={<RestaurantRegister />} />
           <Route path="/restaurants" element={<Restaurant/>}/>
+          <Route path="/owner/profile" element={<Profile/>}/>
         </Routes>
       </main>
       <Footer />
