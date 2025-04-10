@@ -13,11 +13,11 @@ import Cart from './Pages/Order/Cart';
 import { AuthProvider } from './components/Auth/AuthContext';
 import Profile from './Pages/Restaurant/profile/Profile';
 
-// Wrapper component that conditionally renders the Header
-const App = () => {
+// AppContent should be inside Router to use useLocation()
+const AppContent = () => {
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
-  
+
   return (
     <div className="App">
       {!isAuthPage && <Header />}
@@ -28,19 +28,25 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/owner-register" element={<OwnerRegister />} />
           <Route path="/restaurant-register" element={<RestaurantRegister />} />
-          <Route path="/restaurants" element={<Restaurant/>} />
+          <Route path="/restaurants" element={<Restaurant />} />
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/owner/profile" element={<Profile/>}/>
+          <Route path="/owner/profile" element={<Profile />} />
         </Routes>
       </main>
-      <Footer />
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      {!isAuthPage && <Footer />}
     </div>
   );
 };
 
+const App = () => {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
+  );
+};
 
 export default App;
