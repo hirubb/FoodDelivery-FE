@@ -6,7 +6,8 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-
+import DeliverySignUp from '../src/Pages/Delivery personnel/DeliverySignUp.jsx';
+import VehicleOptionsSignUp from '../src/Pages/Delivery personnel/VehicleOptionsSignUp.jsx';
 
 
 const router = createBrowserRouter([
@@ -24,7 +25,15 @@ const router = createBrowserRouter([
   // =============================  Delivery personel ============================= 
 
 
+  {
+    path: "DeliverySignUp",
+    element: <DeliverySignUp />,
+  },
 
+  {
+    path: "VehicleOptionsSignUp",
+    element: <VehicleOptionsSignUp />,
+  },
 
 
 
