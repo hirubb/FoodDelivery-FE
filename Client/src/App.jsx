@@ -12,6 +12,10 @@ import RestaurantDetails from './Pages/Order/RestaurantDetails';
 import Cart from './Pages/Order/Cart';
 import { AuthProvider } from './components/Auth/AuthContext';
 import Profile from './Pages/Restaurant/profile/Profile';
+import CreateMenu from './Pages/Restaurant/profile/CreateMenu';
+import CreateMenuForm from './components/ResturantManagement/profile/CreateMenuForm';
+import CreateMenuItems from './components/ResturantManagement/profile/CreateMenuItems';
+import OwnerLogin from './Pages/Restaurant/profile/OwnerLogin';
 
 // AppContent should be inside Router to use useLocation()
 const AppContent = () => {
@@ -32,6 +36,10 @@ const AppContent = () => {
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/owner/profile" element={<Profile />} />
+          <Route path="/restaurant/menu/create" element={<CreateMenu />} />
+          <Route path="/restaurant/menu/form" element={<CreateMenuForm />} />
+          <Route path="/restaurant/menu/items" element={<CreateMenuItems />} />
+          <Route path="/owner/login" element={<OwnerLogin />} />
         </Routes>
       </main>
       {!isAuthPage && <Footer />}

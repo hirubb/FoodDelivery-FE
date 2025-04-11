@@ -12,8 +12,8 @@ const OwnerProfileData = () => {
     const fetchOwnerData = async () => {
       try {
         const response = await restaurantService.getRestaurantOwner();
-        console.log("response : ", response)
-        setOwnerData(response.data);
+        console.log("response : ", response.data)
+        setOwnerData(response.data.owner);
       } catch (error) {
         setError("Failed to load profile data.");
       }

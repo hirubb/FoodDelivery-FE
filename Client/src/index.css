@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-    @apply bg-[#03081F] text-white font-sans antialiased;
+    @apply bg-[#03081F];
 
     /* Set default padding and margins */
     margin: 0;
