@@ -44,25 +44,40 @@ const RestaurantRegister = () => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-
+  
     try {
       const formDataToSend = new FormData();
+  
+      // Loop through the formData object and append each field
       Object.keys(formData).forEach((key) => {
-        formDataToSend.append(key, formData[key]);
+        if (key === 'logo' || key === 'banner_image') {
+          // Append the file fields if they exist
+          if (formData[key]) {
+            formDataToSend.append(key, formData[key]);
+          }
+        } else {
+          // Append the other fields
+          formDataToSend.append(key, formData[key]);
+        }
       });
-
+  
+      // Send the form data to the backend
       const response = await restaurantService.registerRestaurant(formDataToSend);
+  
       if (response.status === 201) {
         setError(null);
         setSuccess("Restaurant registered successfully");
+  
+        // Redirect to another page after successful registration
         setTimeout(() => {
-          navigate("/");
+          navigate("/"); // Redirect to homepage (or another page of your choice)
         }, 1000);
       }
     } catch (error) {
       setError(error.response?.data?.message || "Registration failed.");
     }
   };
+  
 
   return (
     <div className="flex h-auto w-[50%] mx-auto shadow-lg rounded-lg mt-44 mb-40">

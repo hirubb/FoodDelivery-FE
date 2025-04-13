@@ -3,12 +3,18 @@
 @tailwind utilities;
 
 body {
-    @apply bg-[#03081F];
+    @apply bg-[#03081F] text-white font-sans antialiased;
 
     /* Set default padding and margins */
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+input,
+textarea,
+select {
+  @apply text-black bg-white;
 }
 
 /* Responsive styles for various screen sizes */
