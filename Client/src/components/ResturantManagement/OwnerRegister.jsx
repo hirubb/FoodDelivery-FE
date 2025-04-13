@@ -42,8 +42,15 @@ const OwnerRegister = () => {
   
     try {
       const formDataToSend = new FormData();
+  
+      // Append all fields, including profile_image
       Object.keys(formData).forEach((key) => {
-        formDataToSend.append(key, formData[key]);
+        // Check if it's the profile image field
+        if (key === 'profile_image' && formData[key]) {
+          formDataToSend.append(key, formData[key], formData[key].name); 
+        } else {
+          formDataToSend.append(key, formData[key]);
+        }
       });
   
       const response = await restaurantService.registerRestaurantOwner(formDataToSend);
@@ -60,9 +67,11 @@ const OwnerRegister = () => {
         }, 1000);
       }
     } catch (error) {
+      console.error("Error during registration:", error);
       setError(error.response?.data?.message || "Registration failed.");
     }
   };
+  
   
 
   return (

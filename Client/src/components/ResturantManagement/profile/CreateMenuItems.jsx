@@ -46,9 +46,10 @@ function CreateMenuItemsForm({ restaurantId }) {
 
   const handleFileChange = (index, e) => {
     const newItems = [...items];
-    newItems[index].image = e.target.files[0];
+    newItems[index].image = Array.from(e.target.files); // Store as array
     setItems(newItems);
   };
+  
 
   const addItemRow = () => {
     setItems([
@@ -76,6 +77,10 @@ function CreateMenuItemsForm({ restaurantId }) {
     try {
       const requests = items.map(async (item) => {
         const form = new FormData();
+        if (Array.isArray(item.image)) {
+          item.image.forEach((file) => form.append("images", file));
+        }
+        
         form.append("menu_id", selectedMenu);
         form.append("name", item.name);
         form.append("description", item.description);
@@ -216,13 +221,14 @@ function CreateMenuItemsForm({ restaurantId }) {
                     />
                   </td>
                   <td className="border p-2">
-                    <input
-                      type="file"
-                      name="image"
-                      accept="image/*"
-                      onChange={(e) => handleFileChange(idx, e)}
-                      className="w-full"
-                    />
+                  <input
+  type="file"
+  name="images"
+  accept="image/*"
+  multiple
+  onChange={(e) => handleFileChange(idx, e)}
+  className="w-full"
+/>
                   </td>
                   <td className="border p-2 text-center">
                     <input
