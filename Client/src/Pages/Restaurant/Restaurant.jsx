@@ -1,11 +1,13 @@
 import React from 'react'
+import Restaurants from '../../components/ResturantManagement/Restaurants'
 
 function Restaurant() {
   return (
     <div>
-      <h1>Restaurant page</h1>
+      <Restaurants/>
+     
     </div>
   )
 }
 
-export default Restaurant
+export default Restaurant 
