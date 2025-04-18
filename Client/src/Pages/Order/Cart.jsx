@@ -1,7 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Cart = () => {
+  const navigate = useNavigate();
+  
   // This would typically come from a global state management solution
   // For now, we'll use mock data
   const cartItems = [
@@ -29,6 +31,10 @@ const Cart = () => {
 
   const deliveryFee = 64; // RS.64 as shown in the image
   const total = calculateSubtotal() + deliveryFee;
+
+  const handleCheckout = () => {
+    navigate('/checkout');
+  };
 
   return (
     <div className="min-h-screen bg-[#03081F] mt-48 px-4 md:px-8">
@@ -90,7 +96,10 @@ const Cart = () => {
             </div>
           </div>
           
-          <button className="w-full bg-[#FC8A06] text-white py-4 rounded-xl mt-8 text-lg font-semibold hover:bg-white hover:text-[#03081F] transition-all duration-300 border-2 border-[#FC8A06]">
+          <button 
+            onClick={handleCheckout}
+            className="w-full bg-[#FC8A06] text-white py-4 rounded-xl mt-8 text-lg font-semibold hover:bg-white hover:text-[#03081F] transition-all duration-300 border-2 border-[#FC8A06]"
+          >
             Proceed to Checkout
           </button>
           <Link to="/" className="block text-center mt-4 text-gray-400 hover:text-[#FC8A06] transition-colors">

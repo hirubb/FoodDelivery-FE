@@ -222,7 +222,7 @@ export default function Register() {
                         </>
                     ) : (
                         <>
-                            <div className="mb-4">
+                            {/* <div className="mb-4">
                                 <label htmlFor="role" className="block mb-1 text-sm font-medium text-gray-900">
                                     I am registering as a
                                 </label>
@@ -237,7 +237,7 @@ export default function Register() {
                                     <option value="RESTAURANT_ADMIN" className="text-gray-900">Restaurant Owner</option>
                                     <option value="DELIVERY_PERSONNEL" className="text-gray-900">Delivery Driver</option>
                                 </select>
-                            </div>
+                            </div> */}
                             
                             <div className="mb-4">
                                 <label htmlFor="address" className="block mb-1 text-sm font-medium text-gray-900">
