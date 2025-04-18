@@ -35,6 +35,14 @@ class RestaurantService {
     console.log("service calleddd")
     return HTTP.get(`menu/${restaurant_id}`);
   }
+  getAllRestaurants(searchTerm = "", cuisine = "") {
+    return HTTP.get("/restaurant/", {
+      params: {
+        searchTerm,
+        cuisine_type: cuisine
+      }
+    });
+  }
 
   AddMenu(formData){
     
