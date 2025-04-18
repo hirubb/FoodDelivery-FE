@@ -11,7 +11,6 @@ function RestaurantDetails() {
     const fetchRestaurants = async () => {
       try {
         const response = await restaurantService.getMyRestaurants();
-        console.log("Fetched Restaurant Data:", response);
         setRestaurants(response.data.restaurants || []);
       } catch (err) {
         setError('Failed to fetch restaurant details');
@@ -23,84 +22,80 @@ function RestaurantDetails() {
   }, []);
 
   if (error) {
-    return <div className="text-red-600 p-4">{error}</div>;
+    return (
+      <div className="text-red-600 text-center mt-10 text-lg font-semibold">
+        {error}
+      </div>
+    );
   }
 
   if (restaurants.length === 0) {
-    return <div className="p-4">No restaurants found.</div>;
+    return (
+      <div className="text-center text-gray-500 mt-10 text-lg">
+        You haven't added any restaurants yet.
+        <div className="mt-4">
+          <button
+            onClick={() => navigate('/restaurant-register')}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow"
+          >
+            Add New Restaurant
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 bg-blue-900 rounded shadow-md max-h-[80vh] overflow-y-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">My Restaurants</h2>
+    <div className="p-6 bg-gray-50 rounded-lg shadow-inner max-w-6xl mx-auto">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold text-blue-900">My Restaurants</h2>
         <button
           onClick={() => navigate('/restaurant-register')}
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+          className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded shadow"
         >
-          Add New Restaurant
+          + Add New Restaurant
         </button>
       </div>
 
-      {restaurants.map((restaurant) => (
-        <div
-          key={restaurant._id}
-          className="mb-6 border border-gray-300 rounded-lg p-4 shadow-sm"
-        >
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-lg font-semibold">{restaurant.name}</h3>
-            <button
-              onClick={() => navigate(`/restaurant/menu/${restaurant._id}`)}
-              className="bg-blue-500 hover:bg-blue-950 text-white px-4 py-2 rounded"
-            >
-              Show Menu
-            </button>
-            <button
-              onClick={() => navigate(`/restaurant/menu/create/${restaurant._id}`)}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Add Menu
-            </button>
-          </div>
+      <div className="space-y-6">
+        {restaurants.map((restaurant) => (
+          <div
+            key={restaurant._id}
+            className="bg-white rounded-lg shadow-md border border-gray-200 p-6"
+          >
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-800">
+                  {restaurant.name}
+                </h3>
+                <p className="text-sm text-gray-500">{restaurant.address}, {restaurant.city}, {restaurant.country}</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => navigate(`/restaurant/menu/${restaurant._id}`)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                >
+                  Show Menu
+                </button>
+                <button
+                  onClick={() => navigate(`/restaurant/menu/create/${restaurant._id}`)}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+                >
+                  Add Menu
+                </button>
+              </div>
+            </div>
 
-          <table className="table-auto w-full text-sm">
-            <tbody>
-              <tr>
-                <td className="border px-4 py-2 font-medium">Email</td>
-                <td className="border px-4 py-2">{restaurant.email}</td>
-              </tr>
-              <tr>
-                <td className="border px-4 py-2 font-medium">Phone</td>
-                <td className="border px-4 py-2">{restaurant.phone}</td>
-              </tr>
-              <tr>
-                <td className="border px-4 py-2 font-medium">Address</td>
-                <td className="border px-4 py-2">{restaurant.address}</td>
-              </tr>
-              <tr>
-                <td className="border px-4 py-2 font-medium">City</td>
-                <td className="border px-4 py-2">{restaurant.city}</td>
-              </tr>
-              <tr>
-                <td className="border px-4 py-2 font-medium">Country</td>
-                <td className="border px-4 py-2">{restaurant.country}</td>
-              </tr>
-              <tr>
-                <td className="border px-4 py-2 font-medium">Cuisine</td>
-                <td className="border px-4 py-2">{restaurant.cuisine_type}</td>
-              </tr>
-              <tr>
-                <td className="border px-4 py-2 font-medium">Rating</td>
-                <td className="border px-4 py-2">{restaurant.rating}</td>
-              </tr>
-              <tr>
-                <td className="border px-4 py-2 font-medium">Status</td>
-                <td className="border px-4 py-2 capitalize">{restaurant.status}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-3 text-sm text-gray-700">
+              <div><span className="font-medium">Email:</span> {restaurant.email}</div>
+              <div><span className="font-medium">Phone:</span> {restaurant.phone}</div>
+              <div><span className="font-medium">Cuisine:</span> {restaurant.cuisine_type}</div>
+              <div><span className="font-medium">Rating:</span> {restaurant.rating ?? 'N/A'}</div>
+              <div><span className="font-medium">Status:</span> <span className="capitalize">{restaurant.status}</span></div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

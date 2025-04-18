@@ -46,12 +46,7 @@ class RestaurantService {
 
   AddMenu(formData){
     
-    return HTTP.post("menu/create",formData,
-      {
-        headers:{
-          "Content-Type": "multipart/form-data",
-        }
-      }
+    return HTTP.post("menu/create",formData
     )
   }
   AddMenuItems(formData){

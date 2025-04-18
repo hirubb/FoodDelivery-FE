@@ -8,7 +8,6 @@ import {
   Star,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import restaurantService from "../../services/restaurant-service";
 
 export default function Restaurants() {
@@ -18,12 +17,14 @@ export default function Restaurants() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
         setLoading(true);
-        const response = await restaurantService.getAllRestaurants(searchTerm, selectedCategory);
+        const response = await restaurantService.getAllRestaurants(
+          searchTerm,
+          selectedCategory
+        );
         setRestaurants(response.data.data);
       } catch (err) {
         console.error(err);
@@ -32,7 +33,7 @@ export default function Restaurants() {
         setLoading(false);
       }
     };
-  
+
     fetchRestaurants();
   }, [searchTerm, selectedCategory]);
 
@@ -40,7 +41,6 @@ export default function Restaurants() {
     // Toggle category filter
     setSelectedCategory((prev) => (prev === category ? "" : category));
   };
-  
 
   const foodCategories = [
     { name: "Grocery", icon: "🥬" },
@@ -106,22 +106,24 @@ export default function Restaurants() {
 
       {/* Food Categories */}
       <div className="relative">
-      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-  {foodCategories.map((category, index) => (
-    <div
-      key={index}
-      onClick={() => handleCategoryClick(category.name)}
-      className={`flex flex-col items-center gap-2 min-w-16 cursor-pointer ${
-        selectedCategory === category.name ? "text-[#03081F] font-bold" : ""
-      }`}
-    >
-      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl">
-        {category.icon}
-      </div>
-      <span className="text-sm text-center">{category.name}</span>
-    </div>
-  ))}
-</div>
+        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          {foodCategories.map((category, index) => (
+            <div
+              key={index}
+              onClick={() => handleCategoryClick(category.name)}
+              className={`flex flex-col items-center gap-2 min-w-16 cursor-pointer ${
+                selectedCategory === category.name
+                  ? "text-[#03081F] font-bold"
+                  : ""
+              }`}
+            >
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl">
+                {category.icon}
+              </div>
+              <span className="text-sm text-center">{category.name}</span>
+            </div>
+          ))}
+        </div>
         <button className="absolute right-0 top-8 bg-white shadow-lg rounded-full p-1">
           <ChevronRight size={20} />
         </button>
@@ -205,30 +207,37 @@ export default function Restaurants() {
 
       {/* Restaurant Sections */}
       {!loading && restaurants.length > 0 && (
-  <div className="mb-8">
-    <h2 className="text-2xl font-bold mb-4">All Restaurants</h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {restaurants.map((r, idx) => (
-        <div key={idx} className="p-4 bg-white rounded-lg shadow">
-          <h3 className="text-lg font-semibold">{r.name}</h3>
-          <p className="text-sm text-gray-600">{r.city}</p>
-          <p className="text-sm text-gray-600">{r.cuisine_type}</p>
-          <div className="flex items-center justify-between mt-2 text-sm text-gray-700">
-            <div className="flex items-center gap-1">
-              <Star size={14} className="text-yellow-400" />
-              <span>{r.rating || 'N/A'}</span>
-            </div>
-            <div>{r.deliveryTime || '45 min'}</div>
+        <div className="mb-8 ">
+          <h2 className="text-2xl font-bold mb-4">All Restaurants</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-[#03081F]">
+            {restaurants.map((r, idx) => (
+              <div key={idx} className="p-4 bg-white rounded-lg shadow">
+                {/*logo*/}
+                <img
+                src={r.logo}
+                alt={r.banner_image}
+                className="w-full h-1/3 object-cover  mb-6"
+                />
+                <h3 className="text-lg font-semibold">{r.name}</h3>
+                <p className="text-sm text-gray-600">{r.city}</p>
+                <p className="text-sm text-gray-600">{r.cuisine_type}</p>
+                <div className="flex items-center justify-between mt-2 text-sm text-gray-700">
+                  <div className="flex items-center gap-1">
+                    <Star size={14} className="text-yellow-400" />
+                    <span>{r.rating || "N/A"}</span>
+                  </div>
+                  <div>{r.deliveryTime || "45 min"}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-)}
+      )}
 
-{loading && <p className="text-center my-10">Loading restaurants...</p>}
-{!loading && error && <p className="text-center text-red-500 my-10">{error}</p>}
-
+      {loading && <p className="text-center my-10">Loading restaurants...</p>}
+      {!loading && error && (
+        <p className="text-center text-red-500 my-10">{error}</p>
+      )}
     </div>
   );
 }
