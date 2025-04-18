@@ -47,8 +47,12 @@ class RestaurantService {
     )
   }
   AddMenuItems(formData){
-    console.log("create called");
-    return HTTP.post("menu-item/create",formData)
+    
+    return HTTP.post("menu-item/create",formData,{
+      headers:{
+        "Content-Type": "multipart/form-data"
+      }
+    })
   }
   
 }
