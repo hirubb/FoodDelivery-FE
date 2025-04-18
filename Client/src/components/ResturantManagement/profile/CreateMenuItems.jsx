@@ -20,22 +20,36 @@ function CreateMenuItemsForm({ restaurantId }) {
 
   useEffect(() => {
     if (!restaurantId) return;
-
+  
     const fetchMenus = async () => {
       try {
         const response = await restaurantService.getMenus(restaurantId);
         setMenus(response.data);
-        console.log("menues : ", response.data);
-        if (response.data.length > 0) {
+        if (response.data.length > 0 && !selectedMenu) {
           setSelectedMenu(response.data[0]._id);
         }
       } catch (error) {
         console.error("Error fetching menus:", error);
       }
     };
-
+  
     fetchMenus();
+  
+    // Listen to menuCreated event
+    const handleMenuCreated = (e) => {
+      const newMenu = e.detail;
+      setMenus((prev) => [...prev, newMenu]); // append new menu to list
+      setSelectedMenu(newMenu._id); // optional: auto-select the new menu
+    };
+  
+    window.addEventListener('menuCreated', handleMenuCreated);
+  
+    // Cleanup
+    return () => {
+      window.removeEventListener('menuCreated', handleMenuCreated);
+    };
   }, [restaurantId]);
+  
 
   const handleItemChange = (index, e) => {
     const { name, value, type, checked } = e.target;
@@ -111,7 +125,7 @@ function CreateMenuItemsForm({ restaurantId }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden text-[#03081F]">
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-4">
         <h2 className="text-xl font-bold text-white">Add Items to Menu</h2>
       </div>

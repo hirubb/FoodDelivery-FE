@@ -73,8 +73,18 @@ const RestaurantRegister = () => {
           navigate("/"); // Redirect to homepage (or another page of your choice)
         }, 1000);
       }
-    } catch (error) {
-      setError(error.response?.data?.message || "Registration failed.");
+    } catch (err) {
+      let message = 'Something went wrong. Please try again.';
+    
+      if (err.response?.data?.message) {
+        message = err.response.data.message;
+      } else if (err.response?.data?.errors) {
+        message = Object.values(err.response.data.errors).join(', ');
+      } else if (err.message) {
+        message = err.message;
+      }
+    
+      setError(message);
     }
   };
   
