@@ -1,6 +1,7 @@
 import React from 'react';
 import OwnerProfileData from '../../../components/ResturantManagement/profile/OwnerProfile';
 import RestaurantDetails from '../../../components/ResturantManagement/profile/RestaurantDetails';
+import RestaurantOrders from '../../../components/ResturantManagement/profile/RestaurantOrders';
 
 function Profile() {
   return (
@@ -15,7 +16,7 @@ function Profile() {
           <RestaurantDetails />
         </div>
         <div className="flex w-1/6 bg-[#ffffffd0] p-5 rounded-lg shadow-lg">
-          <RestaurantDetails />
+          <RestaurantOrders />
         </div>
       </div>
     </div>

@@ -12,8 +12,8 @@ const OwnerProfileData = () => {
     const fetchOwnerData = async () => {
       try {
         const response = await restaurantService.getRestaurantOwner();
-        console.log("response : ", response)
-        setOwnerData(response.data);
+        console.log("response : ", response.data);
+        setOwnerData(response.data.owner);
       } catch (error) {
         setError("Failed to load profile data.");
       }
@@ -30,46 +30,52 @@ const OwnerProfileData = () => {
   }
 
   return (
-    <div className=" flex-col  mt-100 mb-20 p-8">
-      <h1 className="text-center text-2xl font-bold mb-8 text-[#FC8A06]">My Data</h1>
+    <div className="max-w-xl w-full mx-auto mt-20 mb-16 px-6 py-8 bg-white shadow-lg rounded-2xl">
+      <h1 className="text-center text-3xl font-extrabold text-[#FC8A06] mb-8">My Profile</h1>
 
-      <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-[#FC8A06]">
-        <img
-          src={ownerData.profile_image || logo}
-        
-          className="w-full h-full object-cover"
-        />
+      <div className="flex flex-col items-center">
+        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#FC8A06]">
+          <img
+            src={ownerData.profile_image || logo}
+            alt="Profile"
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        <h2 className="text-2xl font-semibold text-gray-800 mt-4">
+          {ownerData.first_name} {ownerData.last_name}
+        </h2>
+        <p className="text-[#FC8A06] text-md mb-4">@{ownerData.username}</p>
+
+        <div className="text-gray-700 w-full mt-4">
+          <div className="flex justify-between border-b py-2">
+            <span className="font-medium">Email:</span>
+            <span>{ownerData.email}</span>
+          </div>
+          <div className="flex justify-between border-b py-2">
+            <span className="font-medium">Phone:</span>
+            <span>{ownerData.phone}</span>
+          </div>
+        </div>
+
+        <div className="mt-8 flex gap-4">
+          <button
+            className="px-6 py-2 bg-[#FC8A06] text-white font-semibold rounded-md hover:bg-[#e27600] transition"
+            onClick={() => navigate("/edit-profile")}
+          >
+            Edit Profile
+          </button>
+          <button
+            className="px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition"
+            onClick={() => {
+              // Add logout logic here
+              navigate("/login");
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </div>
-
-      {/* Owner Information */}
-      <h2 className="text-3xl font-bold text-[#FC8A06] mt-4">
-        {ownerData.first_name} {ownerData.last_name}
-      </h2>
-      <p className="text-[#FC8A06] text-lg">@{ownerData.username}</p>
-
-      <div className="mt-6 ">
-        <p className="">
-          <strong>Email:</strong> {ownerData.email}
-        </p>
-        <p className="">
-          <strong>Phone:</strong> {ownerData.phone}
-        </p>
-      </div>
-
-      {/* Edit Profile Button */}
-      <button
-        className="mt-6 px-6 py-2 bg-[#FC8A06] text-white font-bold rounded-md hover:bg-[#E67E22] transition"
-        onClick={() => navigate("/edit-profile")}
-      >
-        Edit Profile
-      </button>
-      <br></br>
-      <button
-        className="mt-6 px-6 py-2 bg-red-800 text-white font-bold rounded-md hover:bg-[#E67E22] transition"
-        onClick={() => navigate("/edit-profile")}
-      >
-        Logout
-      </button>
     </div>
   );
 };

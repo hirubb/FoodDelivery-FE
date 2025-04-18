@@ -34,11 +34,11 @@ export function AuthProvider({ children }) {
                     setIsAuthenticated(true);
                 } else {
                     // Token expired, logout
-                    logout();
+                    // logout();
                 }
             } catch (error) {
                 // Invalid token
-                logout();
+                // logout();
             }
         }
         
