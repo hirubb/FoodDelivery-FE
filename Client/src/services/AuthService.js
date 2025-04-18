@@ -34,3 +34,8 @@ export const getUserRole = () => {
     // This is a simplified example
     return localStorage.getItem('userRole');
 };
+
+// Add this function to fix the import error in paymentAPI.js
+export const getAuthToken = () => {
+    return localStorage.getItem('token');
+};
