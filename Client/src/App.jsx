@@ -18,6 +18,7 @@ import CreateMenuForm from './components/ResturantManagement/profile/CreateMenuF
 import CreateMenuItems from './components/ResturantManagement/profile/CreateMenuItems';
 import OwnerLogin from './Pages/Restaurant/profile/OwnerLogin';
 import ShowMenu from './components/ResturantManagement/profile/ShowMenu';
+import CreatePromo from './components/ResturantManagement/profile/CreatePromo';
 
 // AppContent should be inside Router to use useLocation()
 const AppContent = () => {
@@ -44,6 +45,7 @@ const AppContent = () => {
           <Route path="/restaurant/menu/items" element={<CreateMenuItems />} />
           <Route path="/owner/login" element={<OwnerLogin />} />
           <Route path="/restaurant/menu/:restaurantId" element={<ShowMenu />} />
+          <Route path="/restaurant/promo/create/:restaurantId" element={<CreatePromo />} />
         </Routes>
       </main>
       {!isAuthPage && <Footer />}
