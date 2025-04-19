@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { UserProvider } from './context/UserContext'; // Import UserProvider
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
 import Home from './Pages/Home';
@@ -56,9 +57,11 @@ const AppContent = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <UserProvider>  {/* Wrap your app in UserProvider */}
+        <Router>
+          <AppContent />
+        </Router>
+      </UserProvider>
     </AuthProvider>
   );
 };
