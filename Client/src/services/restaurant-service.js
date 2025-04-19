@@ -43,7 +43,6 @@ class RestaurantService {
       }
     });
   }
-
   AddMenu(formData){
     
     return HTTP.post("menu/create",formData
@@ -56,6 +55,9 @@ class RestaurantService {
         "Content-Type": "multipart/form-data"
       }
     })
+  }
+  getTopRatedRestaurants(){
+    return HTTP.get("/restaurant/top-rated");
   }
   
 }
