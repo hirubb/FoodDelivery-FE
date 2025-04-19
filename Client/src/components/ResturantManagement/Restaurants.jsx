@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import restaurantService from "../../services/restaurant-service";
+import Promotions from "./Promotions";
 
 export default function Restaurants() {
   const [restaurants, setRestaurants] = useState([]);
@@ -20,6 +21,7 @@ export default function Restaurants() {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
+        console.log("search term : ", searchTerm);
         setLoading(true);
         const response = await restaurantService.getAllRestaurants(
           searchTerm,
@@ -43,20 +45,18 @@ export default function Restaurants() {
   };
 
   const foodCategories = [
-    { name: "Grocery", icon: "🥬" },
-    { name: "Pizza", icon: "🍕" },
-    { name: "Burgers", icon: "🍔" },
-    { name: "Chinese", icon: "📦" },
-    { name: "Indian", icon: "🍛" },
-    { name: "Convenience", icon: "🥨" },
-    { name: "Healthy", icon: "🥗" },
-    { name: "Soup", icon: "🍲" },
-    { name: "Snacks", icon: "🍿" },
-    { name: "Korean", icon: "🍱" },
-    { name: "Bubble Tea", icon: "🧋" },
-    { name: "Bakery", icon: "🥐" },
-    { name: "Asian", icon: "🍜" },
     { name: "Italian", icon: "🍝" },
+    { name: "Chinese", icon: "🥡" },
+    { name: "Indian", icon: "🍛" },
+    { name: "Mexican", icon: "🌮" },
+    { name: "French", icon: "🥖" },
+    { name: "Korean", icon: "🍱" },
+    { name: "American", icon: "🍔" },
+    { name: "Japanese", icon: "🍣" },
+    { name: "Srilankan", icon: "🍲" },
+    { name: "Cafe", icon: "☕" },
+    { name: "Seafood", icon: "🦐" },
+    { name: "Others", icon: "🍽️" },
   ];
 
   const promos = [
@@ -103,30 +103,25 @@ export default function Restaurants() {
           />
         </div>
       </header>
-
       {/* Food Categories */}
-      <div className="relative">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <h2 className="text-2xl font-bold text-white mb-6">Food Categories</h2>
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
           {foodCategories.map((category, index) => (
-            <div
+            <button
               key={index}
               onClick={() => handleCategoryClick(category.name)}
-              className={`flex flex-col items-center gap-2 min-w-16 cursor-pointer ${
+              className={`flex flex-col items-center p-4 rounded-lg min-w-[100px] ${
                 selectedCategory === category.name
-                  ? "text-[#03081F] font-bold"
-                  : ""
+                  ? "bg-[#FC8A06] text-white"
+                  : "bg-[#03081F] text-white hover:bg-gray-900 border border-gray-800"
               }`}
             >
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl">
-                {category.icon}
-              </div>
-              <span className="text-sm text-center">{category.name}</span>
-            </div>
+              <span className="text-2xl mb-2">{category.icon}</span>
+              <span className="text-sm">{category.name}</span>
+            </button>
           ))}
         </div>
-        <button className="absolute right-0 top-8 bg-white shadow-lg rounded-full p-1">
-          <ChevronRight size={20} />
-        </button>
       </div>
 
       {/* Filters */}
@@ -163,43 +158,7 @@ export default function Restaurants() {
         </button>
       </div>
 
-      {/* Promotions */}
-      <div className="relative my-6 text-[#03081F]">
-        <div className="flex gap-4 overflow-x-auto text-[#03081F]">
-          {promos.map((promo, index) => (
-            <div
-              key={index}
-              className={`${promo.color} p-6 rounded-lg min-w-64 flex flex-col justify-between`}
-            >
-              <div>
-                <h3 className="font-bold text-lg mb-1">{promo.title}</h3>
-                {promo.description && (
-                  <p className="text-sm mb-4">{promo.description}</p>
-                )}
-              </div>
-              {promo.button && (
-                <button className="bg-black text-white rounded px-4 py-2 w-24">
-                  {promo.button}
-                </button>
-              )}
-              {promo.code && (
-                <div className="bg-white rounded px-3 py-2 self-start text-sm">
-                  Use {promo.code.includes("CB") ? "Promo " : ""}Code:{" "}
-                  {promo.code}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <button className="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-1">
-          <ChevronLeft size={20} />
-        </button>
-
-        <button className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-1">
-          <ChevronRight size={20} />
-        </button>
-      </div>
+      <Promotions promos={promos} />
 
       <div className="text-xs text-gray-500 mb-6">
         Additional fees may apply. <span className="underline">Learn more</span>
@@ -214,9 +173,9 @@ export default function Restaurants() {
               <div key={idx} className="p-4 bg-white rounded-lg shadow">
                 {/*logo*/}
                 <img
-                src={r.logo}
-                alt={r.banner_image}
-                className="w-full h-1/3 object-cover  mb-6"
+                  src={r.logo}
+                  alt={r.banner_image}
+                  className="w-full h-1/3 object-cover  mb-6"
                 />
                 <h3 className="text-lg font-semibold">{r.name}</h3>
                 <p className="text-sm text-gray-600">{r.city}</p>
