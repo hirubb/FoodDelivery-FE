@@ -183,7 +183,7 @@ export default function Restaurants() {
                 <div className="flex items-center justify-between mt-2 text-sm text-gray-700">
                   <div className="flex items-center gap-1">
                     <Star size={14} className="text-yellow-400" />
-                    <span>{r.rating || "N/A"}</span>
+                    <span>{r.averageRating || "N/A"}</span>
                   </div>
                   <div>{r.deliveryTime || "45 min"}</div>
                 </div>
