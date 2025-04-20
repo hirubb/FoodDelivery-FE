@@ -16,8 +16,6 @@ const OwnerLogin = () => {
         console.log(response);
         localStorage.setItem('token', response.data.token);
     })
-
-    
   };
 
   return (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { UserProvider } from './context/UserContext'; // Import UserProvider
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
 import Home from './Pages/Home';
@@ -22,6 +23,7 @@ import CreatePromo from './components/ResturantManagement/profile/CreatePromo';
 import PaymentPage from './Pages/Payment/PaymentPage';
 import PaymentSuccess from './Pages/Payment/PaymentSuccess';
 import PaymentCancel from './Pages/Payment/PaymentCancel';
+import AdminDashboard from './Pages/Admin/AdminDashboard';
 
 // AppContent should be inside Router to use useLocation()
 const AppContent = () => {
@@ -52,6 +54,8 @@ const AppContent = () => {
           <Route path="/payment/paymentPage" element={<PaymentPage />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/cancel" element={<PaymentCancel />} />
+
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
         </Routes>
       </main>
       {!isAuthPage && <Footer />}
@@ -62,9 +66,11 @@ const AppContent = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <UserProvider>  {/* Wrap your app in UserProvider */}
+        <Router>
+          <AppContent />
+        </Router>
+      </UserProvider>
     </AuthProvider>
   );
 };
