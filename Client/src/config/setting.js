@@ -1,1 +1,3 @@
 export const baseURL = import.meta.env.VITE_API_URL;
+export const adminURL = import.meta.env.VITE_ADMIN_URL;
+export const authURL = import.meta.env.VITE_AUTH_URL;
