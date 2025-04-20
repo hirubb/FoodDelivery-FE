@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { baseURL , adminURL } from '../config/setting';
+import { baseURL , adminURL , authURL } from '../config/setting';
 import { getAuthToken } from '../utils/auth';
 
 
@@ -20,6 +20,13 @@ export const AdminHTTP = axios.create({
     },
 });
 
+export const AuthHTTP = axios.create({
+  baseURL: authURL,
+  headers: {
+      "Content-Type": "application/json",
+    },
+});
+
 // Add an interceptor to include the token in every request
 HTTP.interceptors.request.use(
     (config) => {
@@ -35,6 +42,20 @@ HTTP.interceptors.request.use(
   );
 
   AdminHTTP.interceptors.request.use(
+    (config) => {
+      const token = getAuthToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
+
+  AuthHTTP.interceptors.request.use(
     (config) => {
       const token = getAuthToken();
       if (token) {
