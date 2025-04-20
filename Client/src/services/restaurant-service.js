@@ -1,4 +1,5 @@
-import { HTTP } from "./httpCommon-service";
+import { HTTP, AuthHTTP } from "./httpCommon-service";
+
 
 
 class RestaurantService {
@@ -29,7 +30,7 @@ class RestaurantService {
     return HTTP.get("/restaurant/my-restaurants");
   }
   login(formData){
-    return HTTP.post("/restaurant-owners/login",formData)
+    return AuthHTTP.post("/login",formData)
   }
   getMenus(restaurant_id){
     console.log("service calleddd")
