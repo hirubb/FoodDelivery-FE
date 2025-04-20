@@ -1,8 +1,11 @@
 import React from 'react'
+import AdminProfile from '../../components/Admin/AdminProfile'
 
 function AdminDashboard() {
     return (
-        <div>AdminDashboard</div>
+        <div>
+            <AdminProfile/>
+        </div>
     )
 }
 
