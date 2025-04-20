@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import restaurantService from '../../../services/restaurant-service';
+import { useNavigate } from "react-router-dom";
 
 const OwnerLogin = () => {
+
+  const navigate = useNavigate(); 
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleChange = (e) => {
@@ -15,6 +18,19 @@ const OwnerLogin = () => {
     restaurantService.login(formData).then((response) => {
         console.log(response);
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('role', response.data.user.role);
+
+        //if Admin navigate to /adminDashbaord
+        if(response.data.user.role === 'Admin'){
+          setTimeout(() => {
+            navigate("/admin-dashboard"); // Redirect to homepage (or another page of your choice)
+          }, 1000);
+        }
+        if(response.data.user.role === 'Restaurant Owner'){
+          setTimeout(() => {
+            navigate("/owner/profile"); // Redirect to homepage (or another page of your choice)
+          }, 1000);
+        }
     })
   };
 
