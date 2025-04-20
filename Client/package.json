@@ -14,7 +14,7 @@
     "@react-google-maps/api": "^2.20.6",
     "@tailwindcss/vite": "^4.0.17",
     "axios": "^1.8.4",
-    "framer-motion": "^12.6.5",
+    "framer-motion": "^12.7.4",
     "jwt-decode": "^4.0.0",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",

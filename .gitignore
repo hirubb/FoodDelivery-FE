@@ -4,6 +4,7 @@ node_modules
 package.json
 README.md
 package-lock.json
+package*
 
 
 
