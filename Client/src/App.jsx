@@ -19,6 +19,9 @@ import CreateMenuItems from './components/ResturantManagement/profile/CreateMenu
 import OwnerLogin from './Pages/Restaurant/profile/OwnerLogin';
 import ShowMenu from './components/ResturantManagement/profile/ShowMenu';
 import CreatePromo from './components/ResturantManagement/profile/CreatePromo';
+import PaymentPage from './Pages/Payment/PaymentPage';
+import PaymentSuccess from './Pages/Payment/PaymentSuccess';
+import PaymentCancel from './Pages/Payment/PaymentCancel';
 
 // AppContent should be inside Router to use useLocation()
 const AppContent = () => {
@@ -46,6 +49,9 @@ const AppContent = () => {
           <Route path="/owner/login" element={<OwnerLogin />} />
           <Route path="/restaurant/menu/:restaurantId" element={<ShowMenu />} />
           <Route path="/restaurant/promo/create/:restaurantId" element={<CreatePromo />} />
+          <Route path="/payment/paymentPage" element={<PaymentPage />} />
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/cancel" element={<PaymentCancel />} />
         </Routes>
       </main>
       {!isAuthPage && <Footer />}
