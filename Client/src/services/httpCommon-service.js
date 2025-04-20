@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { baseURL , adminURL , authURL } from '../config/setting';
+import { baseURL , adminURL , authURL , customerURL } from '../config/setting';
 import { getAuthToken } from '../utils/auth';
 
 
 console.log("Base URL:", import.meta.env.VITE_API_URL);
 console.log("Admin URL:", import.meta.env.VITE_ADMIN_URL);
+console.log("Customer URL:", import.meta.env.VITE_CUSTOMER_URL);
 
 export const HTTP = axios.create({
     baseURL: baseURL,
@@ -22,6 +23,13 @@ export const AdminHTTP = axios.create({
 
 export const AuthHTTP = axios.create({
   baseURL: authURL,
+  headers: {
+      "Content-Type": "application/json",
+    },
+});
+
+export const CustomerHTTP = axios.create({
+  baseURL: customerURL,
   headers: {
       "Content-Type": "application/json",
     },
@@ -56,6 +64,19 @@ HTTP.interceptors.request.use(
 
 
   AuthHTTP.interceptors.request.use(
+    (config) => {
+      const token = getAuthToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
+  CustomerHTTP.interceptors.request.use(
     (config) => {
       const token = getAuthToken();
       if (token) {
