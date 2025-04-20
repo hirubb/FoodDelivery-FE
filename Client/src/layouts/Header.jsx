@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { FaShoppingCart, FaBars, FaUserCircle } from "react-icons/fa";
 import logo from "/src/assets/logo-color.png";
 import Sidebar from "./Sidebar"; // Import the Sidebar component
+import { UserContext } from "../context/UserContext"; // Import the UserContext
 
 function Header() {
-  const [loggedIn, setLoggedIn] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Access the user data from UserContext
+  const { user } = useContext(UserContext);
+  const { username, loggedIn , profile_image} = user; 
+  console.log("profile_image : ", profile_image);
+  // If profile_image is not available, display a fallback or loading state
+  const userImage = profile_image || "/default-profile.png"; // You can replace with a default image path
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setLoggedIn(!!token);
-  }, []);
+
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -44,7 +48,8 @@ function Header() {
               </Link>
             ) : (
               <Link to="owner/profile" className="hidden md:block text-[#FC8A06] hover:text-[#E67E22]">
-                <FaUserCircle size={28} />
+                <img src={userImage} alt="Profile" className="h-10 w-10 rounded-full mr-2" />
+                <span className="text-sm font-semibold">{username}</span>
               </Link>
             )}
 
