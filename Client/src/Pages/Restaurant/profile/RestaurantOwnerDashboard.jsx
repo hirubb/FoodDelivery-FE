@@ -12,6 +12,8 @@ import OwnerProfileData from "../../../components/ResturantManagement/profile/Ow
 import RestaurantDetails from "../../../components/ResturantManagement/profile/RestaurantDetails";
 import RestaurantOrders from "../../../components/ResturantManagement/profile/RestaurantOrders";
 import EarningsOverview from "../../../components/ResturantManagement/profile/EarningsOverview";
+import RestaurantPaymentInfo from "../../../components/ResturantManagement/profile/RestaurantPaymentInfo";
+
 
 import Logo from "../../../assets/logo-color.png";
 
@@ -62,6 +64,13 @@ function RestaurantOwnerDashboard() {
               active={activeTab === "earnings"}
               onClick={() => setActiveTab("earnings")}
             />
+
+<SidebarItem
+  icon={<FaChartPie />} // You can change this icon
+  title="Payment Info"
+  active={activeTab === "payment"}
+  onClick={() => setActiveTab("payment")}
+/>
           </nav>
         </div>
 
@@ -85,12 +94,14 @@ function RestaurantOwnerDashboard() {
         {/* Header */}
         <header className="bg-white shadow-sm">
           <div className="flex items-center justify-between px-4 py-3">
-            <h1 className="text-xl font-semibold text-gray-800">
-              {activeTab === "dashboard" && "Dashboard Overview"}
-              {activeTab === "profile" && "My Profile"}
-              {activeTab === "restaurant" && "Restaurant Details"}
-              {activeTab === "orders" && "Orders Management"}
-            </h1>
+          <h1 className="text-xl font-semibold text-gray-800">
+  {activeTab === "dashboard" && "Dashboard Overview"}
+  {activeTab === "profile" && "My Profile"}
+  {activeTab === "restaurant" && "Restaurant Details"}
+  {activeTab === "orders" && "Orders Management"}
+  {activeTab === "earnings" && "Earnings Overview"}
+  {activeTab === "payment" && "Payment Info"}
+</h1>
 
             <div className="flex items-center space-x-4">
               <button className="relative p-1 rounded-full text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
@@ -123,6 +134,7 @@ function RestaurantOwnerDashboard() {
           {activeTab === "restaurant" && <RestaurantDetails />}
           {activeTab === "orders" && <RestaurantOrders />}
           {activeTab === "earnings" && <EarningsOverview />}
+          {activeTab === "payment" && <RestaurantPaymentInfo />}
         </main>
       </div>
     </div>
