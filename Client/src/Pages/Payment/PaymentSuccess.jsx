@@ -67,4 +67,4 @@ const PaymentSuccess = () => {
   );
 };
 
-export { PaymentSuccess};
+export default PaymentSuccess;
