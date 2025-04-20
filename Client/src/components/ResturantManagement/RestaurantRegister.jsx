@@ -11,14 +11,37 @@ const RestaurantRegister = () => {
     address: "",
     city: "",
     country: "",
-    cuisine_type: "",
+    cuisine_type: [],
     logo: null,
     banner_image: null,
   });
+
+  const cuisineOptions = [
+    "Italian",
+    "Chinese",
+    "Indian",
+    "Mexican",
+    "French",
+    "Korean",
+    "American",
+    "Japanese",
+    "Srilankan",
+    "Cafe",
+    "Seafood",
+    "Others",
+  ];
+  const handleCuisineChange = (e) => {
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setFormData({ ...formData, cuisine_type: selectedOptions });
+  };
+
   const [previewLogo, setPreviewLogo] = useState(null);
   const [previewBanner, setPreviewBanner] = useState(null);
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);  
+  const [success, setSuccess] = useState(null);
   const navigate = useNavigate(); // Initialize navigate
 
   const handleChange = (e) => {
@@ -47,27 +70,57 @@ const RestaurantRegister = () => {
 
     try {
       const formDataToSend = new FormData();
+
+      // Loop through the formData object and append each field
       Object.keys(formData).forEach((key) => {
-        formDataToSend.append(key, formData[key]);
+        if (key === "logo" || key === "banner_image") {
+          // Append the file fields if they exist
+          if (formData[key]) {
+            formDataToSend.append(key, formData[key]);
+          }
+        } else {
+          // Append the other fields
+          formDataToSend.append(key, formData[key]);
+        }
       });
 
-      const response = await restaurantService.registerRestaurant(formDataToSend);
+      // Send the form data to the backend
+      const response = await restaurantService.registerRestaurant(
+        formDataToSend
+      );
+
       if (response.status === 201) {
         setError(null);
         setSuccess("Restaurant registered successfully");
+
+        // Redirect to another page after successful registration
         setTimeout(() => {
-          navigate("/");
+          navigate("/"); // Redirect to homepage (or another page of your choice)
         }, 1000);
       }
-    } catch (error) {
-      setError(error.response?.data?.message || "Registration failed.");
+    } catch (err) {
+      let message = "Something went wrong. Please try again.";
+
+      if (err.response?.data?.message) {
+        message = err.response.data.message;
+      } else if (err.response?.data?.errors) {
+        message = Object.values(err.response.data.errors).join(", ");
+      } else if (err.message) {
+        message = err.message;
+      }
+
+      setError(message);
     }
   };
 
   return (
     <div className="flex h-auto w-[50%] mx-auto shadow-lg rounded-lg mt-44 mb-40">
       <div className="w-1/2 hidden lg:flex items-center justify-center bg-[#0B0E22]">
-        <img src={logo} alt="Restaurant" className="w-full h-full object-cover" />
+        <img
+          src={logo}
+          alt="Restaurant"
+          className="w-full h-full object-cover"
+        />
       </div>
 
       <div className="w-full lg:w-1/2 flex flex-col justify-center p-12 bg-[#6b6e81]">
@@ -76,7 +129,9 @@ const RestaurantRegister = () => {
         </h2>
 
         {error && <p className="text-red-500 text-center mb-6">{error}</p>}
-        {success && <p className="text-green-500 text-center mb-6">{success}</p>}
+        {success && (
+          <p className="text-green-500 text-center mb-6">{success}</p>
+        )}
 
         <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
           <input
@@ -127,14 +182,28 @@ const RestaurantRegister = () => {
             onChange={handleChange}
             required
           />
-          <input
-            type="text"
-            name="cuisine_type"
-            placeholder="Cuisine Type"
-            className="w-full p-3 border rounded bg-gray-100"
-            onChange={handleChange}
-            required
-          />
+          <label className="block font-medium text-white mb-2">
+            Cuisine Type (Choose one or more)
+          </label>
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {cuisineOptions.map((cuisine) => (
+              <label key={cuisine} className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  value={cuisine}
+                  checked={formData.cuisine_type.includes(cuisine)}
+                  onChange={(e) => {
+                    const selected = formData.cuisine_type.includes(cuisine)
+                      ? formData.cuisine_type.filter((item) => item !== cuisine)
+                      : [...formData.cuisine_type, cuisine];
+                    setFormData({ ...formData, cuisine_type: selected });
+                  }}
+                  className="form-checkbox h-4 w-4 text-[#FC8A06] mr-2"
+                />
+                <span className="text-white">{cuisine}</span>
+              </label>
+            ))}
+          </div>
 
           <label>Logo</label>
           <input
@@ -145,7 +214,11 @@ const RestaurantRegister = () => {
             className="w-full p-2 border rounded bg-[#565b6f94]"
           />
           {previewLogo && (
-            <img src={previewLogo} alt="Logo Preview" className="w-20 h-20 rounded-full mx-auto mt-2" />
+            <img
+              src={previewLogo}
+              alt="Logo Preview"
+              className="w-20 h-20 rounded-full mx-auto mt-2"
+            />
           )}
 
           <label>Banner Image</label>
@@ -157,15 +230,18 @@ const RestaurantRegister = () => {
             className="w-full p-2 border rounded bg-[#565b6f94]"
           />
           {previewBanner && (
-            <img src={previewBanner} alt="Banner Preview" className="w-full h-32 object-cover mt-2" />
+            <img
+              src={previewBanner}
+              alt="Banner Preview"
+              className="w-full h-32 object-cover mt-2"
+            />
           )}
 
           <button
             type="submit"
             className="w-full bg-[#FC8A06] text-white font-bold p-3 rounded-md hover:bg-[#E67E22] flex items-center justify-center gap-2"
           >
-            <span>Register</span>
-            ➜
+            <span>Register</span>➜
           </button>
         </form>
       </div>

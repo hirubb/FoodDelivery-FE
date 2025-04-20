@@ -1,0 +1,139 @@
+version: '3.8'
+
+services:
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+      - AUTH_SERVICE_URL=http://auth-service:3010
+      - RESTAURANT_SERVICE_URL=http://restaurant-service:3001
+      - ORDER_SERVICE_URL=http://order-service:3002
+      - DELIVERY_SERVICE_URL=http://delivery-service:3003
+      - PAYMENT_SERVICE_URL=http://payment-service:3030
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3020
+    depends_on:
+      - auth-service
+      - restaurant-service
+      - order-service
+      - delivery-service
+      - payment-service
+      - notification-service
+
+  # Authentication Service
+  auth-service:
+    build: ./auth-service
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo-db:27017/auth
+      - JWT_SECRET=your_jwt_secret_key
+    depends_on:
+      - mongo-db
+
+  # Restaurant Management Service
+  restaurant-service:
+    build: ./restaurant-service
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo-db:27017/restaurant
+      - AUTH_SERVICE_URL=http://auth-service:3010
+    depends_on:
+      - mongo-db
+      - auth-service
+
+  # Order Management Service
+  order-service:
+    build: ./order-service
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo-db:27017/order
+      - AUTH_SERVICE_URL=http://auth-service:3010
+      - RESTAURANT_SERVICE_URL=http://restaurant-service:3001
+      - PAYMENT_SERVICE_URL=http://payment-service:3030
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3020
+    depends_on:
+      - mongo-db
+      - auth-service
+      - restaurant-service
+      - payment-service
+      - notification-service
+      - kafka
+
+  # Delivery Management Service
+  delivery-service:
+    build: ./delivery-service
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo-db:27017/delivery
+      - AUTH_SERVICE_URL=http://auth-service:3010
+      - ORDER_SERVICE_URL=http://order-service:3002
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3020
+    depends_on:
+      - mongo-db
+      - auth-service
+      - order-service
+      - notification-service
+      - kafka
+
+  # Payment Service
+  payment-service:
+    build: ./payment-service
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo-db:27017/payment
+      - AUTH_SERVICE_URL=http://auth-service:3010
+      - PAYHERE_MERCHANT_ID=your_merchant_id
+      - PAYHERE_SECRET_KEY=your_secret_key
+      - PAYHERE_SANDBOX=true
+    depends_on:
+      - mongo-db
+      - auth-service
+
+  # Notification Service
+  notification-service:
+    build: ./notification-service
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo-db:27017/notification
+      - SMS_API_KEY=your_sms_api_key
+      - EMAIL_API_KEY=your_email_api_key
+    depends_on:
+      - mongo-db
+      - kafka
+
+  # Frontend Web Application
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+
+  # Database
+  mongo-db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  # Kafka for Event-Driven Communication
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
+
+volumes:
+  mongo-data:

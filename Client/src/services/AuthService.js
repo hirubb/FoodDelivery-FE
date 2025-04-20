@@ -20,10 +20,10 @@ export const register = async (userData) => {
     }
 };
 
-export const logout = () => {
-    localStorage.removeItem('token');
-    // Optionally call backend logout endpoint
-};
+// export const logout = () => {
+//     localStorage.removeItem('token');
+//     // Optionally call backend logout endpoint
+// };
 
 export const isAuthenticated = () => {
     return !!localStorage.getItem('token');

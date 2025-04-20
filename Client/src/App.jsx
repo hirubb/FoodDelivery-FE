@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { UserProvider } from './context/UserContext'; // Import UserProvider
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
 import Home from './Pages/Home';
@@ -20,6 +21,14 @@ import DriverDashboard from './Pages/Delivery personnel/DeliveryRiderDashboard/D
 import DeliveryRiderHome from './Pages/Delivery personnel/DeliveryHomePage';
 
 
+import Checkout from './Pages/Order/Checkout';
+import CreateMenu from './Pages/Restaurant/profile/CreateMenu';
+import CreateMenuForm from './components/ResturantManagement/profile/CreateMenuForm';
+import CreateMenuItems from './components/ResturantManagement/profile/CreateMenuItems';
+import OwnerLogin from './Pages/Restaurant/profile/OwnerLogin';
+import ShowMenu from './components/ResturantManagement/profile/ShowMenu';
+import CreatePromo from './components/ResturantManagement/profile/CreatePromo';
+import AdminDashboard from './Pages/Admin/AdminDashboard';
 
 // AppContent should be inside Router to use useLocation()
 const AppContent = () => {
@@ -54,6 +63,14 @@ const AppContent = () => {
 
 
 
+          <Route path="/restaurant/menu/create/:id" element={<CreateMenu />} />
+          <Route path="/restaurant/menu/form" element={<CreateMenuForm />} />
+          <Route path="/restaurant/menu/items" element={<CreateMenuItems />} />
+          <Route path="/owner/login" element={<OwnerLogin />} />
+          <Route path="/restaurant/menu/:restaurantId" element={<ShowMenu />} />
+          <Route path="/restaurant/promo/create/:restaurantId" element={<CreatePromo />} />
+
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
         </Routes>
       </main>
       {!isAuthPage && !isDliveryPersonnelSignUp && <Footer />}
@@ -64,9 +81,11 @@ const AppContent = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <UserProvider>  {/* Wrap your app in UserProvider */}
+        <Router>
+          <AppContent />
+        </Router>
+      </UserProvider>
     </AuthProvider>
   );
 };
