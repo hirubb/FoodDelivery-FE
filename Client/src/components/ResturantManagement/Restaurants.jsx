@@ -17,6 +17,20 @@ export default function Restaurants() {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [systemOffers, setSystemOffers] = useState([]);
+
+  useEffect(() => {
+    const fetchSystemOffers = async () => {
+      try {
+        const response = await restaurantService.getSystemOffers();
+        setSystemOffers(response.data);
+      } catch (err) {
+        console.error("Failed to fetch system offers", err);
+      }
+    };
+  
+    fetchSystemOffers();
+  }, []);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -158,7 +172,8 @@ export default function Restaurants() {
         </button>
       </div>
 
-      <Promotions promos={promos} />
+      <Promotions promos={systemOffers.length ? systemOffers : promos} />
+
 
       <div className="text-xs text-gray-500 mb-6">
         Additional fees may apply. <span className="underline">Learn more</span>
