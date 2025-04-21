@@ -6,12 +6,16 @@ import {
   FaChartPie,
   FaBell,
   FaSignOutAlt,
+  FaAddressBook,
+  FaCcAmazonPay,
 } from "react-icons/fa";
 
 import OwnerProfileData from "../../../components/ResturantManagement/profile/OwnerProfile";
 import RestaurantDetails from "../../../components/ResturantManagement/profile/RestaurantDetails";
 import RestaurantOrders from "../../../components/ResturantManagement/profile/RestaurantOrders";
 import EarningsOverview from "../../../components/ResturantManagement/profile/EarningsOverview";
+import RestaurantPaymentInfo from "../../../components/ResturantManagement/profile/RestaurantPaymentInfo";
+import MenuManagement from "../../../components/ResturantManagement/profile/MenuManagement";
 
 import Logo from "../../../assets/logo-color.png";
 
@@ -62,6 +66,19 @@ function RestaurantOwnerDashboard() {
               active={activeTab === "earnings"}
               onClick={() => setActiveTab("earnings")}
             />
+
+            <SidebarItem
+              icon={<FaCcAmazonPay/>} // You can change this icon
+              title="Payment Info"
+              active={activeTab === "payment"}
+              onClick={() => setActiveTab("payment")}
+            />
+            <SidebarItem
+              icon={<FaAddressBook />} // You can change this icon
+              title="Menus"
+              active={activeTab === "menu"}
+              onClick={() => setActiveTab("menu")}
+            />
           </nav>
         </div>
 
@@ -90,6 +107,9 @@ function RestaurantOwnerDashboard() {
               {activeTab === "profile" && "My Profile"}
               {activeTab === "restaurant" && "Restaurant Details"}
               {activeTab === "orders" && "Orders Management"}
+              {activeTab === "earnings" && "Earnings Overview"}
+              {activeTab === "payment" && "Payment Info"}
+              {activeTab === "menu" && "Menus"}
             </h1>
 
             <div className="flex items-center space-x-4">
@@ -104,7 +124,9 @@ function RestaurantOwnerDashboard() {
                   alt="Owner"
                 />
                 <div className="hidden md:block ml-3">
-                  <p className="text-sm font-medium text-gray-800">Restaurant Owner</p>
+                  <p className="text-sm font-medium text-gray-800">
+                    Restaurant Owner
+                  </p>
                   <p className="text-xs text-gray-500">Online</p>
                 </div>
               </div>
@@ -123,6 +145,8 @@ function RestaurantOwnerDashboard() {
           {activeTab === "restaurant" && <RestaurantDetails />}
           {activeTab === "orders" && <RestaurantOrders />}
           {activeTab === "earnings" && <EarningsOverview />}
+          {activeTab === "payment" && <RestaurantPaymentInfo />}
+          {activeTab === "menu" && <MenuManagement />}
         </main>
       </div>
     </div>
