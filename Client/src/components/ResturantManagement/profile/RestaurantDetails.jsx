@@ -101,10 +101,10 @@ function RestaurantDetails() {
                  Add Menu
                </button>
                <button
-                 onClick={() => navigate(`/restaurant/promo/create/${restaurant._id}`)}
+                 onClick={() => navigate(`/restaurant/offers/${restaurant._id}`)}
                  className="bg-yellow-700 hover:bg-yellow-800 text-white px-4 py-2 rounded"
                >
-                 Create Promo
+                 Offers
                </button>
              </div>
            </div>

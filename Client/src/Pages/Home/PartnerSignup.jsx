@@ -1,8 +1,11 @@
+import { Link } from "react-router-dom";
+
 const PartnerSignup = () => {
   return (
     <div className="container mx-auto px-6 py-[10%]">
-      <div className="flex flex-wrap justify-center gap-8"> {/* Increased gap for spacing */}
-
+      <div className="flex flex-wrap justify-center gap-8">
+        {" "}
+        {/* Increased gap for spacing */}
         {/* Partner Card */}
         <div className="w-full md:w-2/3 lg:w-[45%] bg-black rounded-xl overflow-hidden relative group shadow-lg">
           <img
@@ -16,12 +19,15 @@ const PartnerSignup = () => {
           <div className="absolute bottom-6 left-6 text-white">
             <p className="text-orange-400 text-lg">Signup as a business</p>
             <h2 className="text-3xl font-bold">Partner with us</h2>
-            <button className="mt-4 bg-orange-500 text-white px-6 py-3 rounded-lg text-lg">
+
+            <Link
+              to="/owner-register"
+              className="mt-4 bg-orange-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-[#FC8A06] inline-block text-center"
+            >
               Get Started
-            </button>
+            </Link>
           </div>
         </div>
-
         {/* Rider Card */}
         <div className="w-full md:w-2/3 lg:w-[48%] bg-black rounded-xl overflow-hidden relative group shadow-lg">
           <img
@@ -40,7 +46,6 @@ const PartnerSignup = () => {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );
