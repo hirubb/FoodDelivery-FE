@@ -9,6 +9,10 @@ class OffersService {
       formData
     )
   }
+  getRestaurantOffersById(restaurantId){
+    console.log("restaurantId : ", restaurantId)
+    return HTTP.get(`/offers/restaurant/${restaurantId}`);
+  }
 }
 
 export default new OffersService();
