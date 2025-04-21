@@ -6,6 +6,8 @@ import {
   FaChartPie,
   FaBell,
   FaSignOutAlt,
+  FaAddressBook,
+  FaCcAmazonPay,
 } from "react-icons/fa";
 
 import OwnerProfileData from "../../../components/ResturantManagement/profile/OwnerProfile";
@@ -13,7 +15,7 @@ import RestaurantDetails from "../../../components/ResturantManagement/profile/R
 import RestaurantOrders from "../../../components/ResturantManagement/profile/RestaurantOrders";
 import EarningsOverview from "../../../components/ResturantManagement/profile/EarningsOverview";
 import RestaurantPaymentInfo from "../../../components/ResturantManagement/profile/RestaurantPaymentInfo";
-
+import MenuManagement from "../../../components/ResturantManagement/profile/MenuManagement";
 
 import Logo from "../../../assets/logo-color.png";
 
@@ -65,12 +67,18 @@ function RestaurantOwnerDashboard() {
               onClick={() => setActiveTab("earnings")}
             />
 
-<SidebarItem
-  icon={<FaChartPie />} // You can change this icon
-  title="Payment Info"
-  active={activeTab === "payment"}
-  onClick={() => setActiveTab("payment")}
-/>
+            <SidebarItem
+              icon={<FaCcAmazonPay/>} // You can change this icon
+              title="Payment Info"
+              active={activeTab === "payment"}
+              onClick={() => setActiveTab("payment")}
+            />
+            <SidebarItem
+              icon={<FaAddressBook />} // You can change this icon
+              title="Menus"
+              active={activeTab === "menu"}
+              onClick={() => setActiveTab("menu")}
+            />
           </nav>
         </div>
 
@@ -94,14 +102,15 @@ function RestaurantOwnerDashboard() {
         {/* Header */}
         <header className="bg-white shadow-sm">
           <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-semibold text-gray-800">
-  {activeTab === "dashboard" && "Dashboard Overview"}
-  {activeTab === "profile" && "My Profile"}
-  {activeTab === "restaurant" && "Restaurant Details"}
-  {activeTab === "orders" && "Orders Management"}
-  {activeTab === "earnings" && "Earnings Overview"}
-  {activeTab === "payment" && "Payment Info"}
-</h1>
+            <h1 className="text-xl font-semibold text-gray-800">
+              {activeTab === "dashboard" && "Dashboard Overview"}
+              {activeTab === "profile" && "My Profile"}
+              {activeTab === "restaurant" && "Restaurant Details"}
+              {activeTab === "orders" && "Orders Management"}
+              {activeTab === "earnings" && "Earnings Overview"}
+              {activeTab === "payment" && "Payment Info"}
+              {activeTab === "menu" && "Menus"}
+            </h1>
 
             <div className="flex items-center space-x-4">
               <button className="relative p-1 rounded-full text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
@@ -115,7 +124,9 @@ function RestaurantOwnerDashboard() {
                   alt="Owner"
                 />
                 <div className="hidden md:block ml-3">
-                  <p className="text-sm font-medium text-gray-800">Restaurant Owner</p>
+                  <p className="text-sm font-medium text-gray-800">
+                    Restaurant Owner
+                  </p>
                   <p className="text-xs text-gray-500">Online</p>
                 </div>
               </div>
@@ -135,6 +146,7 @@ function RestaurantOwnerDashboard() {
           {activeTab === "orders" && <RestaurantOrders />}
           {activeTab === "earnings" && <EarningsOverview />}
           {activeTab === "payment" && <RestaurantPaymentInfo />}
+          {activeTab === "menu" && <MenuManagement />}
         </main>
       </div>
     </div>
