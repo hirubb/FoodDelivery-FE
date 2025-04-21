@@ -14,6 +14,8 @@ import ManageRestaurants from "../../components/Admin/ManageRestaurants";
 import Financials from "../../components/Admin/Financials";
 import Offers from "../../components/Admin/Offers";
 import AdminProfile from "../../components/Admin/AdminProfile";
+import RestaurantOwners from "../../components/Admin/RestaurantOwners";
+import DeliveryPerson from "../../components/Admin/DeliveryPerson";
 
 
 
@@ -41,9 +43,21 @@ function AdminDashboard() {
             />
             <SidebarItem
               icon={<FaUsers />}
-              title="Manage Users"
+              title="Customers"
               active={activeTab === "users"}
               onClick={() => setActiveTab("users")}
+            />
+            <SidebarItem
+              icon={<FaStore />}
+              title="Restaurant Owners"
+              active={activeTab === "restaurant owners"}
+              onClick={() => setActiveTab("restaurant owners")}
+            />
+            <SidebarItem
+              icon={<FaStore />}
+              title="Delivery persons"
+              active={activeTab === "delivery person"}
+              onClick={() => setActiveTab("delivery person")}
             />
             <SidebarItem
               icon={<FaStore />}
@@ -86,7 +100,9 @@ function AdminDashboard() {
           <div className="flex items-center justify-between px-4 py-3">
             <h1 className="text-xl font-semibold text-gray-800">
                 {activeTab === "profile" && "My Profile"}
-              {activeTab === "users" && "Manage Users"}
+              {activeTab === "users" && "Customers"}
+              {activeTab === "restaurant owners" && "Restaurant Owners"}
+              {activeTab === "delivery person" && "Delivery Persons"}
               {activeTab === "restaurants" && "Manage Restaurants"}
               {activeTab === "financials" && "Financial Overview"}
               {activeTab === "offers" && "Manage Offers"}
@@ -115,6 +131,8 @@ function AdminDashboard() {
         <main className="flex-1 overflow-y-auto p-4">
           {activeTab === "profile" && <AdminProfile />}
           {activeTab === "users" && <ManageUsers />}
+          {activeTab === "restaurant owners" && <RestaurantOwners />}
+          {activeTab === "delivery person" && <DeliveryPerson />}
           {activeTab === "restaurants" && <ManageRestaurants />}
           {activeTab === "financials" && <Financials />}
           {activeTab === "offers" && <Offers />}
