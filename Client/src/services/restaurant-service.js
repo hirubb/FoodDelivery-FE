@@ -60,6 +60,16 @@ class RestaurantService {
   getTopRatedRestaurants(){
     return HTTP.get("/restaurant/top-rated");
   }
+  updateRestaurantOwner(id, data){
+    console.log("id : ", id)
+    return HTTP.put(`/restaurant-owners/edit/${id}`,
+      data,
+    );
+
+  }
+  getRestaurantById(id){
+    return HTTP.get(`/restaurant/${id}`);
+  }
   
 }
 
