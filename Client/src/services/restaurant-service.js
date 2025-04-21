@@ -1,4 +1,4 @@
-import { HTTP, AuthHTTP } from "./httpCommon-service";
+import { HTTP, AuthHTTP,AdminHTTP } from "./httpCommon-service";
 
 
 
@@ -70,6 +70,11 @@ class RestaurantService {
   getRestaurantById(id){
     return HTTP.get(`/restaurant/${id}`);
   }
+  getSystemOffers(){
+    return AdminHTTP.get("/system-offers");
+  }
+
+
   
 }
 
