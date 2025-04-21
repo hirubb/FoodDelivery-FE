@@ -7,15 +7,15 @@ import { UserContext } from "../context/UserContext"; // Import the UserContext
 
 function Header() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
+  const role = localStorage.getItem("role");
+  const profileLink = role === "Admin" ? "/admin-dashboard" : "/owner/profile";
+
   // Access the user data from UserContext
   const { user } = useContext(UserContext);
-  const { username, loggedIn , profile_image} = user; 
+  const { username, loggedIn, profile_image } = user;
   console.log("profile_image : ", profile_image);
   // If profile_image is not available, display a fallback or loading state
   const userImage = profile_image || "/default-profile.png"; // You can replace with a default image path
-
-
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -31,26 +31,40 @@ function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-6 text-xl font-bold">
-            <Link to="/" className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]">Home</Link>
-            <Link to="#" className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]">Browse Menu</Link>
-            <Link to="/restaurants" className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]">Restaurants</Link>
-            <Link to="#" className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]">Track Order</Link>
+            <Link
+              to="/"
+              className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]"
+            >
+              Home
+            </Link>
+            <Link
+              to="#"
+              className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]"
+            >
+              Browse Menu
+            </Link>
+            <Link
+              to="/restaurants"
+              className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]"
+            >
+              Restaurants
+            </Link>
+            <Link
+              to="#"
+              className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]"
+            >
+              Track Order
+            </Link>
           </div>
 
           {/* Right Section */}
           <div className="flex items-center space-x-6">
-            {!loggedIn ? (
-              <Link
-                to="/login"
-                className="hidden md:block text-[#FC8A06] border border-[#FC8A06] px-4 py-1 rounded hover:bg-[#FC8A06] hover:text-white"
-              >
-                Login / Signup
-              </Link>
-            ) : (
-              <Link to="owner/profile" className="hidden md:block text-[#FC8A06] hover:text-[#E67E22]">
-                <img src={userImage} alt="Profile" className="h-10 w-10 rounded-full mr-2" />
-                <span className="text-sm font-semibold">{username}</span>
-              </Link>
+            {loggedIn && (
+              <Link to={profileLink} className="hidden md:flex items-center text-[#FC8A06] hover:text-[#E67E22]">
+              <img src={userImage} alt="Profile" className="h-10 w-10 rounded-full mr-2" />
+              <span className="text-sm font-semibold">{username}</span>
+            </Link>
+            
             )}
 
             <Link to="/cart" className="relative">
@@ -61,7 +75,10 @@ function Header() {
             </Link>
 
             {/* Menu toggler - visible on all screen sizes */}
-            <button onClick={toggleSidebar} className="text-white focus:outline-none">
+            <button
+              onClick={toggleSidebar}
+              className="text-white focus:outline-none"
+            >
               <FaBars size={24} />
             </button>
           </div>
@@ -69,7 +86,11 @@ function Header() {
       </nav>
 
       {/* Sidebar Component */}
-      <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} loggedIn={loggedIn} />
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        toggleSidebar={toggleSidebar}
+        loggedIn={loggedIn}
+      />
     </>
   );
 }
