@@ -25,6 +25,7 @@ import PaymentSuccess from './Pages/Payment/PaymentSuccess';
 import PaymentCancel from './Pages/Payment/PaymentCancel';
 import AdminDashboard from './Pages/Admin/AdminDashboard';
 import RestaurantOwnerDashboard from './Pages/Restaurant/profile/RestaurantOwnerDashboard';
+import CustomerDashboard from './Pages/Customer/CustomerDashboard';
 import RestaurantOffers from './components/ResturantManagement/profile/RestaurantOffers';
 
 // AppContent should be inside Router to use useLocation()
@@ -61,6 +62,7 @@ const AppContent = () => {
           <Route path="/payment/cancel" element={<PaymentCancel />} />
 
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/customer-dashboard" element={<CustomerDashboard />} />
         </Routes>
       </main>
       {!isAuthPage && <Footer />}
