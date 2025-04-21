@@ -26,7 +26,7 @@ const Promotions = ({ promos }) => {
   };
 
   return (
-    <div className="relative my-6 text-[#03081F]">
+    <div className="relative my-8 text-[#03081F]">
       <div
         ref={scrollRef}
         className="flex gap-4 overflow-x-auto no-scrollbar text-[#03081F]"
