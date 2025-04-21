@@ -16,11 +16,11 @@ const DeliveryRiderHome = () => {
         <div className="font-sans bg-gray-50 text-gray-900">
             {/* <NavBar /> */}
 
-            <Header />
+
             <Herosection />
             <BenefitsSection />
             <HowItWorksSection />
-            <FAQSection />
+
             <TestimonialsSection />
             <DownloadAppSection />
 

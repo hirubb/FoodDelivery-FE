@@ -1,26 +1,32 @@
 import React, { useState } from "react";
 import { FaArrowRight, FaCheckCircle } from "react-icons/fa";
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import DeliveryRiderService from "../../services/DeliveryRider-service";
+
 
 const vehicleOptions = [
     {
         title: "Rides and/or delivery with motorbike",
+        vehicleType: "motorbike",
         age: "18+",
-        vehicle: "Registered ; 1997 or newer",
+        vehicle: "Registered; 1997 or newer",
         license: "Full local license",
         icon: "🏍️"
     },
     {
         title: "Rides with car & Van",
+        vehicleType: "car/van",
         age: "18+",
-        vehicle: "Registered ; 2000 or newer",
+        vehicle: "Registered; 2000 or newer",
         license: "Full local license",
         icon: "🚗"
     },
     {
         title: "Rides with Tuk/auto",
+        vehicleType: "tuk/auto",
         age: "18+",
-        vehicle: "Registered ; 1997 or newer",
+        vehicle: "Registered; 1997 or newer",
         license: "Full local license",
         icon: "🛺"
     }
@@ -28,11 +34,33 @@ const vehicleOptions = [
 
 function VehicleSignUp() {
     const [selected, setSelected] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
-    const handleBack = () => {
-        // Navigation logic for back button
-        console.log("Navigate to previous page");
-        // history.goBack() or other navigation logic
+
+    const handleNext = async () => {
+        setLoading(true);
+        const selectedVehicleType = vehicleOptions[selected].vehicleType;
+
+        try {
+            const response = await DeliveryRiderService.ChooseVehicleType({
+                vehicleType: selectedVehicleType,
+            });
+
+            console.log("Vehicle Type Registered Successfully:", response.data);
+
+            navigate('/deliveryPersonnel/VehicleDetails-SignUp');
+        } catch (err) {
+            console.error("Error registering vehicle type:", err);
+            setError(
+                err.response?.data?.message ||
+                err.response?.data?.errors?.[0]?.msg ||
+                "Registration failed. Please try again."
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -105,7 +133,7 @@ function VehicleSignUp() {
                                 key={index}
                                 onClick={() => setSelected(index)}
                                 className={`relative p-5 rounded-xl cursor-pointer transition-all duration-300 hover:shadow-md 
-                                    ${selected === index
+                                        ${selected === index
                                         ? "bg-orange-50"
                                         : "bg-white hover:border-gray-300"
                                     }`}
@@ -135,19 +163,18 @@ function VehicleSignUp() {
                         ))}
                     </div>
 
-                    {/* Navigation Buttons - Back and Next Step */}
-                    <div className="flex  justify-center  mt-12">
-                        {/* <button
-                            onClick={handleBack}
-                            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-8 py-3 rounded-lg border border-gray-300 shadow-sm inline-flex items-center gap-2 transition-all duration-300 hover:-translate-x-1"
+                    {/* Navigation Buttons - Next Step */}
+                    <div className="flex justify-center mt-12">
+                        <button
+                            onClick={handleNext}
+                            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-lg shadow-md inline-flex items-center gap-2 transition-all duration-300 hover:translate-x-1"
+                            aria-label="Proceed to next step"
                         >
-                            <FaArrowLeft size={14} /> Back
-                        </button> */}
-
-                        <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-lg shadow-md inline-flex items-center gap-2 transition-all duration-300 hover:translate-x-1">
                             Next Step <FaArrowRight size={14} />
                         </button>
                     </div>
+
+                    {error && <p className="text-red-500 text-center mt-4">{error}</p>}
                 </div>
             </div>
         </div>

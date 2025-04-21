@@ -1,8 +1,13 @@
 import axios from 'axios';
-import { baseURL } from '../config/setting';
+import { baseURL, adminURL, authURL, DeliveryRider_BaseURL } from '../config/setting';
 import { getAuthToken } from '../utils/auth';
 
-console.log("base url : ", baseURL);
+
+console.log("Base URL:", import.meta.env.VITE_API_URL);
+console.log("Admin URL:", import.meta.env.VITE_ADMIN_URL);
+console.log("Delivery URL:", import.meta.env.VITE_Delivery_URL);
+
+
 export const HTTP = axios.create({
   baseURL: baseURL,
   headers: {
@@ -10,8 +15,74 @@ export const HTTP = axios.create({
   },
 });
 
+export const DeliveryRiderHTTP = axios.create({
+  baseURL: DeliveryRider_BaseURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+
+export const AdminHTTP = axios.create({
+  baseURL: adminURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+
+
+export const AuthHTTP = axios.create({
+  baseURL: authURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+
 // Add an interceptor to include the token in every request
 HTTP.interceptors.request.use(
+  (config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+DeliveryRiderHTTP.interceptors.request.use(
+  (config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+
+AdminHTTP.interceptors.request.use(
+  (config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+
+AuthHTTP.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
     if (token) {

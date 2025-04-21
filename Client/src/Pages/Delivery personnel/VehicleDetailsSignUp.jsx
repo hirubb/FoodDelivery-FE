@@ -1,8 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaArrowRight, FaIdCard, FaTimes, FaCheck, FaUpload, FaFileAlt, FaCarAlt, FaCertificate, FaCamera } from "react-icons/fa";
 import { motion } from 'framer-motion';
+import DeliveryRiderService from "../../services/DeliveryRider-service";
 
 function VehicleDetailsForm() {
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
     const [formData, setFormData] = useState({
         vehicleModel: "",
         manufactureYear: "",
@@ -57,15 +63,12 @@ function VehicleDetailsForm() {
                 }));
             }
 
-            // Simulate upload process (replace with actual upload logic)
             setTimeout(() => {
-                // Update form data with file
                 setFormData(prev => ({
                     ...prev,
                     [documentType]: file
                 }));
 
-                // Update status to success
                 setUploadStatus(prev => ({
                     ...prev,
                     [documentType]: 'success'
@@ -75,7 +78,7 @@ function VehicleDetailsForm() {
     };
 
     const removeFile = (documentType) => {
-        // Clean up preview URL if it's a vehicle image
+
         if (documentType === 'vehicleFrontView' || documentType === 'vehicleSideView') {
             const viewType = documentType === 'vehicleFrontView' ? 'frontView' : 'sideView';
             if (vehiclePreviews[viewType]) {
@@ -87,26 +90,73 @@ function VehicleDetailsForm() {
             }));
         }
 
-        // Remove file from form data
         setFormData(prev => ({
             ...prev,
             [documentType]: null
         }));
 
-        // Reset upload status
         setUploadStatus(prev => ({
             ...prev,
             [documentType]: null
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Form submission logic here
-        console.log("Form submitted:", formData);
+        setLoading(true);
+        setError(null);
+
+        try {
+            const vehicleFormData = new FormData();
+            vehicleFormData.append('vehicleModel', formData.vehicleModel);
+            vehicleFormData.append('manufactureYear', formData.manufactureYear);
+            vehicleFormData.append('licensePlate', formData.licensePlate);
+
+            if (formData.vehicleFrontView) {
+                vehicleFormData.append('frontViewImage', formData.vehicleFrontView);
+            }
+
+            if (formData.vehicleSideView) {
+                vehicleFormData.append('sideViewImage', formData.vehicleSideView);
+            }
+
+            if (formData.insurance) {
+                vehicleFormData.append('insuranceFile', formData.insurance);
+            }
+
+            if (formData.revenueLicense) {
+                vehicleFormData.append('revenueLicenseFile', formData.revenueLicense);
+            }
+
+            if (formData.driverLicenseFront) {
+                vehicleFormData.append('driverLicenseFrontFile', formData.driverLicenseFront);
+            }
+
+            if (formData.driverLicenseBack) {
+                vehicleFormData.append('driverLicenseBackFile', formData.driverLicenseBack);
+            }
+
+            if (formData.emissionCertificate) {
+                vehicleFormData.append('emissionCertificateFile', formData.emissionCertificate);
+            }
+
+            const response = await DeliveryRiderService.RegisterVehicleDetails(vehicleFormData);
+            console.log("Vehicle Details Registration successful:", response.data);
+
+
+            navigate('/');
+        } catch (err) {
+            console.error("Registration error:", err);
+            setError(
+                err.response?.data?.message ||
+                err.response?.data?.errors?.[0]?.msg ||
+                "Registration failed. Please try again."
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Vehicle image upload component
     const VehicleImageUpload = ({ title, documentType, viewType }) => (
         <div className="border rounded-lg overflow-hidden">
             {!formData[documentType] ? (
@@ -152,7 +202,6 @@ function VehicleDetailsForm() {
         </div>
     );
 
-    // Document upload component with success indicator
     const DocumentUpload = ({ title, documentType, icon }) => (
         <div className="border rounded-md overflow-hidden">
             {!formData[documentType] ? (
@@ -257,6 +306,13 @@ function VehicleDetailsForm() {
                             Please fill the vehicle details below
                         </h3>
 
+                        {/* Error message display */}
+                        {error && (
+                            <div className="bg-red-50 border-l-4 border-red-500 p-3 mb-4">
+                                <p className="text-red-700 text-sm">{error}</p>
+                            </div>
+                        )}
+
                         <form className="space-y-4" onSubmit={handleSubmit}>
                             {/* Vehicle Model */}
                             <div>
@@ -267,7 +323,7 @@ function VehicleDetailsForm() {
                                     value={formData.vehicleModel}
                                     onChange={handleChange}
                                     placeholder="Enter Your vehicle Model"
-                                    className="w-full px-3 py-2.5 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-transparent"
+                                    className="text-black w-full px-3 py-2.5 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-transparent"
                                     required
                                 />
                             </div>
@@ -281,7 +337,7 @@ function VehicleDetailsForm() {
                                     value={formData.manufactureYear}
                                     onChange={handleChange}
                                     placeholder="Enter Your Year of Manufacture"
-                                    className="w-full px-3 py-2.5 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-transparent"
+                                    className="text-black w-full px-3 py-2.5 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-transparent"
                                     required
                                 />
                             </div>
@@ -295,7 +351,7 @@ function VehicleDetailsForm() {
                                     value={formData.licensePlate}
                                     onChange={handleChange}
                                     placeholder="Enter Your License Plate Number"
-                                    className="w-full px-3 py-2.5 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-transparent"
+                                    className="text-black  w-full px-3 py-2.5 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-transparent"
                                     required
                                 />
                             </div>
@@ -389,12 +445,22 @@ function VehicleDetailsForm() {
                         <button
                             type="submit"
                             onClick={handleSubmit}
-                            className="w-full bg-[#FF8A00] hover:bg-opacity-90 text-white font-bold py-2.5 md:py-3 px-4 rounded flex items-center justify-center"
+                            disabled={loading}
+                            className={`w-full ${loading ? 'bg-gray-400' : 'bg-[#FF8A00] hover:bg-opacity-90'} text-white font-bold py-2.5 md:py-3 px-4 rounded flex items-center justify-center`}
                         >
-                            <span className="mr-2">Create Account</span>
-                            <span className="bg-white rounded-full p-1 flex items-center justify-center">
-                                <FaArrowRight size={10} className="text-[#FF8A00]" />
-                            </span>
+                            {loading ? (
+                                <span className="flex items-center">
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                                    Processing...
+                                </span>
+                            ) : (
+                                <>
+                                    <span className="mr-2">Create Account</span>
+                                    <span className="bg-white rounded-full p-1 flex items-center justify-center">
+                                        <FaArrowRight size={10} className="text-[#FF8A00]" />
+                                    </span>
+                                </>
+                            )}
                         </button>
 
                         <div className="text-center mt-2">

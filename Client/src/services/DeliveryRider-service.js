@@ -1,38 +1,36 @@
-import { HTTP } from "./httpCommon-service";
+import { DeliveryRiderHTTP } from "./httpCommon-service";
+
+
 
 class DeliveryRiderService {
 
-    // Register Delivery Rider
+
     RegisterDeliveryRider(data) {
-        return HTTP.post("/api/auth/register", data, {
+        return DeliveryRiderHTTP.post("/auth/DriverRegister", data, {
+
             headers: {
-                "Content-Type": "multipart/form-data",  // Change this if not sending files
+                "Content-Type": "application/json",
             }
         });
     }
 
-    // Login Delivery Rider
-    LoginDeliveryRider(data) {
-        return HTTP.post("/api/auth/login", data, {
+    ChooseVehicleType(data) {
+        return DeliveryRiderHTTP.put("/vehicle/VehicleTypeRegister", data, {
             headers: {
-                "Content-Type": "multipart/form-data",  // Change this if not sending files
+                "Content-Type": "application/json",
             }
         });
     }
-
-    // Login Delivery Rider
-    ChooseVehicle(data) {
-        return HTTP.post("/api/auth/login", data, {
+    RegisterVehicleDetails(data) {
+        return DeliveryRiderHTTP.put("/vehicle/VehicleDetailsSignUp", data, {
             headers: {
-                "Content-Type": "multipart/form-data",  // Change this if not sending files
+                "Content-Type": "Multipart/form-data",
             }
         });
     }
-
-
 
 
 }
 
-// Export an instance of the service to be used elsewhere
+
 export default new DeliveryRiderService();

@@ -43,7 +43,7 @@ function DeliverySignUp() {
 
             });
 
-            navigate('/vehicle-options');
+            navigate('/DeliveryPersonnel-OptionsSignUp');
         } catch (err) {
             console.error("Registration error:", err);
             setError(
