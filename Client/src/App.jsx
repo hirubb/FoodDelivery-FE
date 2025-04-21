@@ -27,6 +27,7 @@ import AdminDashboard from './Pages/Admin/AdminDashboard';
 import RestaurantOwnerDashboard from './Pages/Restaurant/profile/RestaurantOwnerDashboard';
 import CustomerDashboard from './Pages/Customer/CustomerDashboard';
 import RestaurantOffers from './components/ResturantManagement/profile/RestaurantOffers';
+// import OrderStatusPage from './pages/Order/OrderStatusPage';
 
 // AppContent should be inside Router to use useLocation()
 const AppContent = () => {
@@ -47,6 +48,8 @@ const AppContent = () => {
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          {/* <Route path="/order-status" element={<OrderStatusPage />} /> */}
+
           {/* <Route path="/owner/profile" element={<Profile />} /> */}
           <Route path="/owner/profile" element={<RestaurantOwnerDashboard />} />
           <Route path="/restaurant/offers/:restaurantId" element={<RestaurantOffers />} />
