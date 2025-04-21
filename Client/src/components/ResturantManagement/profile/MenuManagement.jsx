@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import restaurantService from '../../../services/restaurant-service';
+import { useNavigate } from 'react-router-dom';
 
 function MenuManagement() {
   const [restaurants, setRestaurants] = useState([]);
@@ -8,6 +9,8 @@ function MenuManagement() {
   const [activeTab, setActiveTab] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+
 
   // Fetch restaurants on mount
   useEffect(() => {
@@ -72,6 +75,8 @@ function MenuManagement() {
   const activeCount = menus.filter(menu => menu.status === 'active').length;
   const draftCount = menus.filter(menu => menu.status === 'draft').length;
 
+  console.log("selected restaurant id : ",selectedRestaurant)
+
   const selectedRestaurantName = restaurants.find(
     r => r._id === selectedRestaurant
   )?.name;
@@ -86,7 +91,13 @@ function MenuManagement() {
 
         <button 
           className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md flex items-center transition-colors"
-          onClick={() => window.location.href = `/restaurant/menu/create/${selectedRestaurant.id}`}
+          onClick={() => {
+            if (selectedRestaurant) {
+              navigate(`/restaurant/menu/create/${selectedRestaurant}`);
+            } else {
+              alert('Please select a restaurant first.');
+            }
+          }}
         >
           <span className="mr-1">+</span> Add New Menu
         </button>
