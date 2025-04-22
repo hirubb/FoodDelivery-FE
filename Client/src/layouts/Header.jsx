@@ -4,19 +4,31 @@ import { FaShoppingCart, FaBars } from "react-icons/fa";
 import logo from "/src/assets/logo-color.png";
 import Sidebar from "./Sidebar";
 import { UserContext } from "../context/UserContext";
+import { FaUserCircle } from "react-icons/fa";
 
 function Header() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const role = localStorage.getItem("role");
   const token = localStorage.getItem("token");
 
-  const profileLink = role === "Admin" ? "/admin-dashboard" : "/owner/profile";
+  let profileLink = "";
+
+  if(role === "Admin") {
+    profileLink = "/admin-dashboard"
+  }
+  if(role === "Restaurant Owner"){
+    profileLink = "/owner/profile"
+  }
+  if(role === "Customer"){
+    profileLink = "/customer-dashboard"
+  }
+
 
   // Access user data from context
   const { user } = useContext(UserContext);
   const { username, loggedIn, profile_image } = user;
 
-  const userImage = profile_image || "/default-profile.png";
+  const userImage = profile_image;
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -64,16 +76,23 @@ function Header() {
             {/* If logged in: Show profile, else show login */}
             {token && loggedIn ? (
               <Link
-                to={profileLink}
-                className="flex items-center text-[#FC8A06] hover:text-[#E67E22]"
-              >
-                <img
-                  src={userImage}
-                  alt="Profile"
-                  className="h-10 w-10 rounded-full mr-2"
-                />
-                <span className="text-sm font-semibold">{username}</span>
-              </Link>
+              to={profileLink}
+              className="flex flex-col items-center text-[#FC8A06] hover:text-[#E67E22]"
+            >
+              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 mb-1">
+                {userImage ? (
+                  <img
+                    src={userImage}
+                    alt="User Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <FaUserCircle className="text-orange-500 w-6 h-6" />
+                )}
+              </div>
+           
+              <span className="text-md font-semibold text-center ">{username}</span>
+            </Link>
             ) : (
               <Link
                 to="/login"

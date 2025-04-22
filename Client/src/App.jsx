@@ -13,7 +13,6 @@ import RestaurantDetails from './Pages/Order/RestaurantDetails';
 import Cart from './Pages/Order/Cart';
 import { AuthProvider } from './components/Auth/AuthContext';
 import Profile from './Pages/Restaurant/profile/Profile';
-// import Checkout from './Pages/Order/Checkout';
 import CreateMenu from './Pages/Restaurant/profile/CreateMenu';
 import CreateMenuForm from './components/ResturantManagement/profile/CreateMenuForm';
 import CreateMenuItems from './components/ResturantManagement/profile/CreateMenuItems';
@@ -47,7 +46,7 @@ const AppContent = () => {
           <Route path="/restaurants" element={<Restaurant />} />
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/cart" element={<Cart />} />
-          {/* <Route path="/checkout" element={<Checkout />} /> */}
+         
           {/* <Route path="/order-status" element={<OrderStatusPage />} /> */}
 
           {/* <Route path="/owner/profile" element={<Profile />} /> */}
