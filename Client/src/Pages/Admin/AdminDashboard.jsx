@@ -26,15 +26,15 @@ function AdminDashboard() {
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-20 md:w-64 bg-[#0C1A39] text-white flex flex-col">
-        <div className="p-4 flex items-center justify-center md:justify-start">
-          {/* <img src={Logo} alt="OrderLk" className="h-12 w-12" /> */}
-          <span className="hidden md:block ml-3 font-bold text-xl">
+        <div className="flex items-center justify-center p-4 md:justify-start">
+          {/* <img src={Logo} alt="OrderLk" className="w-12 h-12" /> */}
+          <span className="hidden ml-3 text-xl font-bold md:block">
             AMBULA.LK
           </span>
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          <nav className="mt-8 px-2">
+          <nav className="px-2 mt-8">
           <SidebarItem
               icon={<FaUser />}
               title="My Profile"
@@ -84,18 +84,18 @@ function AdminDashboard() {
           <button
             onClick={() => {
               localStorage.removeItem("token");
-              window.location.href = "/admin/login";
+              window.location.href = "/login";
             }}
-            className="flex items-center justify-center md:justify-start w-full py-2 text-sm text-white hover:bg-gray-700 rounded transition-colors"
+            className="flex items-center justify-center w-full py-2 text-sm text-white transition-colors rounded md:justify-start hover:bg-gray-700"
           >
-            <FaSignOutAlt className="h-5 w-5" />
-            <span className="hidden md:block ml-3">Logout</span>
+            <FaSignOutAlt className="w-5 h-5" />
+            <span className="hidden ml-3 md:block">Logout</span>
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden">
         <header className="bg-white shadow-sm">
           <div className="flex items-center justify-between px-4 py-3">
             <h1 className="text-xl font-semibold text-gray-800">
@@ -109,17 +109,17 @@ function AdminDashboard() {
             </h1>
 
             <div className="flex items-center space-x-4">
-              <button className="relative p-1 rounded-full text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                <FaBell className="h-6 w-6" />
+              <button className="relative p-1 text-gray-400 rounded-full hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                <FaBell className="w-6 h-6" />
                 <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500"></span>
               </button>
               <div className="flex items-center">
                 <img
-                  className="h-9 w-9 rounded-full object-cover border-2 border-orange-500"
+                  className="object-cover border-2 border-orange-500 rounded-full h-9 w-9"
                   src="https://randomuser.me/api/portraits/women/44.jpg"
                   alt="Admin"
                 />
-                <div className="hidden md:block ml-3">
+                <div className="hidden ml-3 md:block">
                   <p className="text-sm font-medium text-gray-800">Admin</p>
                   <p className="text-xs text-gray-500">Online</p>
                 </div>
@@ -128,7 +128,7 @@ function AdminDashboard() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4">
+        <main className="flex-1 p-4 overflow-y-auto">
           {activeTab === "profile" && <AdminProfile />}
           {activeTab === "users" && <ManageUsers />}
           {activeTab === "restaurant owners" && <RestaurantOwners />}
@@ -151,7 +151,7 @@ function SidebarItem({ icon, title, active, onClick }) {
       }`}
     >
       <div className="w-5 h-5">{icon}</div>
-      <span className="hidden md:block ml-3">{title}</span>
+      <span className="hidden ml-3 md:block">{title}</span>
     </button>
   );
 }
