@@ -35,6 +35,9 @@ class AdminService {
   approveRestaurant(id){
     return AdminHTTP.get(`admin/restaurants/${id}/approve`,)
   }
+  getAllCustomers(){
+    return AdminHTTP.get("admin/customers");
+  }
  
   
 }
