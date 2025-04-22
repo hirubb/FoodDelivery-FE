@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import register from '../../services/AuthService';
+import CustomerService from '../../services/customer-service';
 
 export default function Register() {
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
+        first_name: '',
+        last_name: '',
         email: '',
+        username: '',
         password: '',
         confirmPassword: '',
-        role: 'CUSTOMER',
-        phoneNumber: '',
-        address: ''
+        phone: '',
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -25,7 +24,7 @@ export default function Register() {
 
     const goToNextStep = () => {
         if (step === 1) {
-            if (!formData.firstName || !formData.lastName || !formData.email) {
+            if (!formData.first_name || !formData.last_name || !formData.email) {
                 setError('Please fill in all required fields');
                 return;
             }
@@ -60,20 +59,33 @@ export default function Register() {
             return;
         }
         
+        if (!formData.username) {
+            setError('Username is required');
+            return;
+        }
+        
         setLoading(true);
         
         try {
             const userData = {
-                firstName: formData.firstName,
-                lastName: formData.lastName,
+                first_name: formData.first_name,
+                last_name: formData.last_name,
                 email: formData.email,
+                username: formData.username,
                 password: formData.password,
-                role: formData.role,
-                phoneNumber: formData.phoneNumber,
-                address: formData.address
+                phone: formData.phone
             };
             
-            await register(userData);
+            const response = await CustomerService.registerCustomer(userData);
+            
+            // Store token if returned from backend
+            if (response.data && response.data.token) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('userRole', response.data.customer.role);
+                localStorage.setItem('userId', response.data.customer._id || response.data.customer.id);
+                localStorage.setItem('username', `${response.data.customer.first_name} ${response.data.customer.last_name}`);
+            }
+            
             navigate('/login', { 
                 state: { 
                     successMessage: 'Registration successful! Please log in.' 
@@ -130,35 +142,42 @@ export default function Register() {
                     </div>
                 </div>
                 
-                <form onSubmit={step === 1 ? goToNextStep : handleRegister}>
+                <form onSubmit={(e) => {
+                    e.preventDefault(); // Prevent default form submission
+                    if (step === 1) {
+                        goToNextStep();
+                    } else {
+                        handleRegister(e);
+                    }
+                    }}>
                     {step === 1 ? (
                         <>
                             <div className="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
                                 <div>
-                                    <label htmlFor="firstName" className="block mb-1 text-sm font-medium text-gray-900">
+                                    <label htmlFor="first_name" className="block mb-1 text-sm font-medium text-gray-900">
                                         First Name
                                     </label>
                                     <input
-                                        id="firstName"
+                                        id="first_name"
                                         type="text"
-                                        name="firstName"
+                                        name="first_name"
                                         placeholder="Enter first name"
-                                        value={formData.firstName}
+                                        value={formData.first_name}
                                         onChange={handleChange}
                                         required
                                         className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="lastName" className="block mb-1 text-sm font-medium text-gray-900">
+                                    <label htmlFor="last_name" className="block mb-1 text-sm font-medium text-gray-900">
                                         Last Name
                                     </label>
                                     <input
-                                        id="lastName"
+                                        id="last_name"
                                         type="text"
-                                        name="lastName"
+                                        name="last_name"
                                         placeholder="Enter last name"
-                                        value={formData.lastName}
+                                        value={formData.last_name}
                                         onChange={handleChange}
                                         required
                                         className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
@@ -191,7 +210,7 @@ export default function Register() {
                             </div>
                             
                             <div className="mb-6">
-                                <label htmlFor="phoneNumber" className="block mb-1 text-sm font-medium text-gray-900">
+                                <label htmlFor="phone" className="block mb-1 text-sm font-medium text-gray-900">
                                     Phone Number
                                 </label>
                                 <div className="relative">
@@ -201,12 +220,13 @@ export default function Register() {
                                         </svg>
                                     </div>
                                     <input
-                                        id="phoneNumber"
+                                        id="phone"
                                         type="tel"
-                                        name="phoneNumber"
+                                        name="phone"
                                         placeholder="Enter phone number"
-                                        value={formData.phoneNumber}
+                                        value={formData.phone}
                                         onChange={handleChange}
+                                        required
                                         className="w-full py-2 pl-10 pr-3 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                                     />
                                 </div>
@@ -222,36 +242,27 @@ export default function Register() {
                         </>
                     ) : (
                         <>
-                            {/* <div className="mb-4">
-                                <label htmlFor="role" className="block mb-1 text-sm font-medium text-gray-900">
-                                    I am registering as a
-                                </label>
-                                <select
-                                    id="role"
-                                    name="role"
-                                    value={formData.role}
-                                    onChange={handleChange}
-                                    className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
-                                >
-                                    <option value="CUSTOMER" className="text-gray-900">Customer</option>
-                                    <option value="RESTAURANT_ADMIN" className="text-gray-900">Restaurant Owner</option>
-                                    <option value="DELIVERY_PERSONNEL" className="text-gray-900">Delivery Driver</option>
-                                </select>
-                            </div> */}
-                            
                             <div className="mb-4">
-                                <label htmlFor="address" className="block mb-1 text-sm font-medium text-gray-900">
-                                    Address
+                                <label htmlFor="username" className="block mb-1 text-sm font-medium text-gray-900">
+                                    Username
                                 </label>
-                                <textarea
-                                    id="address"
-                                    name="address"
-                                    placeholder="Enter your address"
-                                    value={formData.address}
-                                    onChange={handleChange}
-                                    rows="3"
-                                    className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
-                                />
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <input
+                                        id="username"
+                                        type="text"
+                                        name="username"
+                                        placeholder="Create a username"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full py-2 pl-10 pr-3 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                                    />
+                                </div>
                             </div>
                             
                             <div className="mb-4">

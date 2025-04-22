@@ -3,13 +3,12 @@ import { HTTP, AuthHTTP, CustomerHTTP } from "./httpCommon-service";
 class CustomerService {
   // Register a new customer
   registerCustomer(data) {
-    return HTTP.post("/customers/register", data, 
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        }
+    // Using JSON instead of FormData since the backend expects JSON
+    return CustomerHTTP.post("/customers/register", data, {
+      headers: {
+        "Content-Type": "application/json",
       }
-    );
+    });
   }
 
   // Login customer
@@ -19,18 +18,48 @@ class CustomerService {
 
   // Get customer profile
   getCustomerProfile() {
-    return HTTP.get("/customers/my-details");
+    return CustomerHTTP.get("/customers/my-details");
   }
 
   // Update customer profile
   updateCustomerProfile(data) {
-    return HTTP.put("/customers/update-profile", data, 
+    return CustomerHTTP.put("/customers/update-profile", data, 
       {
         headers: {
           "Content-Type": "multipart/form-data",
         }
       }
     );
+  }
+
+  // Get order history
+  getOrderHistory() {
+    return CustomerHTTP.get("/orders/history");
+  }
+
+  // Get current order tracking
+  trackCurrentOrder() {
+    return CustomerHTTP.get("/orders/current");
+  }
+
+  // Get favorite restaurants
+  getFavoriteRestaurants() {
+    return CustomerHTTP.get("/favorites");
+  }
+
+  // Get payment methods
+  getPaymentMethods() {
+    return CustomerHTTP.get("/payment-methods");
+  }
+
+  // Get address book
+  getAddressBook() {
+    return CustomerHTTP.get("/addresses");
+  }
+
+  // Get shopping cart
+  getShoppingCart() {
+    return CustomerHTTP.get("/cart");
   }
 }
 
