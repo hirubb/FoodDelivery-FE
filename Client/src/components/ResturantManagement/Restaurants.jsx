@@ -10,8 +10,10 @@ import {
 import { useEffect, useState } from "react";
 import restaurantService from "../../services/restaurant-service";
 import Promotions from "./Promotions";
+import { useNavigate } from 'react-router-dom';//dulmi
 
 export default function Restaurants() {
+  const navigate = useNavigate(); // Navigate to restaurant details page(dulmi)
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -52,6 +54,10 @@ export default function Restaurants() {
 
     fetchRestaurants();
   }, [searchTerm, selectedCategory]);
+
+  const handleRestaurantClick = (restaurantId) => {
+    navigate(`/restaurant/${restaurantId}`); // Navigate to restaurant details page(dulmi)
+  };
 
   const handleCategoryClick = (category) => {
     // Toggle category filter
@@ -180,12 +186,13 @@ export default function Restaurants() {
       </div>
 
       {/* Restaurant Sections */}
-      {!loading && restaurants.length > 0 && (
+      {!loading && Array.isArray(restaurants) && restaurants.length > 0 && ( // dulmi
         <div className="mb-8 ">
           <h2 className="text-2xl font-bold mb-4">All Restaurants</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-[#03081F]">
             {restaurants.map((r, idx) => (
-              <div key={idx} className="p-4 bg-white rounded-lg shadow">
+              <div key={idx} onClick={() => handleRestaurantClick(r._id)}//order details page(dulmi)
+              className="p-4 bg-white rounded-lg shadow">
                 {/*logo*/}
                 <img
                   src={r.logo}
