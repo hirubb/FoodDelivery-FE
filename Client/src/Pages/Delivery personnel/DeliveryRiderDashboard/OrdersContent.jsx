@@ -1,0 +1,434 @@
+import { useState, useEffect } from 'react';
+import {
+    FaMapMarkedAlt,
+    FaCheckCircle,
+    FaTimes,
+    FaPhoneAlt,
+    FaMotorcycle,
+    FaBoxOpen,
+    FaHistory,
+    FaLocationArrow,
+    FaMapMarkerAlt,
+    FaRegClock
+} from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+
+function OrdersContent({ setActiveTab, setNavigationData }) {
+    const [activeOrderTab, setActiveOrderTab] = useState('pending');
+    const [showOrderDetail, setShowOrderDetail] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+
+    // Unified orders array with status field, coordinates and phone numbers
+    const allOrders = [
+        {
+            id: 'ORD-5678',
+            customer: 'Sarah Johnson',
+            customerPhone: '+1 (555) 123-4567',
+            pickup: '123 Restaurant St',
+            pickupLatitude: '6.05352',
+            pickupLongitude: '80.22098',
+            dropoff: '456 Customer Ave',
+            dropoffLatitude: '6.0105569999665125',
+            dropoffLongitude: '80.26322751821459',
+            items: '2 items',
+            status: 'pending',
+            restaurant: 'Pizza Palace',
+        },
+        {
+            id: 'ORD-5679',
+            customer: 'Mike Wilson',
+            customerPhone: '+1 (555) 234-5678',
+            pickup: '789 Cafe Rd',
+            pickupLatitude: '6.034734965306155',
+            pickupLongitude: '80.21474998358613',
+            dropoff: '101 Residence Blvd',
+            dropoffLatitude: '6.0105569999665125',
+            dropoffLongitude: '80.26322751821459',
+            items: '3 items',
+            status: 'pending',
+            restaurant: 'Cafe Delight'
+        },
+        {
+            id: 'ORD-5675',
+            customer: 'David Brown',
+            customerPhone: '+1 (555) 345-6789',
+            pickup: '555 Market St',
+            pickupLatitude: '6.03538579711526',
+            pickupLongitude: '80.21097343326443',
+            dropoff: '777 Home Ave',
+            dropoffLatitude: '6.0105569999665125',
+            dropoffLongitude: '80.26322751821459',
+            items: '1 item',
+            status: 'Accepted',
+            restaurant: 'Burger Corner'
+        },
+        {
+            id: 'ORD-5670',
+            customer: 'Emma Davis',
+            customerPhone: '+1 (555) 456-7890',
+            pickup: '222 Shop St',
+            pickupLatitude: '6.037256926606753',
+            pickupLongitude: '80.2306249334499',
+            dropoff: '333 Apartment Dr',
+            dropoffLatitude: '6.0105569999665125',
+            dropoffLongitude: '80.26322751821459',
+            items: '2 items',
+            status: 'completed',
+            restaurant: 'Sushi Express'
+        },
+        {
+            id: 'ORD-5660',
+            customer: 'James Miller',
+            customerPhone: '+1 (555) 567-8901',
+            pickup: '444 Store Ave',
+            pickupLatitude: '6.035955266656627',
+            pickupLongitude: '80.21000411056926',
+            dropoff: '555 House St',
+            dropoffLatitude: '6.0105569999665125',
+            dropoffLongitude: '80.26322751821459',
+            items: '5 items',
+            status: 'completed',
+            restaurant: 'Breakfast Spot'
+        }
+    ];
+
+    // Filter orders based on status
+    const pendingOrders = allOrders.filter(order => order.status === 'pending');
+    const activeOrders = allOrders.filter(order => order.status === 'Accepted');
+    const historyOrders = allOrders.filter(order => order.status === 'completed');
+
+    const handleOrderClick = (order) => {
+        setSelectedOrder(order);
+        setShowOrderDetail(true);
+    };
+
+    const handleViewOnMap = (order) => {
+        // Pass location data to NavigationContent through parent component
+        setNavigationData({
+            orderId: order.id,
+            customer: order.customer,
+            customerPhone: order.customerPhone,
+            pickup: order.pickup,
+            pickupLatitude: order.pickupLatitude,
+            pickupLongitude: order.pickupLongitude,
+            dropoff: order.dropoff,
+            dropoffLatitude: order.dropoffLatitude,
+            dropoffLongitude: order.dropoffLongitude,
+            items: order.items,
+            restaurant: order.restaurant,
+            status: order.status
+        });
+
+        // Switch to navigation tab
+        setActiveTab('navigation');
+
+        // Close the modal
+        setShowOrderDetail(false);
+    };
+
+    // Status badge component for better reuse
+    const StatusBadge = ({ status }) => {
+        let bgColor, textColor, label, icon;
+
+        switch (status) {
+            case 'completed':
+                bgColor = 'bg-emerald-100';
+                textColor = 'text-emerald-800';
+                label = 'Completed';
+                icon = <FaCheckCircle className="mr-1" />;
+                break;
+            case 'Accepted':
+                bgColor = 'bg-blue-100';
+                textColor = 'text-blue-800';
+                label = 'Active';
+                icon = <FaMotorcycle className="mr-1" />;
+                break;
+            default:
+                bgColor = 'bg-amber-100';
+                textColor = 'text-amber-800';
+                label = 'New';
+                icon = <FaRegClock className="mr-1" />;
+        }
+
+        return (
+            <span className={`ml-2 px-2.5 py-1 text-xs rounded-full flex items-center ${bgColor} ${textColor}`}>
+                {icon} {label}
+            </span>
+        );
+    };
+
+    const renderOrders = (orders) => {
+        return orders.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {orders.map((order) => (
+                    <motion.div
+                        key={order.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-100"
+                        onClick={() => handleOrderClick(order)}
+                    >
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <div className="flex items-center">
+                                    <span className="font-bold text-gray-800">{order.id}</span>
+                                    <StatusBadge status={order.status} />
+                                </div>
+                                <h3 className="text-sm font-medium mt-1 text-gray-700">{order.customer}</h3>
+                                <p className="text-xs text-gray-500 mt-1">{order.restaurant}</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t border-gray-100 text-sm text-gray-600 space-y-2.5">
+                            <div className="flex items-start">
+                                <div className="flex-shrink-0 w-6 text-orange-500">
+                                    <FaMapMarkerAlt />
+                                </div>
+                                <div className="flex-grow">
+                                    <p className="text-xs text-gray-500 font-medium">PICKUP</p>
+                                    <p className="text-sm">{order.pickup}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start">
+                                <div className="flex-shrink-0 w-6 text-blue-500">
+                                    <FaLocationArrow />
+                                </div>
+                                <div className="flex-grow">
+                                    <p className="text-xs text-gray-500 font-medium">DROPOFF</p>
+                                    <p className="text-sm">{order.dropoff}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between text-xs text-gray-500">
+                            <span className="flex items-center">
+                                <FaBoxOpen className="mr-1" /> {order.items}
+                            </span>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+        ) : (
+            <div className="text-center py-16 bg-gray-50 rounded-lg border border-gray-100">
+                <FaBoxOpen className="mx-auto h-12 w-12 text-gray-300" />
+                <h3 className="mt-2 text-sm font-medium text-gray-600">No Orders</h3>
+                <p className="mt-1 text-sm text-gray-500">No {activeOrderTab} orders to display right now.</p>
+            </div>
+        );
+    };
+
+    return (
+        <div className="bg-gray-50 min-h-full p-6">
+            <div className="max-w-7xl mx-auto">
+                {/* Dashboard Summary - Simplified */}
+                <div className="mb-8">
+                    <h1 className="text-2xl font-bold text-gray-800 mb-2">Orders Dashboard</h1>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <div className="text-sm text-gray-500 mb-1">New Orders</div>
+                            <div className="flex items-end justify-between">
+                                <span className="text-2xl font-bold text-gray-800">{pendingOrders.length}</span>
+                                <span className="p-2 bg-amber-100 text-amber-800 rounded-lg">
+                                    <FaBoxOpen />
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <div className="text-sm text-gray-500 mb-1">Active Orders</div>
+                            <div className="flex items-end justify-between">
+                                <span className="text-2xl font-bold text-gray-800">{activeOrders.length}</span>
+                                <span className="p-2 bg-blue-100 text-blue-800 rounded-lg">
+                                    <FaMotorcycle />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Tabs */}
+                <div className="mb-6">
+                    <div className="flex bg-white rounded-xl p-1 shadow-sm">
+                        <button
+                            className={`flex-1 py-2.5 px-4 rounded-lg font-medium transition-all text-sm flex items-center justify-center ${activeOrderTab === 'pending' ? 'bg-amber-500 text-white shadow-md' : 'text-gray-600 hover:text-amber-600'}`}
+                            onClick={() => setActiveOrderTab('pending')}
+                        >
+                            <FaBoxOpen className={`mr-2 ${activeOrderTab === 'pending' ? 'text-white' : 'text-amber-500'}`} />
+                            New Orders
+                            {pendingOrders.length > 0 && (
+                                <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${activeOrderTab === 'pending' ? 'bg-white text-amber-600' : 'bg-amber-100 text-amber-800'}`}>
+                                    {pendingOrders.length}
+                                </span>
+                            )}
+                        </button>
+                        <button
+                            className={`flex-1 py-2.5 px-4 rounded-lg font-medium transition-all text-sm flex items-center justify-center ${activeOrderTab === 'active' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:text-blue-600'}`}
+                            onClick={() => setActiveOrderTab('active')}
+                        >
+                            <FaMotorcycle className={`mr-2 ${activeOrderTab === 'active' ? 'text-white' : 'text-blue-500'}`} />
+                            Active
+                            {activeOrders.length > 0 && (
+                                <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${activeOrderTab === 'active' ? 'bg-white text-blue-600' : 'bg-blue-100 text-blue-800'}`}>
+                                    {activeOrders.length}
+                                </span>
+                            )}
+                        </button>
+                        <button
+                            className={`flex-1 py-2.5 px-4 rounded-lg font-medium transition-all text-sm flex items-center justify-center ${activeOrderTab === 'history' ? 'bg-emerald-500 text-white shadow-md' : 'text-gray-600 hover:text-emerald-600'}`}
+                            onClick={() => setActiveOrderTab('history')}
+                        >
+                            <FaHistory className={`mr-2 ${activeOrderTab === 'history' ? 'text-white' : 'text-emerald-500'}`} />
+                            History
+                            {historyOrders.length > 0 && (
+                                <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${activeOrderTab === 'history' ? 'bg-white text-emerald-600' : 'bg-emerald-100 text-emerald-800'}`}>
+                                    {historyOrders.length}
+                                </span>
+                            )}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Order List */}
+                <div className="transition-all duration-300">
+                    {activeOrderTab === 'pending' && renderOrders(pendingOrders)}
+                    {activeOrderTab === 'active' && renderOrders(activeOrders)}
+                    {activeOrderTab === 'history' && renderOrders(historyOrders)}
+                </div>
+            </div>
+
+            {/* Order Detail Modal - Enhanced */}
+            <AnimatePresence>
+                {showOrderDetail && selectedOrder && (
+                    <motion.div
+                        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowOrderDetail(false)}
+                    >
+                        <motion.div
+                            className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden"
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <div className="p-6 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100">
+                                <div>
+                                    <h2 className="text-xl font-bold text-gray-800">Order Details</h2>
+                                    <p className="text-sm text-gray-500 mt-1">{selectedOrder.restaurant}</p>
+                                </div>
+                                <button
+                                    className="bg-white text-gray-500 p-2 rounded-full hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                                    onClick={() => setShowOrderDetail(false)}
+                                >
+                                    <FaTimes size={16} />
+                                </button>
+                            </div>
+
+                            <div className="p-6">
+                                <div className="pb-4 border-b border-gray-200">
+                                    <div>
+                                        <p className="text-sm text-gray-500">Order ID</p>
+                                        <p className="font-semibold text-gray-800">{selectedOrder.id}</p>
+                                    </div>
+                                </div>
+
+                                <div className="py-4 border-b border-gray-200">
+                                    <div className="flex items-center mb-4">
+                                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                            <span className="text-blue-600 font-bold text-lg">{selectedOrder.customer.charAt(0)}</span>
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-gray-800">{selectedOrder.customer}</p>
+                                            <p className="text-sm text-gray-500">{selectedOrder.customerPhone}</p>
+                                        </div>
+                                        <div className="ml-auto">
+                                            <a href={`tel:${selectedOrder.customerPhone}`} className="bg-green-500 text-white p-2.5 rounded-full hover:bg-green-600 transition-colors inline-flex items-center justify-center">
+                                                <FaPhoneAlt size={14} />
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-5 text-gray-800">
+                                        <div className="flex">
+                                            <div className="flex-shrink-0 w-8 text-orange-500 pt-0.5">
+                                                <FaMapMarkerAlt size={18} />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-500">Pickup location</p>
+                                                <p className="font-medium text-gray-800">{selectedOrder.pickup}</p>
+                                                <p className="text-xs text-gray-500 mt-0.5">
+                                                    {selectedOrder.pickupLatitude}, {selectedOrder.pickupLongitude}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex">
+                                            <div className="flex-shrink-0 w-8 text-blue-500 pt-0.5">
+                                                <FaLocationArrow size={18} />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-500">Dropoff location</p>
+                                                <p className="font-medium text-gray-800">{selectedOrder.dropoff}</p>
+                                                <p className="text-xs text-gray-500 mt-0.5">
+                                                    {selectedOrder.dropoffLatitude}, {selectedOrder.dropoffLongitude}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-gray-50 p-3 rounded-lg">
+                                            <p className="text-sm font-medium text-gray-700 mb-2">Order Items</p>
+                                            <div className="flex items-center">
+                                                <p className="text-gray-800">{selectedOrder.items}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="pt-4">
+                                    <button
+                                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-colors flex items-center justify-center shadow-sm"
+                                        onClick={() => handleViewOnMap(selectedOrder)}
+                                    >
+                                        <FaMapMarkedAlt className="mr-2" /> View on Map
+                                    </button>
+
+                                    {/* Actions based on status */}
+                                    {selectedOrder.status === 'pending' && (
+                                        <div className="grid grid-cols-2 gap-4 mt-4">
+                                            <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
+                                                <FaTimes className="mr-2" /> Decline
+                                            </button>
+                                            <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center shadow-sm">
+                                                <FaCheckCircle className="mr-2" /> Accept
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {selectedOrder.status === 'Accepted' && (
+                                        <button className="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center shadow-sm">
+                                            <FaCheckCircle className="mr-2" /> Mark as Delivered
+                                        </button>
+                                    )}
+
+                                    {selectedOrder.status === 'completed' && (
+                                        <div className="mt-4 bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-lg flex items-center">
+                                            <FaCheckCircle className="mr-3 text-emerald-500" />
+                                            <div>
+                                                <p className="font-medium">Successfully delivered</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+export default OrdersContent;
