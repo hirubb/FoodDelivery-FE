@@ -24,12 +24,9 @@ export default function RestaurantOffers() {
   const fetchOffers = async () => {
     setLoading(true);
     try {
-      const response = await offersService.createRestaurantOffers({
-        type: 'restaurant',
-        restaurantId: restaurantId,
-        ...formData,
-      });
-      setOffers(response.data);
+      const response = await offersService.getRestaurantOffersById(restaurantId)
+      setOffers(response.data.data);
+      
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -65,7 +62,11 @@ export default function RestaurantOffers() {
         );
         alert("Offer updated successfully!");
       } else {
-        const response = await offersService.createRestaurantOffer(formData);
+        const response = await offersService.createRestaurantOffers({
+          type: 'restaurant',
+          restaurantId: restaurantId,
+          ...formData,
+        });
         setOffers([...offers, response.data]);
         alert("Offer added successfully!");
       }
@@ -105,7 +106,8 @@ export default function RestaurantOffers() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mx-4">
+    <div className="bg-white rounded-lg shadow-lg p-6 mx-auto my-10 w-1/2">
+
       <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-4">
         <h2 className="text-2xl font-bold text-gray-900">Restaurant Offers</h2>
         <button
@@ -218,6 +220,9 @@ export default function RestaurantOffers() {
                   Discount
                 </th>
                 <th className="py-3 px-4 text-left text-sm font-medium text-white uppercase tracking-wider">
+                  Code
+                </th>
+                <th className="py-3 px-4 text-left text-sm font-medium text-white uppercase tracking-wider">
                   Description
                 </th>
                 <th className="py-3 px-4 text-left text-sm font-medium text-white uppercase tracking-wider">
@@ -236,6 +241,7 @@ export default function RestaurantOffers() {
                 >
                   <td className="py-4 px-4 text-sm text-gray-800">{offer.title}</td>
                   <td className="py-4 px-4 text-sm text-gray-800">{offer.discount}%</td>
+                  <td className="py-4 px-4 text-sm text-gray-800">{offer.code}%</td>
                   <td className="py-4 px-4 text-sm text-gray-800">{offer.description}</td>
                   <td className="py-4 px-4 text-sm text-gray-800">{offer.validUntil}</td>
                   <td className="py-4 px-4 text-right">

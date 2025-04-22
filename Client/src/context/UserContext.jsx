@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import restaurantService from "../services/restaurant-service";
+import adminService from "../services/admin-service";
 
 // Create the context
 export const UserContext = createContext();
@@ -16,32 +17,39 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (token) {
       try {
         const decoded = jwtDecode(token);
         setUser({ userId: decoded.userId, username: decoded.username, loggedIn: true });
-     
 
-        // Fetch username only once after decoding the token if needed
+        // Fetch full user info including profile image
         fetchUsername(decoded.userId);
       } catch (err) {
         console.error("Invalid token:", err);
       }
     } else {
-      setUser({ ...user, loggedIn: false });
+      setUser((prevUser) => ({ ...prevUser, loggedIn: false }));
     }
   }, []);
 
   const fetchUsername = async (userId) => {
     try {
-      const response = await restaurantService.getRestaurantOwner(userId);
-  
-      // Check if response and response.data exist before accessing username and profile_image
+      const role = localStorage.getItem("role");
+      let response = null;
+
+      if (role === "Restaurant Owner") {
+        response = await restaurantService.getRestaurantOwner(userId);
+      } else if (role === "Admin") {
+        response = await adminService.getAdminProfile(userId);
+      }
+
       if (response && response.data) {
+        const userData = response.data.owner || response.data.admin || {};
         setUser((prevUser) => ({
           ...prevUser,
-          username: response.data.owner.username,
-          profile_image: response.data.owner.profile_image, // Change logo to profile_image
+          username: userData.username || "",
+          profile_image: userData.profile_image || "",
         }));
       } else {
         console.error("Invalid response format:", response);
