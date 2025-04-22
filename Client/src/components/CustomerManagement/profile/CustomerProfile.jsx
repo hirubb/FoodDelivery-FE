@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../../assets/ai-generated-8733795_1280.png";
+import logo1 from "../../../assets/Customer/c1.png";
 import customerService from "../../../services/customer-service";
 
 const CustomerProfile = ({ setCustomerData: setDashboardCustomerData }) => {
@@ -115,7 +116,7 @@ const CustomerProfile = ({ setCustomerData: setDashboardCustomerData }) => {
       <div className="flex flex-col items-center">
         <div className="w-32 h-32 overflow-hidden border-4 rounded-full border-[#FC8A06]">
           <img
-            src={customerData.profile_image || logo}
+            src={customerData.profile_image || logo1}
             alt="Profile"
             className="object-cover w-full h-full"
           />
