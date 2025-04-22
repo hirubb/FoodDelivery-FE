@@ -8,6 +8,7 @@ function HighestRatings() {
     const fetchTopRated = async () => {
       try {
         const res = await RestaurantService.getTopRatedRestaurants();
+        console.log("res : ", res);
         
         setTopRestaurants(res.data.data || []);
       } catch (error) {
