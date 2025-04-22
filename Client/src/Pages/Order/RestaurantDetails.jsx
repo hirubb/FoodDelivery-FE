@@ -1,7 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Star, Clock, MapPin, ShoppingCart } from "lucide-react";
+import axios from "axios";
 import restaurantService from "../../services/restaurant-service";
+import orderService from "../../services/order-service";
+
 
 function RestaurantMenuPage() {
   const { id } = useParams();
@@ -15,27 +18,29 @@ function RestaurantMenuPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const menuIcons = {
-    "Appetizers": "🥗",
+    Appetizers: "🥗",
     "Main Course": "🍱",
-    "Desserts": "🍰",
-    "Beverages": "🥤",
-    "Snacks": "🍟",
-    "Soups": "🥣",
-    "Salads": "🥬",
-    "Rice": "🍚",
-    "Noodles": "🍜",
-    "Pizza": "🍕",
-    "Burgers": "🍔",
-    "Others": "🍽️"
+    Desserts: "🍰",
+    Beverages: "🥤",
+    Snacks: "🍟",
+    Soups: "🥣",
+    Salads: "🥬",
+    Rice: "🍚",
+    Noodles: "🍜",
+    Pizza: "🍕",
+    Burgers: "🍔",
+    Others: "🍽️",
   };
 
   const getImageUrl = (path) => {
-    if (!path) return '/default-food.jpg';
-    return path.startsWith('http') ? path : `${import.meta.env.VITE_API_URL}${path}`;
+    if (!path) return "/default-food.jpg";
+    return path.startsWith("http")
+      ? path
+      : `${import.meta.env.VITE_API_URL}${path}`;
   };
 
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
+    const savedCart = localStorage.getItem("cart");
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }
@@ -47,14 +52,14 @@ function RestaurantMenuPage() {
       try {
         setLoading(true);
         setError(null);
-        
+
         const [menuResponse, restaurantResponse] = await Promise.all([
           restaurantService.getMenus(id),
-          restaurantService.getRestaurantById(id)
+          restaurantService.getRestaurantById(id),
         ]);
 
         if (!restaurantResponse.data || !menuResponse.data) {
-          throw new Error('Invalid response from server');
+          throw new Error("Invalid response from server");
         }
 
         setMenus(menuResponse.data || []);
@@ -71,55 +76,81 @@ function RestaurantMenuPage() {
   }, [id]);
 
   const addToCart = (item) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.find(i => i._id === item._id);
-      
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((i) => i._id === item._id);
+
       let newCart;
       if (existingItem) {
-        newCart = prevCart.map(i => 
+        newCart = prevCart.map((i) =>
           i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
         );
       } else {
-        newCart = [...prevCart, {
-          _id: item._id,
-          name: item.name,
-          price: item.price,
-          portion: item.portion,
-          images: item.images,
-          quantity: 1,
-          restaurant_id: id
-        }];
+        newCart = [
+          ...prevCart,
+          {
+            _id: item._id,
+            name: item.name,
+            price: item.price,
+            portion: item.portion,
+            images: item.images,
+            quantity: 1,
+            restaurant_id: id,
+          },
+        ];
       }
-      
-      localStorage.setItem('cart', JSON.stringify(newCart));
+
+      localStorage.setItem("cart", JSON.stringify(newCart));
       setNotification(`${item.name} added to cart`);
       setTimeout(() => setNotification(null), 2000);
       return newCart;
     });
   };
 
-  if (loading) return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FC8A06]"></div>
-    </div>
-  );
 
-  if (error) return (
-    <div className="text-center py-10">
-      <p className="text-red-500 mb-4">{error}</p>
-      <button 
-        onClick={() => navigate('/restaurants')}
-        className="text-[#FC8A06] hover:text-[#E67E22] underline"
-      >
-        Back to Restaurants
-      </button>
-    </div>
-  );
+const placeOrder = async () => {
+  const orderData = {
+    customerId: "cust001",
+    restaurantId: id,
+    items: cart.map(item => ({
+      menuItemId: item._id,
+      quantity: item.quantity
+    }))
+  };
 
-  // Flattened items for selected category
+  try {
+    await orderService.placeOrder(orderData);
+    alert("Order Placed!");
+    navigate("/orders");
+  } catch (err) {
+    console.error(err);
+    alert("Failed to place order");
+  }
+};
+
+
   const displayedItems = menus
-    .filter(menu => !selectedCategory || selectedCategory === menu._id)
-    .flatMap(menu => menu.menu_items || []);
+    .filter((menu) => !selectedCategory || selectedCategory === menu._id)
+    .flatMap((menu) => menu.menu_items || []);
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FC8A06]"></div>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="text-center py-10">
+        <p className="text-red-500 mb-4">{error}</p>
+        <button
+          onClick={() => navigate("/restaurants")}
+          className="text-[#FC8A06] hover:text-[#E67E22] underline"
+        >
+          Back to Restaurants
+        </button>
+      </div>
+    );
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -138,7 +169,7 @@ function RestaurantMenuPage() {
             className="w-full h-full object-cover"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = '/default-restaurant.jpg';
+              e.target.src = "/default-restaurant.jpg";
             }}
           />
         ) : (
@@ -200,21 +231,21 @@ function RestaurantMenuPage() {
         </div>
       </div>
 
-      {/* Menu Items Grid */}
+      {/* Menu Items */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {displayedItems.map((item) => (
-          <div 
-            key={item._id} 
+          <div
+            key={item._id}
             className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
           >
             {item.images?.[0] && (
-              <img 
+              <img
                 src={getImageUrl(item.images[0])}
-                alt={item.name} 
+                alt={item.name}
                 className="w-full h-48 object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = '/default-food.jpg';
+                  e.target.src = "/default-food.jpg";
                 }}
               />
             )}
@@ -235,18 +266,32 @@ function RestaurantMenuPage() {
         ))}
       </div>
 
-      {/* Floating Cart Button */}
+      {/* Floating Cart + Place Order */}
       {cart.length > 0 && (
-        <div className="fixed bottom-6 right-6">
+        <div className="fixed bottom-6 right-6 space-y-2">
           <button
-            onClick={() => navigate('/cart')}
+            onClick={() => navigate("/cart")}
             className="bg-[#03081F] text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors flex items-center space-x-2"
           >
             <ShoppingCart size={20} />
-            <span>View Cart ({cart.reduce((acc, item) => acc + item.quantity, 0)} items)</span>
-            <span className="font-bold ml-2">
-              Rs. {cart.reduce((acc, item) => acc + (item.price * item.quantity), 0)}
+            <span>
+              View Cart ({cart.reduce((acc, item) => acc + item.quantity, 0)}{" "}
+              items)
             </span>
+            <span className="font-bold ml-2">
+              Rs.{" "}
+              {cart.reduce(
+                (acc, item) => acc + item.price * item.quantity,
+                0
+              )}
+            </span>
+          </button>
+
+          <button
+            onClick={placeOrder}
+            className="bg-green-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-700 transition-colors w-full"
+          >
+            Place Order
           </button>
         </div>
       )}
