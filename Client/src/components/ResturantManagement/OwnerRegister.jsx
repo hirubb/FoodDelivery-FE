@@ -13,6 +13,7 @@ const OwnerRegister = () => {
     password: "",
     phone: "",
     profile_image: null,
+    nic:""
   });
 
   const [preview, setPreview] = useState(null);
@@ -134,6 +135,14 @@ const OwnerRegister = () => {
             type="password"
             name="password"
             placeholder="Password"
+            className="w-full p-3 border rounded bg-gray-100 text-[#03081F]"
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="nic"
+            placeholder="NIC / Passport Number"
             className="w-full p-3 border rounded bg-gray-100 text-[#03081F]"
             onChange={handleChange}
             required
