@@ -11,7 +11,18 @@ function Header() {
   const role = localStorage.getItem("role");
   const token = localStorage.getItem("token");
 
-  const profileLink = role === "Admin" ? "/admin-dashboard" : "/owner/profile";
+  let profileLink = "";
+
+  if(role === "Admin") {
+    profileLink = "/admin-dashboard"
+  }
+  if(role === "Restaurant Owner"){
+    profileLink = "/owner/profile"
+  }
+  if(role === "Customer"){
+    profileLink = "/customer-dashboard"
+  }
+
 
   // Access user data from context
   const { user } = useContext(UserContext);
