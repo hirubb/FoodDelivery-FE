@@ -11,31 +11,29 @@ function RestaurantMenuPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cart, setCart] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [notification, setNotification] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
-  const foodCategories = [
-    { name: "All", icon: "🍽️" },
-    { name: "Italian", icon: "🍝" },
-    { name: "Chinese", icon: "🥡" },
-    { name: "Indian", icon: "🍛" },
-    { name: "Mexican", icon: "🌮" },
-    { name: "French", icon: "🥖" },
-    { name: "Korean", icon: "🍱" },
-    { name: "American", icon: "🍔" },
-    { name: "Japanese", icon: "🍣" },
-    { name: "Srilankan", icon: "🍲" },
-    { name: "Cafe", icon: "☕" },
-    { name: "Seafood", icon: "🦐" }
-  ];
+  const menuIcons = {
+    "Appetizers": "🥗",
+    "Main Course": "🍱",
+    "Desserts": "🍰",
+    "Beverages": "🥤",
+    "Snacks": "🍟",
+    "Soups": "🥣",
+    "Salads": "🥬",
+    "Rice": "🍚",
+    "Noodles": "🍜",
+    "Pizza": "🍕",
+    "Burgers": "🍔",
+    "Others": "🍽️"
+  };
 
-  // Helper function for image URLs
   const getImageUrl = (path) => {
     if (!path) return '/default-food.jpg';
     return path.startsWith('http') ? path : `${import.meta.env.VITE_API_URL}${path}`;
   };
 
-  // Load cart from localStorage
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
@@ -43,11 +41,9 @@ function RestaurantMenuPage() {
     }
   }, []);
 
-  // Fetch restaurant details
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
       if (!id) return;
-
       try {
         setLoading(true);
         setError(null);
@@ -73,10 +69,6 @@ function RestaurantMenuPage() {
 
     fetchRestaurantDetails();
   }, [id]);
-
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category === "All" ? "" : category);
-  };
 
   const addToCart = (item) => {
     setCart(prevCart => {
@@ -124,9 +116,13 @@ function RestaurantMenuPage() {
     </div>
   );
 
+  // Flattened items for selected category
+  const displayedItems = menus
+    .filter(menu => !selectedCategory || selectedCategory === menu._id)
+    .flatMap(menu => menu.menu_items || []);
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Notification */}
       {notification && (
         <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-out z-50">
           {notification}
@@ -170,90 +166,73 @@ function RestaurantMenuPage() {
         </div>
       </div>
 
-      {/* Food Categories */}
+      {/* Menu Categories */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-6">Categories</h2>
+        <h2 className="text-2xl font-bold mb-6">Menu Categories</h2>
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-          {foodCategories.map((category, index) => (
+          <button
+            onClick={() => setSelectedCategory("")}
+            className={`flex flex-col items-center p-4 rounded-lg min-w-[100px] ${
+              selectedCategory === ""
+                ? "bg-[#FC8A06] text-white"
+                : "bg-[#03081F] text-white hover:bg-gray-900 border border-gray-800"
+            }`}
+          >
+            <span className="text-2xl mb-2">🍽️</span>
+            <span className="text-sm">All</span>
+          </button>
+          {menus.map((menu) => (
             <button
-              key={index}
-              onClick={() => handleCategoryClick(category.name)}
+              key={menu._id}
+              onClick={() => setSelectedCategory(menu._id)}
               className={`flex flex-col items-center p-4 rounded-lg min-w-[100px] ${
-                selectedCategory === category.name
+                selectedCategory === menu._id
                   ? "bg-[#FC8A06] text-white"
-                  : "bg-white text-gray-800 hover:bg-gray-50 border border-gray-200"
+                  : "bg-[#03081F] text-white hover:bg-gray-900 border border-gray-800"
               }`}
             >
-              <span className="text-2xl mb-2">{category.icon}</span>
-              <span className="text-sm whitespace-nowrap">{category.name}</span>
+              <span className="text-2xl mb-2">
+                {menuIcons[menu.name] || "🍽️"}
+              </span>
+              <span className="text-sm whitespace-nowrap">{menu.name}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Menu Sections */}
-      <div className="grid grid-cols-12 gap-6">
-        {/* Menu Categories Sidebar */}
-        <div className="col-span-3 hidden md:block">
-          <div className="sticky top-4">
-            <h3 className="font-semibold mb-4">Menu Categories</h3>
-            <nav className="flex flex-col gap-2">
-              {menus.map((menu) => (
-                <a
-                  key={menu._id}
-                  href={`#${menu._id}`}
-                  className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+      {/* Menu Items Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {displayedItems.map((item) => (
+          <div 
+            key={item._id} 
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+          >
+            {item.images?.[0] && (
+              <img 
+                src={getImageUrl(item.images[0])}
+                alt={item.name} 
+                className="w-full h-48 object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/default-food.jpg';
+                }}
+              />
+            )}
+            <div className="p-4">
+              <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
+              <p className="text-gray-600 text-sm mb-3">{item.description}</p>
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-bold">Rs. {item.price}</span>
+                <button
+                  onClick={() => addToCart(item)}
+                  className="bg-[#FC8A06] text-white px-4 py-2 rounded-full hover:bg-[#E67E22] transition-colors"
                 >
-                  {menu.name}
-                </a>
-              ))}
-            </nav>
-          </div>
-        </div>
-
-        {/* Menu Items */}
-        <div className="col-span-12 md:col-span-9">
-          {menus.map((menu) => (
-            <div key={menu._id} id={menu._id} className="mb-12">
-              <h2 className="text-2xl font-semibold mb-6">{menu.name}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {menu.menu_items?.filter(item => 
-                  !selectedCategory || item.category === selectedCategory
-                ).map((item) => (
-                  <div 
-                    key={item._id} 
-                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                  >
-                    {item.images?.[0] && (
-                      <img 
-                        src={getImageUrl(item.images[0])}
-                        alt={item.name} 
-                        className="w-full h-48 object-cover"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = '/default-food.jpg';
-                        }}
-                      />
-                    )}
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
-                      <p className="text-gray-600 text-sm mb-3">{item.description}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold">Rs. {item.price}</span>
-                        <button
-                          onClick={() => addToCart(item)}
-                          className="bg-[#FC8A06] text-white px-4 py-2 rounded-full hover:bg-[#E67E22] transition-colors"
-                        >
-                          Add to Cart
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                  Add to Cart
+                </button>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
       {/* Floating Cart Button */}
