@@ -70,14 +70,7 @@ function CustomerDashboard() {
       }
     } catch (error) {
       console.error("Error fetching customer data:", error);
-      // For demo purposes, set mock data
-      setCustomerData({
-        first_name: "Sarah",
-        last_name: "Silva",
-        email: "sarah@example.com",
-        phone: "+94 71 234 5678",
-        profile_image: "https://randomuser.me/api/portraits/women/65.jpg"
-      });
+      // No longer setting mock data here
     } finally {
       setIsLoading(false);
     }
@@ -221,11 +214,17 @@ function CustomerDashboard() {
               
               {/* User Profile */}
               <div className="flex items-center">
-                <img
-                  className="object-cover border-2 border-orange-500 rounded-full h-9 w-9"
-                  src={customerData?.profile_image || "https://randomuser.me/api/portraits/women/65.jpg"}
-                  alt="Customer"
-                />
+                {customerData?.profile_image ? (
+                  <img
+                    className="object-cover border-2 border-orange-500 rounded-full h-9 w-9"
+                    src={customerData.profile_image}
+                    alt="Customer"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center bg-gray-200 border-2 border-orange-500 rounded-full h-9 w-9">
+                    <FaUser className="w-4 h-4 text-gray-500" />
+                  </div>
+                )}
                 <div className="hidden ml-3 md:block">
                   <p className="text-sm font-medium text-gray-800">
                     {customerData ? `${customerData.first_name} ${customerData.last_name}` : "Loading..."}
