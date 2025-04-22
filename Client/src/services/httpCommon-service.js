@@ -3,9 +3,10 @@ import { baseURL, adminURL, authURL, DeliveryRider_BaseURL } from '../config/set
 import { getAuthToken } from '../utils/auth';
 
 
-console.log("Base URL:", import.meta.env.VITE_API_URL);
-console.log("Admin URL:", import.meta.env.VITE_ADMIN_URL);
-console.log("Delivery URL:", import.meta.env.VITE_Delivery_URL);
+console.log("Base URL:", baseURL);
+console.log("Admin URL:", adminURL);
+console.log("Delivery URL:", authURL);
+
 
 
 export const HTTP = axios.create({
