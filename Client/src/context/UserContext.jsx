@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import restaurantService from "../services/restaurant-service";
 import adminService from "../services/admin-service";
-
+import customerService from "../services/customer-service"
 // Create the context
 export const UserContext = createContext();
 
@@ -42,10 +42,12 @@ export const UserProvider = ({ children }) => {
         response = await restaurantService.getRestaurantOwner(userId);
       } else if (role === "Admin") {
         response = await adminService.getAdminProfile(userId);
+      }else if(role === "Customer"){
+        response = await customerService.getCustomerProfile(userId);
       }
 
       if (response && response.data) {
-        const userData = response.data.owner || response.data.admin || {};
+        const userData = response.data.owner || response.data.admin || response.data.customer ||{};
         setUser((prevUser) => ({
           ...prevUser,
           username: userData.username || "",

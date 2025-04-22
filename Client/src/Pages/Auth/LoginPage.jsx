@@ -128,7 +128,7 @@ export default function LoginPage() {
             if (userRole === 'Admin') {
                 navigate('/admin-dashboard');
             } else if (userRole === 'RestaurantOwner') {
-                navigate('/restaurant/dashboard');
+                navigate('/owner/profile');
             } else if (userRole === 'Customer') {
                 navigate('/customer-dashboard');
             } else {
