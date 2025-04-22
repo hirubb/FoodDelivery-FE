@@ -13,7 +13,7 @@ class AuthService {
   // Logout function to clear stored credentials
   logout() {
     localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
+    localStorage.removeItem('role');
     localStorage.removeItem('userId');
     localStorage.removeItem('username');
     localStorage.removeItem('rememberedEmail');
@@ -26,7 +26,7 @@ class AuthService {
 
   // Get user role
   getUserRole() {
-    return localStorage.getItem('userRole');
+    return localStorage.getItem('role');
   }
 
   // Store authentication data
@@ -61,7 +61,7 @@ class AuthService {
     }
 
     if (role) {
-      localStorage.setItem("userRole", role);
+      localStorage.setItem("role", role);
     }
     
     // Handle user ID - check all possible locations
