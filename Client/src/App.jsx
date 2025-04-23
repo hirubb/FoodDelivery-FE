@@ -26,6 +26,14 @@ import AdminDashboard from './Pages/Admin/AdminDashboard';
 import RestaurantOwnerDashboard from './Pages/Restaurant/profile/RestaurantOwnerDashboard';
 import CustomerDashboard from './Pages/Customer/CustomerDashboard';
 import RestaurantOffers from './components/ResturantManagement/profile/RestaurantOffers';
+import DeliveryOptionsSignUp from './Pages/Delivery personnel/DeliveryOptionsSignUp';
+import DeliverySignUp from './Pages/Delivery personnel/DeliverySignUp';
+import VehicleDetailsSignUp from './Pages/Delivery personnel/VehicleDetailsSignUp';
+import DriverDashboard from './Pages/Delivery personnel/DeliveryRiderDashboard/DriverDashboard';
+import DeliveryRiderHome from './Pages/Delivery personnel/DeliveryHomePage';
+
+
+
 // import OrderStatusPage from './pages/Order/OrderStatusPage';
 
 import DummyOrderData from './Pages/Payment/DummyOrderData';
@@ -35,10 +43,11 @@ import TestPayment from './Pages/Payment/TestPayment';
 const AppContent = () => {
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isDliveryPersonnelSignUp = location.pathname === '/deliveryPersonnel-SignUp' || location.pathname === '/DeliveryPersonnel-OptionsSignUp' || location.pathname === '/deliveryPersonnel/VehicleDetails-SignUp' || location.pathname === '/deliveryPersonnel/DriverDashboard';
 
   return (
     <div className="App">
-      {!isAuthPage && <Header />}
+      {!isAuthPage && !isDliveryPersonnelSignUp && <Header />}
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -49,7 +58,7 @@ const AppContent = () => {
           <Route path="/restaurants" element={<Restaurant />} />
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/cart" element={<Cart />} />
-         
+
           {/* <Route path="/order-status" element={<OrderStatusPage />} /> */}
 
           {/* <Route path="/owner/profile" element={<Profile />} /> */}
@@ -70,11 +79,23 @@ const AppContent = () => {
           <Route path="/customer-dashboard" element={<CustomerDashboard />} />
 
 
-          <Route path="/dummy-order" element={<DummyOrderData />} />
-          <Route path="/test-payment" element={<TestPayment />} />
+
+          {/* ===================== Delivery Rider Routes ===================== */}
+
+          <Route path="/deliveryPersonnel" element={<DeliveryRiderHome />} />
+
+          <Route path="/DeliveryPersonnel-OptionsSignUp" element={<DeliveryOptionsSignUp />} />
+          <Route path="/deliveryPersonnel-SignUp" element={<DeliverySignUp />} />
+          <Route path="/deliveryPersonnel/VehicleDetails-SignUp" element={<VehicleDetailsSignUp />} />
+          <Route path="/deliveryPersonnel/DriverDashboard" element={<DriverDashboard />} />
+          <Route path="/deliveryPersonnel/HomePage" element={<DeliveryRiderHome />} />
+
+
+
+
         </Routes>
       </main>
-      {!isAuthPage && <Footer />}
+      {!isAuthPage && !isDliveryPersonnelSignUp && <Footer />}
     </div>
   );
 };
