@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { baseURL, adminURL, authURL, customerURL, DeliveryRider_BaseURL } from '../config/setting';
+import { baseURL, adminURL, authURL, customerURL, DeliveryRider_BaseURL, paymentURL } from '../config/setting';
 import { getAuthToken } from '../utils/auth';
 
 
@@ -39,6 +39,13 @@ export const AuthHTTP = axios.create({
 
 export const CustomerHTTP = axios.create({
   baseURL: customerURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export const PaymentHTTP = axios.create({
+  baseURL: paymentURL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -99,6 +106,19 @@ AuthHTTP.interceptors.request.use(
 );
 
 CustomerHTTP.interceptors.request.use(
+  (config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+PaymentHTTP.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
     if (token) {
