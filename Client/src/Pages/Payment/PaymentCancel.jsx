@@ -1,42 +1,59 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+// Commented out UI components that might be missing
+// import { Spinner, Alert } from '../components/ui';
 
 const PaymentCancel = () => {
+  const { getToken } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Extract orderId from URL query params
+  const orderId = new URLSearchParams(location.search).get('orderId');
+  
+  const handleRetryPayment = () => {
+    // Navigate to checkout page with appropriate path
+    // Based on your routes in App.js, it seems the path should be /payment/Payment-checkout
+    if (orderId) {
+      // This assumes your checkout page can handle order ID in query params
+      navigate(`/payment/Payment-checkout?orderId=${orderId}`);
+    } else {
+      navigate('/cart');
+    }
+  };
+  
+  const handleBackToHome = () => {
+    navigate('/');
+  };
   
   return (
-    <div className="max-w-md p-6 mx-auto my-10 bg-white rounded-lg shadow-lg">
-      <div className="mb-6 text-center">
-        <div className="flex justify-center">
-          <div className="p-3 bg-red-100 rounded-full">
-            <svg className="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </div>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
+      <div className="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-md">
+        <div className="mb-4 text-yellow-500">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         </div>
-        <h2 className="mt-4 text-2xl font-bold text-gray-800">Payment Cancelled</h2>
-        <p className="mt-2 text-gray-600">Your payment was cancelled. No charges were made.</p>
-      </div>
-      
-      <div className="pt-4 mt-6 border-t">
-        <p className="text-gray-700">
-          You can retry the payment or choose a different payment method.
+        <h2 className="mb-4 text-2xl font-bold">Payment Canceled</h2>
+        <p className="mb-6 text-gray-600">
+          Your payment for order #{orderId || 'Unknown'} has been canceled.
+          Your cart items are still saved, and you can try again when you're ready.
         </p>
-      </div>
-      
-      <div className="flex justify-center mt-8">
-        <button
-          onClick={() => navigate('/checkout')}
-          className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
-        >
-          Try Again
-        </button>
-        <button
-          onClick={() => navigate('/cart')}
-          className="px-4 py-2 ml-3 text-gray-800 bg-gray-200 rounded hover:bg-gray-300"
-        >
-          Back to Cart
-        </button>
+        <div className="flex flex-col space-y-3">
+          <button
+            className="w-full px-4 py-2 font-bold text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700"
+            onClick={handleRetryPayment}
+          >
+            Retry Payment
+          </button>
+          <button
+            className="w-full px-4 py-2 font-bold text-gray-800 transition-colors bg-gray-200 rounded-md hover:bg-gray-300"
+            onClick={handleBackToHome}
+          >
+            Back to Home
+          </button>
+        </div>
       </div>
     </div>
   );
