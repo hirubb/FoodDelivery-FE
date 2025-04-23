@@ -19,9 +19,9 @@ import CreateMenuItems from './components/ResturantManagement/profile/CreateMenu
 import OwnerLogin from './Pages/Restaurant/profile/OwnerLogin';
 import ShowMenu from './components/ResturantManagement/profile/ShowMenu';
 import CreatePromo from './components/ResturantManagement/profile/CreatePromo';
-import PaymentCheckout from './Pages/Payment/PaymentCheckout';
+import CheckoutPage from './Pages/Payment/Checkout';
 import PaymentSuccess from './Pages/Payment/PaymentSuccess';
-import PaymentCancel from './Pages/Payment/PaymentCancel';
+// import PaymentCancel from './Pages/Payment/PaymentCancel';
 import AdminDashboard from './Pages/Admin/AdminDashboard';
 import RestaurantOwnerDashboard from './Pages/Restaurant/profile/RestaurantOwnerDashboard';
 import CustomerDashboard from './Pages/Customer/CustomerDashboard';
@@ -35,6 +35,9 @@ import DeliveryRiderHome from './Pages/Delivery personnel/DeliveryHomePage';
 
 
 // import OrderStatusPage from './pages/Order/OrderStatusPage';
+
+import DummyOrderData from './Pages/Payment/DummyOrderData';
+import TestPayment from './Pages/Payment/TestPayment';
 
 // AppContent should be inside Router to use useLocation()
 const AppContent = () => {
@@ -68,14 +71,15 @@ const AppContent = () => {
           <Route path="/owner/login" element={<OwnerLogin />} />
           <Route path="/restaurant/menu/:restaurantId" element={<ShowMenu />} />
           <Route path="/restaurant/promo/create/:restaurantId" element={<CreatePromo />} />
-          <Route path="/payment/paymentCheckout" element={<PaymentCheckout />} />
-          <Route path="/payment/payment-success" element={<PaymentSuccess />} />
-          <Route path="/payment/payment-cancel" element={<PaymentCancel />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/cancel" element={<CheckoutPage />} />
 
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-
-
+          
+          <Route path="/dummy-order" element={<DummyOrderData />} />
+          <Route path="/test-payment" element={<TestPayment />} />
 
           {/* ===================== Delivery Rider Routes ===================== */}
 
