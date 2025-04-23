@@ -1,13 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaCamera, FaEdit, FaSave, FaTimes } from "react-icons/fa";
 import restaurantService from "../../../services/restaurant-service";
 import logo from "../../../assets/ai-generated-8733795_1280.png";
 
 const OwnerProfileData = () => {
   const [ownerData, setOwnerData] = useState(null);
   const [error, setError] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [profileImg, setProfileImg] = useState(logo);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
-  const [showEditModal, setShowEditModal] = useState(false);
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -15,46 +18,24 @@ const OwnerProfileData = () => {
     email: "",
     username: "",
     phone: "",
-    password: "", // optional
+    password: "",
   });
-
-  const openEditModal = () => {
-    setFormData({
-      first_name: ownerData.first_name,
-      last_name: ownerData.last_name,
-      email: ownerData.email,
-      username: ownerData.username,
-      phone: ownerData.phone,
-      password: "",
-    });
-    setShowEditModal(true);
-  };
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-  const handleUpdate = async () => {
-    try {
-      console.log("owner id : ", ownerData.id);
-      const response = await restaurantService.updateRestaurantOwner(
-        ownerData.id,
-        formData
-      );
-      setOwnerData(response.data.owner);
-      setShowEditModal(false);
-    } catch (error) {
-      setError("Update failed. Try again.");
-    }
-  };
 
   useEffect(() => {
     const fetchOwnerData = async () => {
       try {
         const response = await restaurantService.getRestaurantOwner();
-        console.log("response in profile: ", response.data);
-        setOwnerData(response.data.owner);
+        const data = response.data.owner;
+        setOwnerData(data);
+        setProfileImg(data.profile_image || logo);
+        setFormData({
+          first_name: data.first_name,
+          last_name: data.last_name,
+          email: data.email,
+          username: data.username,
+          phone: data.phone,
+          password: "",
+        });
       } catch (error) {
         setError("Failed to load profile data.");
       }
@@ -62,105 +43,138 @@ const OwnerProfileData = () => {
     fetchOwnerData();
   }, []);
 
-  if (error) {
-    return <p className="text-red-500 text-center mt-10">{error}</p>;
-  }
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => setProfileImg(e.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
 
-  if (!ownerData) {
-    return (
-      <p className="text-center mt-10 text-gray-600">Loading profile...</p>
-    );
-  }
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const response = await restaurantService.updateRestaurantOwner(
+        ownerData.id,
+        formData
+      );
+      setOwnerData(response.data.owner);
+      setProfileImg(response.data.owner.profile_image || logo);
+      setEditMode(false);
+    } catch (error) {
+      setError("Update failed. Try again.");
+    }
+  };
+
+  if (error) return <p className="text-red-500 text-center mt-10">{error}</p>;
+  if (!ownerData) return <p className="text-center mt-10 text-gray-600">Loading profile...</p>;
 
   return (
-    <div className="max-w-xl w-full mx-auto mt-20 mb-16 px-6 py-8 bg-white shadow-lg rounded-2xl">
-      <h1 className="text-center text-3xl font-extrabold text-[#FC8A06] mb-8">
-        My Profile
-      </h1>
-
-      <div className="flex flex-col items-center">
-        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#FC8A06]">
-          <img
-            src={ownerData.profile_image || logo}
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        <h2 className="text-2xl font-semibold text-gray-800 mt-4">
-          {ownerData.first_name} {ownerData.last_name}
-        </h2>
-        <p className="text-[#FC8A06] text-md mb-4">@{ownerData.username}</p>
-
-        <div className="text-gray-700 w-full mt-4">
-          <div className="flex justify-between border-b py-2">
-            <span className="font-medium">Email:</span>
-            <span>{ownerData.email}</span>
+    <div className="max-w-5xl mx-auto p-4">
+      <div className="bg-white shadow-lg rounded-xl overflow-hidden">
+        {/* Profile Header */}
+        <div className="relative bg-gradient-to-r from-[#0C1A39] to-[#1D2D50] text-white p-8 sm:p-12">
+          <div className="flex flex-col sm:flex-row items-center relative z-10">
+            <div className="relative mb-6 sm:mb-0 sm:mr-8">
+              <div className="h-36 w-36 rounded-full bg-gradient-to-r from-orange-400 to-orange-600 p-1 shadow-2xl">
+                <img
+                  src={profileImg}
+                  alt="Profile"
+                  className="h-full w-full rounded-full object-cover border-4 border-white"
+                />
+              </div>
+              {editMode && (
+                <button
+                  onClick={() => fileInputRef.current.click()}
+                  className="absolute bottom-1 right-1 bg-orange-500 text-white p-2.5 rounded-full hover:bg-orange-600 transition-all shadow-lg"
+                  title="Change profile photo"
+                >
+                  <FaCamera size={18} />
+                </button>
+              )}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageChange}
+                accept="image/*"
+                className="hidden"
+              />
+            </div>
+            <div className="text-center sm:text-left">
+              <h1 className="text-3xl font-bold">
+                {ownerData.first_name} {ownerData.last_name}
+              </h1>
+              <p className="text-gray-300 text-sm mt-1">@{ownerData.username}</p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                {editMode ? (
+                  <>
+                    <button
+                      onClick={handleUpdate}
+                      className="flex items-center px-6 py-2.5 bg-orange-500 text-white rounded-full text-sm font-semibold hover:bg-orange-600 transition-all"
+                    >
+                      <FaSave className="mr-2" /> Save Changes
+                    </button>
+                    <button
+                      onClick={() => setEditMode(false)}
+                      className="flex items-center px-6 py-2.5 bg-white bg-opacity-20 text-white rounded-full text-sm font-semibold hover:bg-opacity-30 transition-all"
+                    >
+                      <FaTimes className="mr-2" /> Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setEditMode(true)}
+                    className="flex items-center px-6 py-2.5 bg-white bg-opacity-20 text-white rounded-full text-sm font-semibold hover:bg-opacity-30 transition-all"
+                  >
+                    <FaEdit className="mr-2" /> Edit Profile
+                  </button>
+                )}
+                <button
+                  onClick={() => navigate("/login")}
+                  className="flex items-center px-6 py-2.5 bg-red-600 text-white rounded-full text-sm font-semibold hover:bg-red-700 transition-all"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="flex justify-between border-b py-2">
-            <span className="font-medium">Phone:</span>
-            <span>{ownerData.phone}</span>
+        </div>
+
+        {/* Profile Details */}
+        <div className="p-6 sm:p-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {["first_name", "last_name", "email", "username", "phone", "password"].map((field) => (
+              <div key={field}>
+                <label className="text-gray-700 font-semibold capitalize">
+                  {field.replace("_", " ")}
+                </label>
+                {editMode ? (
+                  <input
+                    type={field === "password" ? "password" : "text"}
+                    name={field}
+                    value={formData[field]}
+                    onChange={handleChange}
+                    className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  />
+                ) : (
+                  <p className="mt-1 text-gray-600">
+                    {field === "password" ? "••••••••" : formData[field]}
+                  </p>
+                )}
+              </div>
+            ))}
           </div>
         </div>
-
-        <div className="mt-8 flex gap-4">
-          <button
-            className="px-6 py-2 bg-[#FC8A06] text-white font-semibold rounded-md hover:bg-[#e27600] transition"
-            onClick={openEditModal}
-          >
-            Edit Profile
-          </button>
-          <button
-            className="px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition"
-            onClick={() => {
-              // Add logout logic here
-              navigate("/login");
-            }}
-          >
-            Logout
-          </button>
-        </div>
       </div>
-      {showEditModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-white rounded-2xl p-6 w-[90%] max-w-lg shadow-xl">
-      <h2 className="text-xl font-bold text-[#FC8A06] mb-4">Edit Profile</h2>
-
-      <div className="space-y-3">
-        {["first_name", "last_name", "email", "username", "phone", "password"].map((field) => (
-          <input
-            key={field}
-            name={field}
-            type={field === "password" ? "password" : "text"}
-            placeholder={field.replace("_", " ").toUpperCase()}
-            value={formData[field]}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
-          />
-        ))}
-      </div>
-
-      <div className="flex justify-end gap-4 mt-6">
-        <button
-          className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
-          onClick={() => setShowEditModal(false)}
-        >
-          Cancel
-        </button>
-        <button
-          className="px-4 py-2 bg-[#FC8A06] text-white rounded-md hover:bg-[#e27600]"
-          onClick={handleUpdate}
-        >
-          Save Changes
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
     </div>
   );
-  
 };
 
 export default OwnerProfileData;
