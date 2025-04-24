@@ -1,10 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Star, Clock, MapPin, ShoppingCart } from "lucide-react";
-import axios from "axios";
 import restaurantService from "../../services/restaurant-service";
-import orderService from "../../services/order-service";
-
 
 function RestaurantMenuPage() {
   const { id } = useParams();
@@ -18,17 +15,11 @@ function RestaurantMenuPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const menuIcons = {
-    Appetizers: "🥗",
-    "Main Course": "🍱",
-    Desserts: "🍰",
+    Breakfast: "🥗",
+    kottuspecial: "🍰",
     Beverages: "🥤",
-    Snacks: "🍟",
-    Soups: "🥣",
-    Salads: "🥬",
-    Rice: "🍚",
-    Noodles: "🍜",
-    Pizza: "🍕",
-    Burgers: "🍔",
+    dinner: "🍟",
+    lunch: "🍚",
     Others: "🍽️",
   };
 
@@ -75,58 +66,48 @@ function RestaurantMenuPage() {
     fetchRestaurantDetails();
   }, [id]);
 
-  const addToCart = (item) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((i) => i._id === item._id);
+  // Keeping only the relevant addToCart function in RestaurantDetails.jsx
 
-      let newCart;
-      if (existingItem) {
-        newCart = prevCart.map((i) =>
-          i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
-        );
-      } else {
-        newCart = [
-          ...prevCart,
-          {
-            _id: item._id,
-            name: item.name,
-            price: item.price,
-            portion: item.portion,
-            images: item.images,
-            quantity: 1,
-            restaurant_id: id,
-          },
-        ];
-      }
+const addToCart = (item) => {
+  setCart((prevCart) => {
+    const existingItem = prevCart.find((i) => i._id === item._id);
 
-      localStorage.setItem("cart", JSON.stringify(newCart));
-      setNotification(`${item.name} added to cart`);
-      setTimeout(() => setNotification(null), 2000);
-      return newCart;
-    });
-  };
+    let newCart;
+    if (existingItem) {
+      newCart = prevCart.map((i) =>
+        i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
+      );
+    } else {
+      newCart = [
+        ...prevCart,
+        {
+          _id: item._id,
+          name: item.name,
+          price: item.price,
+          portion: item.portion,
+          images: item.images,
+          quantity: 1,
+          restaurant_id: id,
+        },
+      ];
+    }
 
-
-const placeOrder = async () => {
-  const orderData = {
-    customerId: "cust001",
-    restaurantId: id,
-    items: cart.map(item => ({
-      menuItemId: item._id,
-      quantity: item.quantity
-    }))
-  };
-
-  try {
-    await orderService.placeOrder(orderData);
-    alert("Order Placed!");
-    navigate("/orders");
-  } catch (err) {
-    console.error(err);
-    alert("Failed to place order");
-  }
+    localStorage.setItem("cart", JSON.stringify(newCart));
+    setNotification(`${item.name} added to cart`);
+    
+    // Show notification with view cart button
+    // const shouldViewCart = window.confirm(`${item.name} added to cart! View your cart?`);
+    // if (shouldViewCart) {
+    //   navigate("/cart");
+    // }
+    
+    setTimeout(() => setNotification(null), 1000);
+    return newCart;
+  });
 };
 
+
+ // Inside RestaurantDetails.jsx - updating only the placeOrder function
 
   const displayedItems = menus
     .filter((menu) => !selectedCategory || selectedCategory === menu._id)
@@ -269,14 +250,9 @@ const placeOrder = async () => {
       {/* Floating Cart + Place Order */}
       {cart.length > 0 && (
         <div className="fixed bottom-6 right-6 space-y-2">
-          <button
-            onClick={() => navigate("/cart")}
-            className="bg-[#03081F] text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors flex items-center space-x-2"
-          >
-            <ShoppingCart size={20} />
-            <span>
-              View Cart ({cart.reduce((acc, item) => acc + item.quantity, 0)}{" "}
-              items)
+          <div className="bg-green-500 px-4 py-3 rounded-full shadow-lg flex items-center w-64">
+          <span className="ml-5 ">
+             Total Amount :
             </span>
             <span className="font-bold ml-2">
               Rs.{" "}
@@ -285,10 +261,10 @@ const placeOrder = async () => {
                 0
               )}
             </span>
-          </button>
+          </div>
 
           <button
-            onClick={placeOrder}
+            onClick={()=> navigate("/cart")}
             className="bg-green-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-700 transition-colors w-full"
           >
             Place Order
