@@ -164,10 +164,10 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen ">
-      <div className="container max-w-6xl p-6 py-12 mx-auto">
+    <div className="min-h-screen">
+      <div className="container max-w-6xl p-6 py-4 mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Checkout</h1>
+          <h1 className="text-3xl font-bold text-[#FC8A06]">Checkout</h1>
           <div className="hidden md:block">
             <div className="flex items-center space-x-2">
               <span className="flex items-center justify-center w-8 h-8 text-white bg-[#FC8A06] rounded-full">1</span>
@@ -186,60 +186,62 @@ const CheckoutPage = () => {
           </div>
         </div>
         
+        {/* Added flex-1 to parent container to make it stretch to fill available space */}
         <div className="flex flex-col lg:flex-row lg:space-x-8">
           {/* Left Side - Form Fields */}
           <div className="lg:w-2/3">
-            <form onSubmit={initializePayment} className="space-y-6">
-              <div className="p-6 mb-6 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
-                <h2 className="flex items-center mb-6 text-xl font-semibold text-gray-800">
+            {/* Added overflow-auto and max-h-screen to create scrollable container if needed */}
+            <form onSubmit={initializePayment} className="space-y-4">
+              <div className="p-5 mb-4 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
+                <h2 className="flex items-center mb-4 text-lg font-semibold text-gray-800">
                   <span className="flex items-center justify-center w-6 h-6 mr-3 text-xs text-white bg-[#FC8A06] rounded-full">1</span>
                   Customer Details
                 </h2>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <label className="block mb-2 font-medium text-gray-700">First Name *</label>
+                    <label className="block mb-1 font-medium text-gray-700">First Name *</label>
                     <input
                       type="text"
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className="w-full p-3 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                       required
-                      placeholder="John"
+                      // placeholder="John"
                     />
                   </div>
                   <div>
-                    <label className="block mb-2 font-medium text-gray-700">Last Name *</label>
+                    <label className="block mb-1 font-medium text-gray-700">Last Name *</label>
                     <input
                       type="text"
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className="w-full p-3 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                       required
-                      placeholder="Doe"
+                      // placeholder="Doe"
                     />
                   </div>
                   <div>
-                    <label className="block mb-2 font-medium text-gray-700">Email *</label>
+                    <label className="block mb-1 font-medium text-gray-700">Email *</label>
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full p-3 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                       required
-                      placeholder="john.doe@example.com"
+                      // placeholder="emailname@gmail.com"
                     />
                   </div>
                   <div>
-                    <label className="block mb-2 font-medium text-gray-700">Phone *</label>
+                    <label className="block mb-1 font-medium text-gray-700">Phone *</label>
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full p-3 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                       required
                       placeholder="+94 7X XXX XXXX"
                     />
@@ -247,44 +249,44 @@ const CheckoutPage = () => {
                 </div>
               </div>
 
-              <div className="p-6 mb-6 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
-                <h2 className="flex items-center mb-6 text-xl font-semibold text-gray-800">
+              <div className="p-5 mb-4 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
+                <h2 className="flex items-center mb-4 text-lg font-semibold text-gray-800">
                   <span className="flex items-center justify-center w-6 h-6 mr-3 text-xs text-white bg-[#FC8A06] rounded-full">2</span>
                   Billing Address
                 </h2>
-                <div className="grid grid-cols-1 gap-6">
+                <div className="grid grid-cols-1 gap-4">
                   <div>
-                    <label className="block mb-2 font-medium text-gray-700">Address *</label>
+                    <label className="block mb-1 font-medium text-gray-700">Address *</label>
                     <input
                       type="text"
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      className="w-full p-3 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                       required
-                      placeholder="123 Main Street"
+                      // placeholder="123 Main Street"
                     />
                   </div>
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <div>
-                      <label className="block mb-2 font-medium text-gray-700">City *</label>
+                      <label className="block mb-1 font-medium text-gray-700">City *</label>
                       <input
                         type="text"
                         name="city"
                         value={formData.city}
                         onChange={handleInputChange}
-                        className="w-full p-3 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                        className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                         required
-                        placeholder="Colombo"
+                        // placeholder="Colombo"
                       />
                     </div>
                     <div>
-                      <label className="block mb-2 font-medium text-gray-700">Country</label>
+                      <label className="block mb-1 font-medium text-gray-700">Country</label>
                       <select
                         name="country"
                         value={formData.country}
                         onChange={handleInputChange}
-                        className="w-full p-3 transition-colors bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                        className="w-full p-2 transition-colors bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                       >
                         <option value="Sri Lanka">Sri Lanka</option>
                         <option value="India">India</option>
@@ -292,22 +294,22 @@ const CheckoutPage = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block mb-2 font-medium text-gray-700">Postal Code</label>
+                      <label className="block mb-1 font-medium text-gray-700">Postal Code</label>
                       <input
                         type="text"
                         name="postalCode"
                         value={formData.postalCode}
                         onChange={handleInputChange}
-                        className="w-full p-3 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
-                        placeholder="10000"
+                        className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                        // placeholder="10000"
                       />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="p-6 mb-6 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
-                <div className="flex items-center mb-6">
+              <div className="p-5 mb-4 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
+                <div className="flex items-center mb-4">
                   <span className="flex items-center justify-center w-6 h-6 mr-3 text-xs text-white bg-[#FC8A06] rounded-full">3</span>
                   <input
                     type="checkbox"
@@ -315,7 +317,7 @@ const CheckoutPage = () => {
                     id="useDeliveryAddress"
                     checked={formData.useDeliveryAddress}
                     onChange={handleInputChange}
-                    className="w-5 h-5 mr-3 text-[#FC8A06] border-gray-300 rounded focus:ring-[#FC8A06]"
+                    className="w-4 h-4 mr-3 text-[#FC8A06] border-gray-300 rounded focus:ring-[#FC8A06]"
                   />
                   <label htmlFor="useDeliveryAddress" className="font-medium text-gray-700">
                     Use different delivery address
@@ -323,41 +325,41 @@ const CheckoutPage = () => {
                 </div>
 
                 {formData.useDeliveryAddress && (
-                  <div className="pt-2 pl-5 mt-4 border-l-4 border-[#FC8A06]">
-                    <h2 className="mb-6 text-xl font-semibold text-gray-800">Delivery Address</h2>
-                    <div className="grid grid-cols-1 gap-6">
+                  <div className="pt-2 pl-4 mt-3 border-l-4 border-[#FC8A06]">
+                    <h2 className="mb-4 text-lg font-semibold text-gray-800">Delivery Address</h2>
+                    <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <label className="block mb-2 font-medium text-gray-700">Address *</label>
+                        <label className="block mb-1 font-medium text-gray-700">Address *</label>
                         <input
                           type="text"
                           name="deliveryAddress"
                           value={formData.deliveryAddress}
                           onChange={handleInputChange}
-                          className="w-full p-3 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                          className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                           required={formData.useDeliveryAddress}
-                          placeholder="123 Delivery Street"
+                          // placeholder="123 Delivery Street"
                         />
                       </div>
-                      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <div>
-                          <label className="block mb-2 font-medium text-gray-700">City *</label>
+                          <label className="block mb-1 font-medium text-gray-700">City *</label>
                           <input
                             type="text"
                             name="deliveryCity"
                             value={formData.deliveryCity}
                             onChange={handleInputChange}
-                            className="w-full p-3 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                            className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                             required={formData.useDeliveryAddress}
-                            placeholder="Kandy"
+                            // placeholder="Kandy"
                           />
                         </div>
                         <div>
-                          <label className="block mb-2 font-medium text-gray-700">Country</label>
+                          <label className="block mb-1 font-medium text-gray-700">Country</label>
                           <select
                             name="deliveryCountry"
                             value={formData.deliveryCountry}
                             onChange={handleInputChange}
-                            className="w-full p-3 transition-colors bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                            className="w-full p-2 transition-colors bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                           >
                             <option value="Sri Lanka">Sri Lanka</option>
                             <option value="India">India</option>
@@ -365,14 +367,14 @@ const CheckoutPage = () => {
                           </select>
                         </div>
                         <div>
-                          <label className="block mb-2 font-medium text-gray-700">Postal Code</label>
+                          <label className="block mb-1 font-medium text-gray-700">Postal Code</label>
                           <input
                             type="text"
                             name="deliveryPostalCode"
                             value={formData.deliveryPostalCode}
                             onChange={handleInputChange}
-                            className="w-full p-3 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
-                            placeholder="20000"
+                            className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                            // placeholder="20000"
                           />
                         </div>
                       </div>
@@ -382,9 +384,9 @@ const CheckoutPage = () => {
               </div>
 
               {error && (
-                <div className="p-4 mb-6 text-red-700 bg-red-100 border-l-4 border-red-500 rounded-md shadow-sm">
+                <div className="p-3 mb-4 text-red-700 bg-red-100 border-l-4 border-red-500 rounded-md shadow-sm">
                   <div className="flex items-center">
-                    <svg className="w-6 h-6 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <p className="font-medium">{error}</p>
@@ -392,10 +394,10 @@ const CheckoutPage = () => {
                 </div>
               )}
 
-              <div className="flex justify-start mt-6 mb-8 lg:hidden">
+              <div className="flex justify-start mt-4 mb-6 lg:hidden">
                 <button
                   type="button"
-                  className="px-6 py-3 mr-4 font-semibold text-[#FC8A06] transition-colors bg-white border border-[#FC8A06] rounded-lg hover:bg-[#FC8A06] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:ring-offset-2"
+                  className="px-6 py-2 mr-4 font-semibold text-[#FC8A06] transition-colors bg-white border border-[#FC8A06] rounded-lg hover:bg-[#FC8A06] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:ring-offset-2"
                   onClick={() => navigate(-1)}
                   disabled={isLoading}
                 >
@@ -409,14 +411,14 @@ const CheckoutPage = () => {
           <div className="lg:w-1/3">
             <div className="sticky top-8">
               {orderDetails && (
-                <div className="p-6 mb-6 bg-white border border-gray-200 rounded-lg shadow-md">
-                  <h2 className="flex items-center justify-between pb-4 mb-6 text-xl font-semibold text-gray-800 border-b">
+                <div className="p-5 mb-6 bg-white border border-gray-200 rounded-lg shadow-md">
+                  <h2 className="flex items-center justify-between pb-3 mb-4 text-lg font-semibold text-gray-800 border-b">
                     <span>Order Summary</span>
                     <span className="text-sm font-normal text-gray-500">{orderDetails.items.length} items</span>
                   </h2>
-                  <div className="pr-2 mb-4 space-y-4 overflow-auto max-h-64">
+                  <div className="pr-2 mb-4 space-y-3 overflow-auto max-h-56">
                     {orderDetails.items.map((item, index) => (
-                      <div key={index} className="flex justify-between pb-3 text-gray-700 border-b">
+                      <div key={index} className="flex justify-between pb-2 text-gray-700 border-b">
                         <div className="flex items-start">
                           <span className="px-2 py-1 mr-2 text-xs text-[#FC8A06] bg-orange-100 rounded">{item.quantity}</span>
                           <span className="font-medium">{item.name}</span>
@@ -426,7 +428,7 @@ const CheckoutPage = () => {
                     ))}
                   </div>
                   
-                  <div className="py-4 space-y-2 border-t border-b">
+                  <div className="py-3 space-y-2 border-t border-b">
                     <div className="flex justify-between text-gray-600">
                       <span>Subtotal</span>
                       <span>LKR {orderDetails.totalAmount.toFixed(2)}</span>
@@ -441,22 +443,22 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                   
-                  <div className="flex justify-between pt-4 text-lg font-bold">
+                  <div className="flex justify-between pt-3 text-lg font-bold">
                     <span>Total:</span>
                     <span className="text-[#FC8A06]">LKR {orderDetails.totalAmount.toFixed(2)}</span>
                   </div>
                   
                   {/* Payment buttons at the bottom of Order Summary */}
-                  <div className="mt-8 space-y-4">
+                  <div className="mt-6 space-y-3">
                     <button
                       type="submit"
                       onClick={initializePayment}
-                      className="flex items-center justify-center w-full px-8 py-3 font-semibold text-white transition-colors bg-[#FC8A06] rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                      className="flex items-center justify-center w-full px-6 py-2 font-semibold text-white transition-colors bg-[#FC8A06] rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                       disabled={isLoading}
                     >
                       {isLoading ? (
                         <>
-                          <svg className="w-5 h-5 mr-3 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 mr-2 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
@@ -474,7 +476,7 @@ const CheckoutPage = () => {
                     
                     <button
                       type="button"
-                      className="flex items-center justify-center w-full px-6 py-3 font-semibold text-[#FC8A06] transition-colors bg-white border border-[#FC8A06] rounded-lg hover:bg-[#FC8A06] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:ring-offset-2"
+                      className="flex items-center justify-center w-full px-6 py-2 font-semibold text-[#FC8A06] transition-colors bg-white border border-[#FC8A06] rounded-lg hover:bg-[#FC8A06] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:ring-offset-2"
                       onClick={() => navigate(-1)}
                       disabled={isLoading}
                     >
@@ -485,7 +487,7 @@ const CheckoutPage = () => {
                     </button>
                   </div>
                   
-                  <div className="pt-4 mt-6 border-t">
+                  <div className="pt-3 mt-4 border-t">
                     <div className="flex items-center justify-center text-sm text-gray-500">
                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>

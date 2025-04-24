@@ -11,11 +11,11 @@ export const generateDummyOrder = () => {
     // List of sample food items
     const foodItems = [
       { name: "Chicken Burger", price: 650.00 },
+      { name: "Fried Chicken", price: 950.00 },
       { name: "Beef Burger", price: 750.00 },
       { name: "Vegetable Burger", price: 550.00 },
       { name: "French Fries", price: 350.00 },
       { name: "Onion Rings", price: 400.00 },
-      { name: "Fried Chicken", price: 950.00 },
       { name: "Coke", price: 250.00 },
       { name: "Sprite", price: 250.00 },
       { name: "Water", price: 150.00 }
