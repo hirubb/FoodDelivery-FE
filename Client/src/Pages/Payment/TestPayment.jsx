@@ -141,247 +141,408 @@ const TestPayment = () => {
     window.payhere.startPayment(paymentData);
   };
 
+  if (error && !orderDetails) {
+    return (
+      <div className="container max-w-6xl p-8 mx-auto mt-8 bg-white rounded-lg shadow-lg">
+        <div className="p-4 mb-6 text-red-700 bg-red-100 border border-red-400 rounded-md">
+          <p className="font-medium">{error}</p>
+        </div>
+        <button
+          className="px-6 py-2 font-semibold text-white transition-colors bg-[#FC8A06] rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+          onClick={() => window.history.back()}
+        >
+          Return to Home
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="container p-4 mx-auto">
-      <h1 className="mb-6 text-2xl font-bold">Test Checkout</h1>
-      
-      {success && (
-        <div className="px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded">
-          {success}
-        </div>
-      )}
-
-      {orderDetails && (
-        <div className="p-4 mb-8 border rounded shadow">
-          <h2 className="mb-4 text-xl font-semibold">Order Summary</h2>
-          <div className="space-y-2">
-            {orderDetails.items.map((item, index) => (
-              <div key={index} className="flex justify-between">
-                <span>{item.quantity}x {item.name}</span>
-                <span>LKR {(item.price * item.quantity).toFixed(2)}</span>
-              </div>
-            ))}
-            <div className="flex justify-between pt-2 mt-2 font-bold border-t">
-              <span>Total:</span>
-              <span>LKR {orderDetails.totalAmount.toFixed(2)}</span>
+    <div className="min-h-screen">
+      <div className="container max-w-6xl p-6 py-4 mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-[#FC8A06]">Test Checkout</h1>
+          <div className="hidden md:block">
+            <div className="flex items-center space-x-2">
+              <span className="flex items-center justify-center w-8 h-8 text-white bg-[#FC8A06] rounded-full">1</span>
+              <span className="font-medium text-[#FC8A06]">Cart</span>
+              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+              <span className="flex items-center justify-center w-8 h-8 text-white bg-[#FC8A06] rounded-full">2</span>
+              <span className="font-medium text-[#FC8A06]">Checkout</span>
+              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+              <span className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full">3</span>
+              <span className="font-medium text-gray-600">Confirmation</span>
             </div>
           </div>
         </div>
-      )}
-      
-      <form onSubmit={initializePayment}>
-        <div className="mb-6">
-          <h2 className="mb-4 text-xl font-semibold">Customer Details</h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <label className="block mb-2">First Name *</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-                required
-              />
+        
+        {success && (
+          <div className="p-4 mb-6 text-green-700 bg-green-100 border border-green-400 rounded-md">
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <p className="font-medium">{success}</p>
             </div>
-            <div>
-              <label className="block mb-2">Last Name *</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-2">Email *</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-2">Phone *</label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-                required
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <h2 className="mb-4 text-xl font-semibold">Billing Address</h2>
-          <div className="grid grid-cols-1 gap-4">
-            <div>
-              <label className="block mb-2">Address *</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <div>
-                <label className="block mb-2">City *</label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-2">Country</label>
-                <input
-                  type="text"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div>
-                <label className="block mb-2">Postal Code</label>
-                <input
-                  type="text"
-                  name="postalCode"
-                  value={formData.postalCode}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="useDeliveryAddress"
-              id="useDeliveryAddress"
-              checked={formData.useDeliveryAddress}
-              onChange={handleInputChange}
-              className="mr-2"
-            />
-            <label htmlFor="useDeliveryAddress">Use different delivery address</label>
-          </div>
-
-          {formData.useDeliveryAddress && (
-            <div className="pl-4 border-l-2 border-gray-300">
-              <h2 className="mb-4 text-xl font-semibold">Delivery Address</h2>
-              <div className="grid grid-cols-1 gap-4">
-                <div>
-                  <label className="block mb-2">Address *</label>
-                  <input
-                    type="text"
-                    name="deliveryAddress"
-                    value={formData.deliveryAddress}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded"
-                    required={formData.useDeliveryAddress}
-                  />
-                </div>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <div>
-                    <label className="block mb-2">City *</label>
-                    <input
-                      type="text"
-                      name="deliveryCity"
-                      value={formData.deliveryCity}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border rounded"
-                      required={formData.useDeliveryAddress}
-                    />
-                  </div>
-                  <div>
-                    <label className="block mb-2">Country</label>
-                    <input
-                      type="text"
-                      name="deliveryCountry"
-                      value={formData.deliveryCountry}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border rounded"
-                    />
-                  </div>
-                  <div>
-                    <label className="block mb-2">Postal Code</label>
-                    <input
-                      type="text"
-                      name="deliveryPostalCode"
-                      value={formData.deliveryPostalCode}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border rounded"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="p-4 mb-6 border rounded shadow">
-          <h2 className="mb-4 text-xl font-semibold">Test Payment Information</h2>
-          <p className="mb-4 text-gray-700">
-            <strong>Note:</strong> For testing in sandbox mode, use these test cards:
-            <br />
-            - Visa: 4916217501611292
-            <br />
-            - MasterCard: 5307732125531191
-            <br />
-            - AMEX: 346781005510225
-          </p>
-        </div>
-
-        {error && (
-          <div className="px-4 py-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded">
-            {error}
           </div>
         )}
+        
+        <div className="flex flex-col lg:flex-row lg:space-x-8">
+          {/* Left Side - Form Fields */}
+          <div className="lg:w-2/3">
+            <form onSubmit={initializePayment} className="space-y-4">
+              <div className="p-5 mb-4 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
+                <h2 className="flex items-center mb-4 text-lg font-semibold text-gray-800">
+                  <span className="flex items-center justify-center w-6 h-6 mr-3 text-xs text-white bg-[#FC8A06] rounded-full">1</span>
+                  Customer Details
+                </h2>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700">First Name *</label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700">Last Name *</label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700">Email *</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700">Phone *</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      required
+                      placeholder="+94 7X XXX XXXX"
+                    />
+                  </div>
+                </div>
+              </div>
 
-        <div className="flex justify-end">
-          <button
-            type="button"
-            className="px-4 py-2 mr-2 font-bold text-gray-800 bg-gray-300 rounded hover:bg-gray-400"
-            disabled={isLoading}
-          >
-            Back
-          </button>
-          <button
-            type="submit"
-            className="flex items-center px-4 py-2 font-bold text-white bg-green-500 rounded hover:bg-green-700"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <svg className="w-5 h-5 mr-3 -ml-1 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Processing...
-              </>
-            ) : (
-              'Pay Now'
-            )}
-          </button>
+              <div className="p-5 mb-4 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
+                <h2 className="flex items-center mb-4 text-lg font-semibold text-gray-800">
+                  <span className="flex items-center justify-center w-6 h-6 mr-3 text-xs text-white bg-[#FC8A06] rounded-full">2</span>
+                  Billing Address
+                </h2>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700">Address *</label>
+                    <input
+                      type="text"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleInputChange}
+                      className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div>
+                      <label className="block mb-1 font-medium text-gray-700">City *</label>
+                      <input
+                        type="text"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleInputChange}
+                        className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-1 font-medium text-gray-700">Country</label>
+                      <select
+                        name="country"
+                        value={formData.country}
+                        onChange={handleInputChange}
+                        className="w-full p-2 transition-colors bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      >
+                        <option value="Sri Lanka">Sri Lanka</option>
+                        <option value="India">India</option>
+                        <option value="Maldives">Maldives</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block mb-1 font-medium text-gray-700">Postal Code</label>
+                      <input
+                        type="text"
+                        name="postalCode"
+                        value={formData.postalCode}
+                        onChange={handleInputChange}
+                        className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 mb-4 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
+                <div className="flex items-center mb-4">
+                  <span className="flex items-center justify-center w-6 h-6 mr-3 text-xs text-white bg-[#FC8A06] rounded-full">3</span>
+                  <input
+                    type="checkbox"
+                    name="useDeliveryAddress"
+                    id="useDeliveryAddress"
+                    checked={formData.useDeliveryAddress}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 mr-3 text-[#FC8A06] border-gray-300 rounded focus:ring-[#FC8A06]"
+                  />
+                  <label htmlFor="useDeliveryAddress" className="font-medium text-gray-700">
+                    Use different delivery address
+                  </label>
+                </div>
+
+                {formData.useDeliveryAddress && (
+                  <div className="pt-2 pl-4 mt-3 border-l-4 border-[#FC8A06]">
+                    <h2 className="mb-4 text-lg font-semibold text-gray-800">Delivery Address</h2>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <label className="block mb-1 font-medium text-gray-700">Address *</label>
+                        <input
+                          type="text"
+                          name="deliveryAddress"
+                          value={formData.deliveryAddress}
+                          onChange={handleInputChange}
+                          className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                          required={formData.useDeliveryAddress}
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <div>
+                          <label className="block mb-1 font-medium text-gray-700">City *</label>
+                          <input
+                            type="text"
+                            name="deliveryCity"
+                            value={formData.deliveryCity}
+                            onChange={handleInputChange}
+                            className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                            required={formData.useDeliveryAddress}
+                          />
+                        </div>
+                        <div>
+                          <label className="block mb-1 font-medium text-gray-700">Country</label>
+                          <select
+                            name="deliveryCountry"
+                            value={formData.deliveryCountry}
+                            onChange={handleInputChange}
+                            className="w-full p-2 transition-colors bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                          >
+                            <option value="Sri Lanka">Sri Lanka</option>
+                            <option value="India">India</option>
+                            <option value="Maldives">Maldives</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block mb-1 font-medium text-gray-700">Postal Code</label>
+                          <input
+                            type="text"
+                            name="deliveryPostalCode"
+                            value={formData.deliveryPostalCode}
+                            onChange={handleInputChange}
+                            className="w-full p-2 transition-colors border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-5 mb-4 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
+                <h2 className="flex items-center mb-4 text-lg font-semibold text-gray-800">
+                  <span className="flex items-center justify-center w-6 h-6 mr-3 text-xs text-white bg-[#FC8A06] rounded-full">4</span>
+                  Test Payment Information
+                </h2>
+                <p className="mb-4 text-gray-700">
+                  <strong>Note:</strong> For testing in sandbox mode, use these test cards:
+                </p>
+                <div className="p-3 rounded-md bg-gray-50">
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+                    <div className="p-2 bg-white rounded shadow-sm">
+                      <p className="font-medium text-gray-800">Visa</p>
+                      <p className="text-gray-600">4916217501611292</p>
+                    </div>
+                    <div className="p-2 bg-white rounded shadow-sm">
+                      <p className="font-medium text-gray-800">MasterCard</p>
+                      <p className="text-gray-600">5307732125531191</p>
+                    </div>
+                    <div className="p-2 bg-white rounded shadow-sm">
+                      <p className="font-medium text-gray-800">AMEX</p>
+                      <p className="text-gray-600">346781005510225</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {error && (
+                <div className="p-3 mb-4 text-red-700 bg-red-100 border-l-4 border-red-500 rounded-md shadow-sm">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p className="font-medium">{error}</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-start mt-4 mb-6 lg:hidden">
+                <button
+                  type="button"
+                  className="px-6 py-2 mr-4 font-semibold text-[#FC8A06] transition-colors bg-white border border-[#FC8A06] rounded-lg hover:bg-[#FC8A06] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:ring-offset-2"
+                  onClick={() => window.history.back()}
+                  disabled={isLoading}
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  className="flex items-center px-6 py-2 font-semibold text-white transition-colors bg-[#FC8A06] rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <svg className="w-5 h-5 mr-2 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                      </svg>
+                      Pay Now
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          {/* Right Side - Order Summary */}
+          <div className="lg:w-1/3">
+            <div className="sticky top-8">
+              {orderDetails && (
+                <div className="p-5 mb-6 bg-white border border-gray-200 rounded-lg shadow-md">
+                  <h2 className="flex items-center justify-between pb-3 mb-4 text-lg font-semibold text-gray-800 border-b">
+                    <span>Order Summary</span>
+                    <span className="text-sm font-normal text-gray-500">{orderDetails.items.length} items</span>
+                  </h2>
+                  <div className="pr-2 mb-4 space-y-3 overflow-auto max-h-56">
+                    {orderDetails.items.map((item, index) => (
+                      <div key={index} className="flex justify-between pb-2 text-gray-700 border-b">
+                        <div className="flex items-start">
+                          <span className="px-2 py-1 mr-2 text-xs text-[#FC8A06] bg-orange-100 rounded">{item.quantity}</span>
+                          <span className="font-medium">{item.name}</span>
+                        </div>
+                        <span className="font-semibold">LKR {(item.price * item.quantity).toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="py-3 space-y-2 border-t border-b">
+                    <div className="flex justify-between text-gray-600">
+                      <span>Subtotal</span>
+                      <span>LKR {orderDetails.totalAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-gray-600">
+                      <span>Delivery Fee</span>
+                      <span>LKR 0.00</span>
+                    </div>
+                    <div className="flex justify-between text-gray-600">
+                      <span>Tax</span>
+                      <span>Included</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between pt-3 text-lg font-bold">
+                    <span>Total:</span>
+                    <span className="text-[#FC8A06]">LKR {orderDetails.totalAmount.toFixed(2)}</span>
+                  </div>
+                  
+                  {/* Payment buttons at the bottom of Order Summary */}
+                  <div className="mt-6 space-y-3">
+                    <button
+                      type="submit"
+                      onClick={initializePayment}
+                      className="flex items-center justify-center w-full px-6 py-2 font-semibold text-white transition-colors bg-[#FC8A06] rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <svg className="w-5 h-5 mr-2 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                          </svg>
+                          Pay Now
+                        </>
+                      )}
+                    </button>
+                    
+                    <button
+                      type="button"
+                      className="flex items-center justify-center w-full px-6 py-2 font-semibold text-[#FC8A06] transition-colors bg-white border border-[#FC8A06] rounded-lg hover:bg-[#FC8A06] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:ring-offset-2"
+                      onClick={() => window.history.back()}
+                      disabled={isLoading}
+                    >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                      </svg>
+                      Back
+                    </button>
+                  </div>
+                  
+                  <div className="pt-3 mt-4 border-t">
+                    <div className="flex items-center justify-center text-sm text-gray-500">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                      </svg>
+                      Secured by PayHere
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

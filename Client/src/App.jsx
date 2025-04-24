@@ -36,7 +36,6 @@ import DeliveryRiderHome from './Pages/Delivery personnel/DeliveryHomePage';
 
 // import OrderStatusPage from './pages/Order/OrderStatusPage';
 
-import DummyOrderData from './Pages/Payment/DummyOrderData';
 import TestPayment from './Pages/Payment/TestPayment';
 
 // AppContent should be inside Router to use useLocation()
@@ -78,7 +77,6 @@ const AppContent = () => {
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/customer-dashboard" element={<CustomerDashboard />} />
           
-          <Route path="/dummy-order" element={<DummyOrderData />} />
           <Route path="/test-payment" element={<TestPayment />} />
 
           {/* ===================== Delivery Rider Routes ===================== */}
