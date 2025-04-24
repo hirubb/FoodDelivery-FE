@@ -15,6 +15,9 @@ const ManageUsers = () => {
     setLoading(true);
     try {
       const response = await adminService.getAllCustomers();
+
+      console.log("response : ", response);
+      
       
       const data = response.data.customers.users;
       setcustomers(data);

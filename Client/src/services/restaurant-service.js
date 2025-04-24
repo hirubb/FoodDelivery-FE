@@ -73,9 +73,15 @@ class RestaurantService {
   getSystemOffers(){
     return AdminHTTP.get("/system-offers");
   }
-  
-
-
+  editRestaurant(formdata,restaurant_id){
+    return HTTP.put(`/restaurant/${restaurant_id}`,formdata,
+      {
+        headers:{
+          "Content-Type": "multipart/form-data",
+        }
+      }
+    )
+  }
   
 }
 

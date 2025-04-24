@@ -126,6 +126,8 @@ function Header() {
         sidebarOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
         loggedIn={loggedIn}
+        username={username}
+        profileImage={profile_image}
       />
     </>
   );

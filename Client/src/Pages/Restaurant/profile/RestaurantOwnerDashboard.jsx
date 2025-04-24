@@ -8,6 +8,7 @@ import {
   FaSignOutAlt,
   FaAddressBook,
   FaCcAmazonPay,
+  FaAd,
 } from "react-icons/fa";
 
 import OwnerProfileData from "../../../components/ResturantManagement/profile/OwnerProfile";
@@ -16,6 +17,7 @@ import RestaurantOrders from "../../../components/ResturantManagement/profile/Re
 import EarningsOverview from "../../../components/ResturantManagement/profile/EarningsOverview";
 import RestaurantPaymentInfo from "../../../components/ResturantManagement/profile/RestaurantPaymentInfo";
 import MenuManagement from "../../../components/ResturantManagement/profile/MenuManagement";
+import RestaurantOffers from "../../../components/ResturantManagement/profile/RestaurantOffers";
 
 import Logo from "../../../assets/logo-color.png";
 
@@ -54,6 +56,18 @@ function RestaurantOwnerDashboard() {
               onClick={() => setActiveTab("restaurant")}
             />
             <SidebarItem
+              icon={<FaAddressBook />} // You can change this icon
+              title="Menus"
+              active={activeTab === "menu"}
+              onClick={() => setActiveTab("menu")}
+            />
+             <SidebarItem
+              icon={<FaAd/>} // You can change this icon
+              title="Offers"
+              active={activeTab === "offers"}
+              onClick={() => setActiveTab("offers")}
+            />
+            <SidebarItem
               icon={<FaClipboardList />}
               title="Orders"
               active={activeTab === "orders"}
@@ -73,12 +87,7 @@ function RestaurantOwnerDashboard() {
               active={activeTab === "payment"}
               onClick={() => setActiveTab("payment")}
             />
-            <SidebarItem
-              icon={<FaAddressBook />} // You can change this icon
-              title="Menus"
-              active={activeTab === "menu"}
-              onClick={() => setActiveTab("menu")}
-            />
+            
           </nav>
         </div>
 
@@ -106,10 +115,12 @@ function RestaurantOwnerDashboard() {
               {activeTab === "dashboard" && "Dashboard Overview"}
               {activeTab === "profile" && "My Profile"}
               {activeTab === "restaurant" && "Restaurant Details"}
+              {activeTab === "menu" && "Menus"}
+              {activeTab === "offers" && "Offers"}
               {activeTab === "orders" && "Orders Management"}
               {activeTab === "earnings" && "Earnings Overview"}
               {activeTab === "payment" && "Payment Info"}
-              {activeTab === "menu" && "Menus"}
+              
             </h1>
 
             <div className="flex items-center space-x-4">
@@ -143,10 +154,12 @@ function RestaurantOwnerDashboard() {
           )}
           {activeTab === "profile" && <OwnerProfileData />}
           {activeTab === "restaurant" && <RestaurantDetails />}
+          {activeTab === "menu" && <MenuManagement />}
+          {activeTab === "offers" && <RestaurantOffers />}
           {activeTab === "orders" && <RestaurantOrders />}
           {activeTab === "earnings" && <EarningsOverview />}
           {activeTab === "payment" && <RestaurantPaymentInfo />}
-          {activeTab === "menu" && <MenuManagement />}
+          
         </main>
       </div>
     </div>
