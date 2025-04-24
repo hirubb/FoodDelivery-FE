@@ -41,6 +41,9 @@ class AdminService {
   getAllDrivers(){
     return AdminHTTP.get("admin/drivers");
   }
+  getAllNotifications(){
+    return AdminHTTP.get("/admin/notifications");
+  }
  
   
 }
