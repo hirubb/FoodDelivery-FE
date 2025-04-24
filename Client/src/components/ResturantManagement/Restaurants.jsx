@@ -6,20 +6,22 @@ import {
   MapPin,
   Clock,
   Star,
+  Filter,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import restaurantService from "../../services/restaurant-service";
 import Promotions from "./Promotions";
-import { useNavigate } from 'react-router-dom';//dulmi
+import { useNavigate } from "react-router-dom";
 
 export default function Restaurants() {
-  const navigate = useNavigate(); // Navigate to restaurant details page(dulmi)
+  const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [systemOffers, setSystemOffers] = useState([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   useEffect(() => {
     const fetchSystemOffers = async () => {
@@ -30,14 +32,13 @@ export default function Restaurants() {
         console.error("Failed to fetch system offers", err);
       }
     };
-  
+
     fetchSystemOffers();
   }, []);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        console.log("search term : ", searchTerm);
         setLoading(true);
         const response = await restaurantService.getAllRestaurants(
           searchTerm,
@@ -56,11 +57,10 @@ export default function Restaurants() {
   }, [searchTerm, selectedCategory]);
 
   const handleRestaurantClick = (restaurantId) => {
-    navigate(`/restaurant/${restaurantId}`); // Navigate to restaurant details page(dulmi)
+    navigate(`/restaurant/${restaurantId}`);
   };
 
   const handleCategoryClick = (category) => {
-    // Toggle category filter
     setSelectedCategory((prev) => (prev === category ? "" : category));
   };
 
@@ -100,114 +100,141 @@ export default function Restaurants() {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto p-4 font-sans">
+    <div className="max-w-6xl mx-auto p-4 font-sans bg-[#03081F] min-h-screen text-white">
       {/* Header */}
-      <header className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <MapPin size={18} />
+      <header className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <div className="flex items-center gap-2 bg-[#FFFFFF10] rounded-lg p-3 hover:bg-[#FFFFFF20] transition-colors cursor-pointer">
+          <MapPin size={18} className="text-[#FC8A06]" />
           <span className="font-medium">335 Kandy - Colombo Rd</span>
-          <span className="text-gray-500 text-sm">· Now</span>
-          <ChevronRight size={16} className="text-gray-500" />
+          <span className="text-[#83858E] text-sm">· Now</span>
+          <ChevronRight size={16} className="text-[#83858E]" />
         </div>
 
-        <div className="relative flex-1 max-w-md mx-4">
-          <div className="absolute inset-y-0 left-3 flex items-center">
-            <Search size={18} className="text-gray-500" />
+        <div className="relative flex-1 max-w-md">
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <Search size={18} className="text-[#83858E]" />
           </div>
           <input
             type="text"
-            placeholder="Search Uber Eats"
+            placeholder="Search for restaurants, cuisines, or dishes"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-gray-100 w-full pl-10 pr-4 py-2 rounded-full focus:outline-none"
+            className="bg-[#FFFFFF10] w-full pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FC8A06] transition-all text-white placeholder-[#83858E]"
           />
         </div>
       </header>
+
       {/* Food Categories */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold text-white mb-6">Food Categories</h2>
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4 text-white">Food Categories</h2>
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
           {foodCategories.map((category, index) => (
             <button
               key={index}
               onClick={() => handleCategoryClick(category.name)}
-              className={`flex flex-col items-center p-4 rounded-lg min-w-[100px] ${
+              className={`flex flex-col items-center p-3 rounded-lg transition-all transform hover:scale-105 ${
                 selectedCategory === category.name
-                  ? "bg-[#FC8A06] text-white"
-                  : "bg-[#03081F] text-white hover:bg-gray-900 border border-gray-800"
+                  ? "bg-[#FC8A06] text-white shadow-lg shadow-[#FC8A06]/30"
+                  : "bg-[#FFFFFF10] text-white hover:bg-[#FFFFFF20]"
               }`}
             >
               <span className="text-2xl mb-2">{category.icon}</span>
-              <span className="text-sm">{category.name}</span>
+              <span className="text-sm font-medium">{category.name}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-2 my-4 overflow-x-auto">
-        <button className="flex items-center gap-1 px-4 py-2 bg-gray-100 rounded-full text-[#03081F]">
-          <span>Offers</span>
-        </button>
-        <button className="flex items-center gap-1 px-4 py-2 bg-gray-100 rounded-full text-[#03081F]">
-          <span>Delivery fee</span>
-          <ChevronRight size={16} className="text-gray-500" />
-        </button>
-        <button className="px-4 py-2 bg-gray-100 rounded-full text-[#03081F]">
-          Under 30 min
-        </button>
-        <button className="flex items-center gap-1 px-4 py-2 bg-gray-100 rounded-full text-[#03081F]">
-          <Star size={16} />
-          <span>Highest rated</span>
-        </button>
-        <button className="flex items-center gap-1 px-4 py-2 bg-gray-100 rounded-full text-[#03081F]">
-          <span>Rating</span>
-          <ChevronRight size={16} className="text-gray-500" />
-        </button>
-        <button className="flex items-center gap-1 px-4 py-2 bg-gray-100 rounded-full text-[#03081F]">
-          <span>Price</span>
-          <ChevronRight size={16} className="text-gray-500" />
-        </button>
-        <button className="flex items-center gap-1 px-4 py-2 bg-gray-100 rounded-full text-[#03081F]">
-          <span>Dietary</span>
-          <ChevronRight size={16} className="text-gray-500" />
-        </button>
-        <button className="flex items-center gap-1 px-4 py-2 bg-gray-100 rounded-full text-[#03081F]">
-          <span>Sort</span>
-          <ChevronRight size={16} className="text-gray-500" />
-        </button>
-      </div>
-
+      {/* Promotions */}
       <Promotions promos={systemOffers.length ? systemOffers : promos} />
 
+      {/* Smart Filters */}
+      <div className="my-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Smart Filters</h2>
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="flex items-center gap-2 bg-[#FFFFFF10] hover:bg-[#FFFFFF20] p-2 rounded-lg transition-colors"
+          >
+            <Filter size={18} className="text-[#FC8A06]" />
+            <span>All Filters</span>
+          </button>
+        </div>
 
-      <div className="text-xs text-gray-500 mb-6">
-        Additional fees may apply. <span className="underline">Learn more</span>
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <button className="flex items-center gap-1 px-4 py-2 bg-[#FC8A06] rounded-full text-white shadow-md shadow-[#FC8A06]/30 transition-all hover:brightness-110">
+            <span>Special Offers</span>
+          </button>
+          <button className="flex items-center gap-1 px-4 py-2 bg-[#FFFFFF10] rounded-full text-white hover:bg-[#FFFFFF20] transition-colors">
+            <span>Delivery Fee</span>
+            <ChevronRight size={16} className="text-[#83858E]" />
+          </button>
+          <button className="px-4 py-2 bg-[#FFFFFF10] rounded-full text-white hover:bg-[#FFFFFF20] transition-colors">
+            <span>Under 30 min</span>
+          </button>
+          <button className="flex items-center gap-1 px-4 py-2 bg-[#FFFFFF10] rounded-full text-white hover:bg-[#FFFFFF20] transition-colors">
+            <Star size={16} className="text-[#FC8A06]" />
+            <span>Top Rated</span>
+          </button>
+          <button className="flex items-center gap-1 px-4 py-2 bg-[#FFFFFF10] rounded-full text-white hover:bg-[#FFFFFF20] transition-colors">
+            <span>Price Range</span>
+            <ChevronRight size={16} className="text-[#83858E]" />
+          </button>
+        </div>
+      </div>
+
+      <div className="text-xs text-[#83858E] mb-6">
+        Additional fees may apply.{" "}
+        <span className="underline cursor-pointer hover:text-[#FC8A06]">
+          Learn more
+        </span>
       </div>
 
       {/* Restaurant Sections */}
-      {!loading && Array.isArray(restaurants) && restaurants.length > 0 && ( // dulmi
-        <div className="mb-8 ">
+      {!loading && Array.isArray(restaurants) && restaurants.length > 0 && (
+        <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">All Restaurants</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-[#03081F]">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {restaurants.map((r, idx) => (
-              <div key={idx} onClick={() => handleRestaurantClick(r._id)}//order details page(dulmi)
-              className="p-4 bg-white rounded-lg shadow">
-                {/*logo*/}
-                <img
-                  src={r.logo}
-                  alt={r.banner_image}
-                  className="w-full h-1/3 object-cover  mb-6"
-                />
-                <h3 className="text-lg font-semibold">{r.name}</h3>
-                <p className="text-sm text-gray-600">{r.city}</p>
-                <p className="text-sm text-gray-600">{r.cuisine_type}</p>
-                <div className="flex items-center justify-between mt-2 text-sm text-gray-700">
-                  <div className="flex items-center gap-1">
-                    <Star size={14} className="text-yellow-400" />
-                    <span>{r.averageRating || "N/A"}</span>
+              <div
+                key={idx}
+                onClick={() => handleRestaurantClick(r._id)}
+                className="bg-[#FFFFFF10] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] cursor-pointer group"
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={r.logo}
+                    alt={r.name}
+                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#03081F] to-transparent opacity-60"></div>
+                  <button className="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Heart size={18} className="text-[#FC8A06]" />
+                  </button>
+                </div>
+
+                <div className="p-4">
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-lg font-bold text-white">{r.name}</h3>
+                    <div className="flex items-center gap-1 bg-[#FC8A06] px-2 py-1 rounded text-xs font-semibold">
+                      <Star size={12} className="text-white" />
+                      <span>{r.averageRating || "N/A"}</span>
+                    </div>
                   </div>
-                  <div>{r.deliveryTime || "45 min"}</div>
+
+                  <div className="flex items-center gap-2 mt-2 text-sm text-[#83858E]">
+                    <MapPin size={14} />
+                    <span>{r.city}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 mt-1 text-sm text-[#83858E]">
+                    <Clock size={14} />
+                    <span>{r.deliveryTime || "45 min"}</span>
+                  </div>
+
+                  <div className="mt-3 inline-block bg-[#FFFFFF10] px-3 py-1 rounded-full text-xs font-medium">
+                    {r.cuisine_type}
+                  </div>
                 </div>
               </div>
             ))}
@@ -215,9 +242,42 @@ export default function Restaurants() {
         </div>
       )}
 
-      {loading && <p className="text-center my-10">Loading restaurants...</p>}
+      {loading && (
+        <div className="flex flex-col items-center justify-center p-10">
+          <div className="w-16 h-16 border-4 border-[#FC8A06] border-t-transparent rounded-full animate-spin"></div>
+          <p className="mt-4 text-[#83858E]">
+            Finding the best restaurants for you...
+          </p>
+        </div>
+      )}
+
       {!loading && error && (
-        <p className="text-center text-red-500 my-10">{error}</p>
+        <div className="bg-[#FFFFFF10] p-6 rounded-lg text-center my-10">
+          <p className="text-red-400 mb-2">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-[#FC8A06] text-white px-4 py-2 rounded-lg hover:bg-[#FC8A06]/80 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {!loading && Array.isArray(restaurants) && restaurants.length === 0 && (
+        <div className="bg-[#FFFFFF10] p-6 rounded-lg text-center my-10">
+          <p className="text-[#83858E] mb-2">
+            No restaurants found matching your criteria
+          </p>
+          <button
+            onClick={() => {
+              setSearchTerm("");
+              setSelectedCategory("");
+            }}
+            className="bg-[#FC8A06] text-white px-4 py-2 rounded-lg hover:bg-[#FC8A06]/80 transition-colors"
+          >
+            Clear Filters
+          </button>
+        </div>
       )}
     </div>
   );

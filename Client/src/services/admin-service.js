@@ -38,6 +38,9 @@ class AdminService {
   getAllCustomers(){
     return AdminHTTP.get("admin/customers");
   }
+  getAllDrivers(){
+    return AdminHTTP.get("admin/drivers");
+  }
  
   
 }
