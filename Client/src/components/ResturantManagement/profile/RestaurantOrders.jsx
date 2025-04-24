@@ -138,14 +138,6 @@ const RestaurantOrders = () => {
                       </span>
                     </td>
                     <td className="p-4">
-                    {order.items.map((item, idx) => (
-                          <li key={idx}>
-                            <div className="font-semibold">{item.createdAt
-                              ? new Date(order.createdAt).toLocaleString("en-GB"): "-"}
-                              </div>
-                        
-                          </li>
-                        ))}
                       {order.createdAt
                         ? new Date(order.createdAt).toLocaleString("en-GB")
                         : "-"}
