@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import adminService from "../../services/admin-service";
 import {
   FaUsers,
   FaStore,
@@ -17,10 +18,30 @@ import AdminProfile from "../../components/Admin/AdminProfile";
 import RestaurantOwners from "../../components/Admin/RestaurantOwners";
 import DeliveryPerson from "../../components/Admin/DeliveryPerson";
 
-
-
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("profile");
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await adminService.getAllNotifications();
+        console.log("response notifications : ", response.data.notifications);
+        setNotifications(response.data.notifications);
+      } catch (err) {
+        setError("Failed to load admin profile.");
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+  function formatTime(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString(); // or customize the format as needed
+  }
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -35,7 +56,7 @@ function AdminDashboard() {
 
         <div className="flex-1 overflow-y-auto">
           <nav className="px-2 mt-8">
-          <SidebarItem
+            <SidebarItem
               icon={<FaUser />}
               title="My Profile"
               active={activeTab === "profile"}
@@ -99,7 +120,7 @@ function AdminDashboard() {
         <header className="bg-white shadow-sm">
           <div className="flex items-center justify-between px-4 py-3">
             <h1 className="text-xl font-semibold text-gray-800">
-                {activeTab === "profile" && "My Profile"}
+              {activeTab === "profile" && "My Profile"}
               {activeTab === "users" && "Customers"}
               {activeTab === "restaurant owners" && "Restaurant Owners"}
               {activeTab === "delivery person" && "Delivery Persons"}
@@ -109,7 +130,10 @@ function AdminDashboard() {
             </h1>
 
             <div className="flex items-center space-x-4">
-              <button className="relative p-1 text-gray-400 rounded-full hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-1 text-gray-400 rounded-full hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              >
                 <FaBell className="w-6 h-6" />
                 <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500"></span>
               </button>
@@ -138,6 +162,29 @@ function AdminDashboard() {
           {activeTab === "offers" && <Offers />}
         </main>
       </div>
+      {showNotifications && (
+  <div className="absolute top-64 right-6 z-50 w-80 h-96 bg-[#03081F] border border-gray-300 shadow-lg rounded-lg p-4 overflow-hidden">
+    <h2 className="text-lg font-semibold mb-2 text-white">Notifications</h2>
+    <div className="h-[20rem] overflow-y-auto space-y-2 pr-2">
+      {Array.isArray(notifications) && notifications.length > 0 ? (
+        notifications
+          .slice()
+          .reverse()
+          .map((note, index) => (
+            <div
+              key={index}
+              className="p-3 border border-gray-200 rounded-md shadow-sm bg-gray-50"
+            >
+              <p className="text-sm text-gray-700">{note.message}</p>
+              <p className="text-xs text-gray-400">{formatTime(note.createdAt)}</p>
+            </div>
+          ))
+      ) : (
+        <p className="text-sm text-gray-300">No new notifications.</p>
+      )}
+    </div>
+  </div>
+)}
     </div>
   );
 }
