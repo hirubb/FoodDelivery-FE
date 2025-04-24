@@ -1,25 +1,37 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, ArrowLeft } from 'lucide-react';
-import axios from 'axios';
+import { Trash2, ArrowLeft, ShoppingBag } from 'lucide-react';
+import orderService from '../../services/order-service';
 
 function CartPage() {
   const navigate = useNavigate();
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [orderError, setOrderError] = useState(null);
 
-  // Get image URL
   const getImageUrl = (path) => {
     if (!path) return '/default-food.jpg';
-    return path.startsWith('http') ? path : `${import.meta.env.VITE_API_URL}${path}`;
+    return path.startsWith('http')
+      ? path
+      : `${import.meta.env.VITE_API_URL}${path}`;
   };
 
-  // Load cart from localStorage
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }
+    
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // If not authenticated, redirect to login page
+      setOrderError("You need to be logged in to view your cart");
+      // You could also automatically redirect to login
+      // navigate('/login', { state: { returnUrl: '/cart' } });
+    }
+    
     setLoading(false);
   }, []);
 
@@ -29,51 +41,90 @@ function CartPage() {
   };
 
   const updateQuantity = (itemId, newQuantity) => {
-    const updatedCart = cart.map(item =>
-      item._id === itemId ? { ...item, quantity: newQuantity } : item
-    ).filter(item => item.quantity > 0);
+    const updatedCart = cart
+      .map((item) =>
+        item._id === itemId ? { ...item, quantity: newQuantity } : item
+      )
+      .filter((item) => item.quantity > 0);
     updateCart(updatedCart);
   };
 
   const removeItem = (itemId) => {
-    const updatedCart = cart.filter(item => item._id !== itemId);
+    const updatedCart = cart.filter((item) => item._id !== itemId);
     updateCart(updatedCart);
   };
 
-  const clearCart = () => {
-    updateCart([]);
-  };
-
+  // Calculate total amount
   const calculateTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   };
 
-  // 🧾 Place order and send to backend
-  const handlePlaceOrder = async () => {
-    if (!cart.length) return;
-
+  // Handle place order
+  const placeOrder = async () => {
+    // Check for authentication
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setOrderError("Please login to place an order");
+      navigate('/login', { state: { returnUrl: '/cart' } });
+      return;
+    }
+    
+    // Check if cart is empty
+    if (cart.length === 0) {
+      alert("Your cart is empty. Please add items before placing an order.");
+      return;
+    }
+    
+    // Prepare order data
+    const restaurantId = cart[0].restaurant_id; // Assuming all items are from the same restaurant
+    
+    const orderItems = cart.map(item => ({
+      menuItemId: item._id,
+      quantity: item.quantity
+    }));
+    
+    const totalAmount = calculateTotal();
+    
+    const orderData = {
+      restaurantId,
+      items: orderItems,
+      totalAmount
+    };
+    
     try {
-      const order = {
-        customerId: "cust123", // Replace with real user if needed
-        restaurantId: cart[0].restaurant_id,
-        items: cart.map(item => ({
-          menuItemId: item._id,
-          quantity: item.quantity
-        }))
-      };
-
-      const res = await axios.post("http://localhost:5001/orders", order);
-
-      alert("✅ Order placed successfully!");
-      localStorage.removeItem("cart");
-      navigate("/"); // Redirect to home or order list
+      setIsPlacingOrder(true);
+      setOrderError(null);
+      
+      const response = await orderService.placeOrder(orderData);
+      
+      // Clear cart after successful order
+      localStorage.removeItem('cart');
+      setCart([]);
+      
+      // Save order ID for tracking
+      const orderId = response.data.order.orderId;
+      const recentOrders = JSON.parse(localStorage.getItem('recentOrders') || '[]');
+      recentOrders.unshift(orderId);
+      localStorage.setItem('recentOrders', JSON.stringify(recentOrders.slice(0, 10))); // Keep last 10 orders
+      
+      alert("Order Placed Successfully! Your order ID is: " + orderId);
+      navigate("/orders");
     } catch (err) {
-      console.error(err);
-      alert("❌ Failed to place order.");
+      console.error("Order placement failed:", err);
+      
+      if (!err.response) {
+        setOrderError("Network error. Please check your connection and try again.");
+      } else if (err.response.status === 401) {
+        setOrderError("Your session has expired. Please login again.");
+        navigate('/login', { state: { returnUrl: '/cart' } });
+      } else {
+        setOrderError(`Failed to place order: ${err.response.data.error || err.message}`);
+      }
+    } finally {
+      setIsPlacingOrder(false);
     }
   };
 
-  // Loader
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -82,123 +133,126 @@ function CartPage() {
     );
   }
 
-  // Empty cart
   if (cart.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center py-16">
-          <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-          <p className="text-gray-600 mb-8">Add some delicious items to your cart!</p>
-          <button
-            onClick={() => navigate('/restaurants')}
-            className="flex items-center gap-2 mx-auto text-[#FC8A06] hover:text-[#E67E22]"
-          >
-            <ArrowLeft size={20} />
-            <span>Continue Shopping</span>
-          </button>
-        </div>
+      <div className="text-center py-10">
+        <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
+        <button
+          onClick={() => navigate('/restaurants')}
+          className="flex items-center gap-2 text-[#FC8A06] hover:text-[#E67E22] underline mx-auto"
+        >
+          <ArrowLeft size={20} />
+          Browse Restaurants
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Shopping Cart</h1>
-        <button
-          onClick={() => navigate('/restaurants')}
-          className="flex items-center gap-2 text-[#FC8A06] hover:text-[#E67E22]"
-        >
-          <ArrowLeft size={20} />
-          <span>Continue Shopping</span>
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          {cart.map((item) => (
-            <div
-              key={item._id}
-              className="flex gap-4 p-4 mb-4 bg-white rounded-lg shadow-sm"
-            >
-              <img
-                src={getImageUrl(item.images?.[0])}
-                alt={item.name}
-                className="w-24 h-24 object-cover rounded-lg"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = '/default-food.jpg';
-                }}
-              />
-              <div className="flex-1">
-                <h3 className="font-semibold">{item.name}</h3>
-                <p className="text-gray-600 text-sm">{item.portion}</p>
-                <div className="flex items-center justify-between mt-4">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => updateQuantity(item._id, item.quantity - 1)}
-                      className="px-3 py-1 border rounded-full"
-                    >
-                      -
-                    </button>
-                    <span className="w-8 text-center">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item._id, item.quantity + 1)}
-                      className="px-3 py-1 border rounded-full"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="font-semibold">Rs. {item.price * item.quantity}</span>
-                    <button
-                      onClick={() => removeItem(item._id)}
-                      className="text-red-500 hover:text-red-600"
-                    >
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
+      
+      {orderError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          {orderError}
         </div>
+      )}
+      
+      <div className="space-y-4">
+        {cart.map((item) => (
+          <div
+            key={item._id}
+            className="flex items-center gap-4 bg-white p-4 rounded-lg shadow"
+          >
+            {/* Image */}
+            <img
+              src={getImageUrl(item.images?.[0])}
+              alt={item.name}
+              className="w-20 h-20 object-cover rounded"
+            />
 
-        <div className="lg:col-span-1">
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-            <div className="space-y-2 mb-4">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span>Rs. {calculateTotal()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Delivery Fee</span>
-                <span>Rs. 100</span>
-              </div>
-              <div className="border-t pt-2 mt-2">
-                <div className="flex justify-between font-bold">
-                  <span>Total</span>
-                  <span>Rs. {calculateTotal() + 100}</span>
-                </div>
+            {/* Item Details */}
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold">{item.name}</h3>
+              <p className="text-sm text-gray-600 mb-1">
+                Portion: {item.portion}
+              </p>
+              <p className="text-sm text-gray-700 mb-1">
+                Price: Rs. {item.price}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() =>
+                    updateQuantity(item._id, Math.max(item.quantity - 1, 0))
+                  }
+                  className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  -
+                </button>
+                <span>{item.quantity}</span>
+                <button
+                  onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                  className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  +
+                </button>
               </div>
             </div>
-            <div className="space-y-2">
+
+            {/* Price and Remove */}
+            <div className="text-right">
+              <p className="font-bold text-lg text-[#FC8A06]">
+                Rs. {item.price * item.quantity}
+              </p>
+              <p className="text-xs text-gray-500">
+                ({item.price} x {item.quantity})
+              </p>
               <button
-                onClick={handlePlaceOrder}
-                className="w-full bg-[#FC8A06] text-white py-3 rounded-full hover:bg-[#E67E22] transition-colors"
+                onClick={() => removeItem(item._id)}
+                className="text-red-500 hover:text-red-700 mt-2"
               >
-                ✅ Place Order
-              </button>
-              <button
-                onClick={clearCart}
-                className="w-full text-red-500 py-2 hover:text-red-600"
-              >
-                Clear Cart
+                <Trash2 size={20} />
               </button>
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* Total & Action Buttons */}
+      <div className="mt-8">
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-[#FC8A06] hover:text-[#E67E22] underline flex items-center gap-2"
+          >
+            <ArrowLeft size={20} />
+            Back to Menu
+          </button>
+          <div className="text-xl font-bold">
+            Total: Rs. {calculateTotal()}
+          </div>
         </div>
+        
+        {/* Place Order Button */}
+        <button
+          onClick={placeOrder}
+          disabled={isPlacingOrder}
+          className={`w-full py-3 ${
+            isPlacingOrder ? 'bg-gray-400' : 'bg-[#FC8A06] hover:bg-[#E67E22]'
+          } text-white rounded-lg flex items-center justify-center gap-2`}
+        >
+          {isPlacingOrder ? (
+            <>
+              <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+              Processing...
+            </>
+          ) : (
+            <>
+              <ShoppingBag size={20} />
+              Place Order (Rs. {calculateTotal()})
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

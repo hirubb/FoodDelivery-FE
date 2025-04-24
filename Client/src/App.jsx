@@ -11,6 +11,7 @@ import RestaurantRegister from './components/ResturantManagement/RestaurantRegis
 import Restaurant from './Pages/Restaurant/Restaurant';
 import RestaurantDetails from './Pages/Order/RestaurantDetails';
 import Cart from './Pages/Order/Cart';
+import OrdersPage from './Pages/Order/OrdersPage';
 import { AuthProvider } from './components/Auth/AuthContext';
 import Profile from './Pages/Restaurant/profile/Profile';
 import CreateMenu from './Pages/Restaurant/profile/CreateMenu';
@@ -55,10 +56,12 @@ const AppContent = () => {
           <Route path="/owner-register" element={<OwnerRegister />} />
           <Route path="/restaurant-register" element={<RestaurantRegister />} />
           <Route path="/restaurants" element={<Restaurant />} />
+
+           {/* =====================  Order Routes ===================== */}
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/orders" element={<OrdersPage />} />
 
-          {/* <Route path="/order-status" element={<OrderStatusPage />} /> */}
 
           {/* <Route path="/owner/profile" element={<Profile />} /> */}
           <Route path="/owner/profile" element={<RestaurantOwnerDashboard />} />
