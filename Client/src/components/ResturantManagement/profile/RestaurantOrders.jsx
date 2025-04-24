@@ -36,8 +36,9 @@ const RestaurantOrders = () => {
   const fetchOrders = async (restaurantId) => {
     setLoading(true);
     try {
-      const response = await restaurantService.getMyRestaurantOrders(restaurantId);
-      const orderList = response?.data?.status || [];
+      const response = await restaurantService.getOrders(restaurantId);
+      const orderList = response.data.status.orders;
+      console.log("response :: ",orderList)
       setOrders(orderList);
     } catch (err) {
       console.error(err);
@@ -91,46 +92,67 @@ const RestaurantOrders = () => {
               </tr>
             </thead>
             <tbody className="text-[#03081F]">
-              {orders.map((order) => (
-                <tr key={order._id} className="border-t border-gray-200 hover:bg-[#f9fafb]">
-                  <td className="p-4 font-medium">{order.orderId}</td>
-                  <td className="p-4">
-                    <ul className="list-disc pl-5 space-y-1">
-                      {order.items.map((item) => (
-                        <li key={item._id}>
-                          <span className="font-medium">{item.menuItemId}</span> — Qty: {item.quantity}
-                        </li>
-                      ))}
-                    </ul>
-                  </td>
-                  <td className="p-4">Rs. {order.totalAmount.toFixed(2)}</td>
-                  <td className="p-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
-                        order.status === "Completed"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
-                        order.paymentStatus === "Paid"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-gray-200 text-gray-700"
-                      }`}
-                    >
-                      {order.paymentStatus}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    {new Date(order.createdAt).toLocaleString("en-GB")}
-                  </td>
-                </tr>
-              ))}
+              {orders.map((order, index) => {
+                const total = order.items.reduce(
+                  (acc, item) => acc + item.menuItem.price * item.quantity,
+                  0
+                );
+
+                return (
+                  <tr key={index} className="border-t border-gray-200 hover:bg-[#f9fafb]">
+                    <td className="p-4 font-medium">{order.orderId}</td>
+                    <td className="p-4">
+                      <ul className="list-disc pl-5 space-y-1">
+                        {order.items.map((item, idx) => (
+                          <li key={idx}>
+                            <div className="font-semibold">{item.menuItem.name}</div>
+                            <div className="text-sm text-gray-600">
+                              Portion: {item.menuItem.portion} | Qty: {item.quantity} | Rs.{" "}
+                              {item.menuItem.price.toFixed(2)}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td className="p-4">Rs. {total.toFixed(2)}</td>
+                    <td className="p-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
+                          order.status === "Completed"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {order.status || "Pending"}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
+                          order.paymentStatus === "Paid"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-gray-200 text-gray-700"
+                        }`}
+                      >
+                        {order.paymentStatus || "Unpaid"}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                    {order.items.map((item, idx) => (
+                          <li key={idx}>
+                            <div className="font-semibold">{item.createdAt
+                              ? new Date(order.createdAt).toLocaleString("en-GB"): "-"}
+                              </div>
+                        
+                          </li>
+                        ))}
+                      {order.createdAt
+                        ? new Date(order.createdAt).toLocaleString("en-GB")
+                        : "-"}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
