@@ -82,6 +82,9 @@ class RestaurantService {
       }
     )
   }
+  getMyRestaurantOrders(restaurantId){
+    return HTTP.get(`/restaurant/get-orders/${restaurantId}`);
+  }
   
 }
 
