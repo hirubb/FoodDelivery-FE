@@ -7,7 +7,7 @@ console.log("Base URL:", import.meta.env.VITE_API_URL);
 console.log("Admin URL:", import.meta.env.VITE_ADMIN_URL);
 console.log("Customer URL:", import.meta.env.VITE_CUSTOMER_URL);
 console.log("Payment URL:", import.meta.env.VITE_CUSTOMER_URL);
-console.log("Order URL:", import.meta.env.VITE_ORDER_URL);
+console.log("Order URL:", import.meta.env.VITE_Order_URL);
 
 export const HTTP = axios.create({
   baseURL: baseURL,
