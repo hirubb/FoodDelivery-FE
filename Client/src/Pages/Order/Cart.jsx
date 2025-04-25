@@ -108,7 +108,8 @@ function CartPage() {
       localStorage.setItem('recentOrders', JSON.stringify(recentOrders.slice(0, 10))); // Keep last 10 orders
       
       alert("Order Placed Successfully! Your order ID is: " + orderId);
-      navigate("/orders");
+      navigate("/checkout", { state: { orderId } });
+
     } catch (err) {
       console.error("Order placement failed:", err);
       
@@ -127,7 +128,7 @@ function CartPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FC8A06]"></div>
       </div>
     );
@@ -135,8 +136,8 @@ function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="text-center py-10">
-        <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
+      <div className="py-10 text-center">
+        <h2 className="mb-4 text-2xl font-bold">Your cart is empty</h2>
         <button
           onClick={() => navigate('/restaurants')}
           className="flex items-center gap-2 text-[#FC8A06] hover:text-[#E67E22] underline mx-auto"
@@ -149,11 +150,11 @@ function CartPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
+    <div className="max-w-4xl p-6 mx-auto">
+      <h1 className="mb-6 text-3xl font-bold">Your Cart</h1>
       
       {orderError && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <div className="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded">
           {orderError}
         </div>
       )}
@@ -162,22 +163,22 @@ function CartPage() {
         {cart.map((item) => (
           <div
             key={item._id}
-            className="flex items-center gap-4 bg-white p-4 rounded-lg shadow"
+            className="flex items-center gap-4 p-4 bg-white rounded-lg shadow"
           >
             {/* Image */}
             <img
               src={getImageUrl(item.images?.[0])}
               alt={item.name}
-              className="w-20 h-20 object-cover rounded"
+              className="object-cover w-20 h-20 rounded"
             />
 
             {/* Item Details */}
             <div className="flex-1">
               <h3 className="text-lg font-semibold">{item.name}</h3>
-              <p className="text-sm text-gray-600 mb-1">
+              <p className="mb-1 text-sm text-gray-600">
                 Portion: {item.portion}
               </p>
-              <p className="text-sm text-gray-700 mb-1">
+              <p className="mb-1 text-sm text-gray-700">
                 Price: Rs. {item.price}
               </p>
               <div className="flex items-center gap-2">
@@ -209,7 +210,7 @@ function CartPage() {
               </p>
               <button
                 onClick={() => removeItem(item._id)}
-                className="text-red-500 hover:text-red-700 mt-2"
+                className="mt-2 text-red-500 hover:text-red-700"
               >
                 <Trash2 size={20} />
               </button>
@@ -220,7 +221,7 @@ function CartPage() {
 
       {/* Total & Action Buttons */}
       <div className="mt-8">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate(-1)}
             className="text-[#FC8A06] hover:text-[#E67E22] underline flex items-center gap-2"
@@ -243,7 +244,7 @@ function CartPage() {
         >
           {isPlacingOrder ? (
             <>
-              <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+              <div className="w-5 h-5 border-2 border-white rounded-full animate-spin border-t-transparent"></div>
               Processing...
             </>
           ) : (
