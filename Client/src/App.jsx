@@ -80,7 +80,7 @@ const AppContent = () => {
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/customer-dashboard" element={<CustomerDashboard />} />
           
-          <Route path="/test-payment" element={<TestPayment />} />
+          {/* <Route path="/test-payment" element={<TestPayment />} /> */}
 
           {/* ===================== Delivery Rider Routes ===================== */}
 
