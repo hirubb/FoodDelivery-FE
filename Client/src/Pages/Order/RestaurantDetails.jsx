@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Star, Clock, MapPin, ShoppingCart } from "lucide-react";
+import { Star, Clock, MapPin, AlertCircle } from "lucide-react";
 import restaurantService from "../../services/restaurant-service";
+import DeliveryLocationPopup from "../../components/OrderManagement/DeliveryLocationPopup";
 
 function RestaurantMenuPage() {
   const { id } = useParams();
@@ -13,6 +14,12 @@ function RestaurantMenuPage() {
   const [cart, setCart] = useState([]);
   const [notification, setNotification] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
+  
+  // Location related state
+  const [userLocation, setUserLocation] = useState(null);
+  
+  // Always show location popup on first load
+  const [isLocationPopupOpen, setIsLocationPopupOpen] = useState(true);
 
   const menuIcons = {
     Breakfast: "🥗",
@@ -29,6 +36,25 @@ function RestaurantMenuPage() {
       ? path
       : `${import.meta.env.VITE_API_URL}${path}`;
   };
+
+  // Check for saved location on component mount
+  useEffect(() => {
+    const savedLocation = localStorage.getItem('userLocation');
+    
+    if (savedLocation) {
+      try {
+        const parsedLocation = JSON.parse(savedLocation);
+        if (parsedLocation.latitude && parsedLocation.longitude) {
+          setUserLocation(parsedLocation);
+          // Even if we have a saved location, we still show the popup
+          // but we'll pass the saved location as initialLocation
+        }
+      } catch (error) {
+        console.error("Error parsing saved location:", error);
+      }
+    }
+    // No need to set isLocationPopupOpen to true here as it's already true by default
+  }, []);
 
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
@@ -66,48 +92,64 @@ function RestaurantMenuPage() {
     fetchRestaurantDetails();
   }, [id]);
 
-  // Keeping only the relevant addToCart function in RestaurantDetails.jsx
+  const handleSaveLocation = (locationData) => {
+    // Set the user location
+    setUserLocation(locationData);
+    
+    // Save to localStorage for future use
+    localStorage.setItem('userLocation', JSON.stringify(locationData));
+    
+    // Show confirmation notification
+    const message = locationData.source === "current" 
+      ? "Using your current location for delivery" 
+      : "Delivery location has been set";
+    
+    setNotification(message);
+    setTimeout(() => setNotification(null), 2000);
+  };
 
-const addToCart = (item) => {
-  setCart((prevCart) => {
-    const existingItem = prevCart.find((i) => i._id === item._id);
-
-    let newCart;
-    if (existingItem) {
-      newCart = prevCart.map((i) =>
-        i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
-      );
-    } else {
-      newCart = [
-        ...prevCart,
-        {
-          _id: item._id,
-          name: item.name,
-          price: item.price,
-          portion: item.portion,
-          images: item.images,
-          quantity: 1,
-          restaurant_id: id,
-        },
-      ];
+  const addToCart = (item) => {
+    // Check if location is set before adding to cart
+    if (!userLocation) {
+      setNotification("Please set your delivery location first");
+      setTimeout(() => {
+        setNotification(null);
+        setIsLocationPopupOpen(true);
+      }, 1500);
+      return;
     }
-
-    localStorage.setItem("cart", JSON.stringify(newCart));
-    setNotification(`${item.name} added to cart`);
     
-    // Show notification with view cart button
-    // const shouldViewCart = window.confirm(`${item.name} added to cart! View your cart?`);
-    // if (shouldViewCart) {
-    //   navigate("/cart");
-    // }
-    
-    setTimeout(() => setNotification(null), 1000);
-    return newCart;
-  });
-};
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((i) => i._id === item._id);
 
+      let newCart;
+      if (existingItem) {
+        newCart = prevCart.map((i) =>
+          i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      } else {
+        newCart = [
+          ...prevCart,
+          {
+            _id: item._id,
+            name: item.name,
+            price: item.price,
+            portion: item.portion,
+            images: item.images,
+            quantity: 1,
+            restaurant_id: id,
+            // Include user's location in the cart item
+            userLocation: userLocation,
+          },
+        ];
+      }
 
- // Inside RestaurantDetails.jsx - updating only the placeOrder function
+      localStorage.setItem("cart", JSON.stringify(newCart));
+      setNotification(`${item.name} added to cart`);
+      setTimeout(() => setNotification(null), 1000);
+      return newCart;
+    });
+  };
 
   const displayedItems = menus
     .filter((menu) => !selectedCategory || selectedCategory === menu._id)
@@ -135,11 +177,55 @@ const addToCart = (item) => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Delivery Location Popup - shows on page load */}
+      <DeliveryLocationPopup 
+        isOpen={isLocationPopupOpen}
+        onClose={() => setIsLocationPopupOpen(false)}
+        onSave={handleSaveLocation}
+        initialLocation={userLocation}
+      />
+
       {notification && (
         <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-out z-50">
           {notification}
         </div>
       )}
+
+      {/* Location Banner/Button */}
+      <div className="mb-4">
+        {userLocation ? (
+          <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between shadow-sm">
+            <div className="flex items-center">
+              <MapPin size={18} className="text-[#FC8A06] mr-2" />
+              <div>
+                <p className="font-medium">Delivery Location</p>
+                <p className="text-sm text-gray-600 truncate max-w-md">
+                  {userLocation.address || `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}`}
+                </p>
+              </div>
+            </div>
+            <button 
+              onClick={() => setIsLocationPopupOpen(true)}
+              className="text-[#FC8A06] hover:text-[#E67E22] text-sm font-medium"
+            >
+              Change
+            </button>
+          </div>
+        ) : (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-center justify-between">
+            <div className="flex items-center">
+              <AlertCircle size={18} className="text-yellow-500 mr-2" />
+              <p className="text-yellow-700">Delivery location not set</p>
+            </div>
+            <button 
+              onClick={() => setIsLocationPopupOpen(true)}
+              className="bg-[#FC8A06] text-white px-3 py-1 rounded hover:bg-[#E67E22] text-sm"
+            >
+              Set Location
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Restaurant Banner */}
       <div className="relative h-[300px] mb-8 rounded-xl overflow-hidden">
@@ -178,7 +264,7 @@ const addToCart = (item) => {
         </div>
       </div>
 
-      {/* Menu Categories */}
+      {/* Menu Categories, etc. - rest of the component remains unchanged */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-6">Menu Categories</h2>
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
@@ -251,8 +337,8 @@ const addToCart = (item) => {
       {cart.length > 0 && (
         <div className="fixed bottom-6 right-6 space-y-2">
           <div className="bg-green-500 px-4 py-3 rounded-full shadow-lg flex items-center w-64">
-          <span className="ml-5 ">
-             Total Amount :
+            <span className="ml-5">
+              Total Amount:
             </span>
             <span className="font-bold ml-2">
               Rs.{" "}
@@ -264,7 +350,7 @@ const addToCart = (item) => {
           </div>
 
           <button
-            onClick={()=> navigate("/cart")}
+            onClick={() => navigate("/cart")}
             className="bg-green-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-700 transition-colors w-full"
           >
             Place Order
