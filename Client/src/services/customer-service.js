@@ -23,13 +23,12 @@ class CustomerService {
 
   // Update customer profile
   updateCustomerProfile(data) {
-    return CustomerHTTP.put("/customers/update-profile", data, 
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        }
+    // Changed to application/json to match how the data is sent in the component
+    return CustomerHTTP.put("/customers/update-profile", data, {
+      headers: {
+        "Content-Type": "application/json",
       }
-    );
+    });
   }
 
   // Get order history

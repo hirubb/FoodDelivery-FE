@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 
 function CustomerDashboard() {
   const [activeTab, setActiveTab] = useState("welcome");
+  const [cart, setCart] = useState([]); // Example cart state
   const [cartItems, setCartItems] = useState(3); // Example cart count
   const [customerData, setCustomerData] = useState(null);
   const [notifications, setNotifications] = useState(2); // Example notification count
@@ -67,10 +68,19 @@ function CustomerDashboard() {
       if (cartResponse.ok) {
         const cartData = await cartResponse.json();
         setCartItems(cartData.items.length);
+        
+        // Update localStorage with the fresh cart data
+        localStorage.setItem("cart", JSON.stringify(cartData.items));
+      } else {
+        // If cart fetch fails, clear any existing cart data
+        setCartItems(0);
+        localStorage.removeItem("cart");
       }
     } catch (error) {
       console.error("Error fetching customer data:", error);
-      // No longer setting mock data here
+      // Clear cart data if there's an error
+      setCartItems(0);
+      localStorage.removeItem("cart");
     } finally {
       setIsLoading(false);
     }
@@ -78,9 +88,11 @@ function CustomerDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("cart");
+    setCart([]);
+    setCartItems(0); // Reset the cart count to zero
     navigate("/login");
   };
-
   const handleSearch = (e) => {
     e.preventDefault();
     // Navigate to search results or filter current view
