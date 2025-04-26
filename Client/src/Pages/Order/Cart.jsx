@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, ArrowLeft, ShoppingBag } from 'lucide-react';
+import { Trash2, ArrowLeft, ShoppingBag, MapPin } from 'lucide-react';
 import orderService from '../../services/order-service';
 
 function CartPage() {
@@ -9,6 +9,7 @@ function CartPage() {
   const [loading, setLoading] = useState(true);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderError, setOrderError] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
 
   const getImageUrl = (path) => {
     if (!path) return '/default-food.jpg';
@@ -23,17 +24,46 @@ function CartPage() {
       setCart(JSON.parse(savedCart));
     }
     
+    // Get user location from localStorage (set in RestaurantMenuPage)
+    const locationData = localStorage.getItem('userLocation');
+    if (locationData) {
+      setUserLocation(JSON.parse(locationData));
+    } else {
+      // If location isn't available, try to get it now
+      getCurrentLocation();
+    }
+    
     // Check if user is authenticated
     const token = localStorage.getItem('token');
     if (!token) {
-      // If not authenticated, redirect to login page
       setOrderError("You need to be logged in to view your cart");
-      // You could also automatically redirect to login
-      // navigate('/login', { state: { returnUrl: '/cart' } });
     }
     
     setLoading(false);
   }, []);
+
+  // Function to get current location if not already set
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const locationData = {
+            latitude,
+            longitude,
+            accuracy: position.coords.accuracy,
+            timestamp: position.timestamp
+          };
+          
+          setUserLocation(locationData);
+          localStorage.setItem('userLocation', JSON.stringify(locationData));
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    }
+  };
 
   const updateCart = (newCart) => {
     setCart(newCart);
@@ -85,10 +115,12 @@ function CartPage() {
     
     const totalAmount = calculateTotal();
     
+    // Include location data in the order
     const orderData = {
       restaurantId,
       items: orderItems,
-      totalAmount
+      totalAmount,
+      deliveryLocation: userLocation
     };
     
     try {
@@ -108,8 +140,7 @@ function CartPage() {
       localStorage.setItem('recentOrders', JSON.stringify(recentOrders.slice(0, 10))); // Keep last 10 orders
       
       alert("Order Placed Successfully! Your order ID is: " + orderId);
-      navigate("/checkout", { state: { orderId } });
-
+      navigate("/orders");
     } catch (err) {
       console.error("Order placement failed:", err);
       
@@ -128,7 +159,7 @@ function CartPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FC8A06]"></div>
       </div>
     );
@@ -136,8 +167,8 @@ function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="py-10 text-center">
-        <h2 className="mb-4 text-2xl font-bold">Your cart is empty</h2>
+      <div className="text-center py-10">
+        <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
         <button
           onClick={() => navigate('/restaurants')}
           className="flex items-center gap-2 text-[#FC8A06] hover:text-[#E67E22] underline mx-auto"
@@ -150,35 +181,55 @@ function CartPage() {
   }
 
   return (
-    <div className="max-w-4xl p-6 mx-auto">
-      <h1 className="mb-6 text-3xl font-bold">Your Cart</h1>
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
       
       {orderError && (
-        <div className="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
           {orderError}
         </div>
       )}
+      
+      {/* Location status */}
+      <div className={`flex items-center p-3 rounded mb-6 ${userLocation ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+        <MapPin size={20} className="mr-2" />
+        {userLocation ? (
+          <div>
+            <span className="font-semibold">Delivery location:</span> Location detected for delivery
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            <span>No delivery location provided</span>
+            <button 
+              onClick={getCurrentLocation}
+              className="text-blue-600 underline text-sm mt-1"
+            >
+              Share your location for delivery
+            </button>
+          </div>
+        )}
+      </div>
       
       <div className="space-y-4">
         {cart.map((item) => (
           <div
             key={item._id}
-            className="flex items-center gap-4 p-4 bg-white rounded-lg shadow"
+            className="flex items-center gap-4 bg-white p-4 rounded-lg shadow"
           >
             {/* Image */}
             <img
               src={getImageUrl(item.images?.[0])}
               alt={item.name}
-              className="object-cover w-20 h-20 rounded"
+              className="w-20 h-20 object-cover rounded"
             />
 
             {/* Item Details */}
             <div className="flex-1">
               <h3 className="text-lg font-semibold">{item.name}</h3>
-              <p className="mb-1 text-sm text-gray-600">
+              <p className="text-sm text-gray-600 mb-1">
                 Portion: {item.portion}
               </p>
-              <p className="mb-1 text-sm text-gray-700">
+              <p className="text-sm text-gray-700 mb-1">
                 Price: Rs. {item.price}
               </p>
               <div className="flex items-center gap-2">
@@ -210,7 +261,7 @@ function CartPage() {
               </p>
               <button
                 onClick={() => removeItem(item._id)}
-                className="mt-2 text-red-500 hover:text-red-700"
+                className="text-red-500 hover:text-red-700 mt-2"
               >
                 <Trash2 size={20} />
               </button>
@@ -221,7 +272,7 @@ function CartPage() {
 
       {/* Total & Action Buttons */}
       <div className="mt-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex justify-between items-center mb-6">
           <button
             onClick={() => navigate(-1)}
             className="text-[#FC8A06] hover:text-[#E67E22] underline flex items-center gap-2"
@@ -244,7 +295,7 @@ function CartPage() {
         >
           {isPlacingOrder ? (
             <>
-              <div className="w-5 h-5 border-2 border-white rounded-full animate-spin border-t-transparent"></div>
+              <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
               Processing...
             </>
           ) : (
