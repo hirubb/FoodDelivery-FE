@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Star, Clock, MapPin, AlertCircle } from "lucide-react";
+import { Star, Clock, MapPin, AlertCircle, ShoppingBag, ChevronUp, ChevronDown } from "lucide-react";
 import restaurantService from "../../services/restaurant-service";
 import DeliveryLocationPopup from "../../components/OrderManagement/DeliveryLocationPopup";
 
@@ -14,6 +14,7 @@ function RestaurantMenuPage() {
   const [cart, setCart] = useState([]);
   const [notification, setNotification] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [isCartExpanded, setIsCartExpanded] = useState(true);
   
   // Location related state
   const [userLocation, setUserLocation] = useState(null);
@@ -146,9 +147,23 @@ function RestaurantMenuPage() {
 
       localStorage.setItem("cart", JSON.stringify(newCart));
       setNotification(`${item.name} added to cart`);
+      
+      // Auto expand cart when adding items
+      setIsCartExpanded(true);
+      
       setTimeout(() => setNotification(null), 1000);
       return newCart;
     });
+  };
+
+  // Calculate total amount with delivery fee
+  const calculateTotal = () => {
+    const itemsTotal = cart.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+    const deliveryFee = itemsTotal * 0.05; // 5% delivery fee
+    return itemsTotal + deliveryFee;
   };
 
   const displayedItems = menus
@@ -176,7 +191,7 @@ function RestaurantMenuPage() {
     );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-24">
       {/* Delivery Location Popup - shows on page load */}
       <DeliveryLocationPopup 
         isOpen={isLocationPopupOpen}
@@ -264,7 +279,7 @@ function RestaurantMenuPage() {
         </div>
       </div>
 
-      {/* Menu Categories, etc. - rest of the component remains unchanged */}
+      {/* Menu Categories */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-6">Menu Categories</h2>
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
@@ -333,28 +348,90 @@ function RestaurantMenuPage() {
         ))}
       </div>
 
-      {/* Floating Cart + Place Order */}
+      {/* Enhanced Floating Cart */}
       {cart.length > 0 && (
-        <div className="fixed bottom-6 right-6 space-y-2">
-          <div className="bg-green-500 px-4 py-3 rounded-full shadow-lg flex items-center w-64">
-            <span className="ml-5">
-              Total Amount:
-            </span>
-            <span className="font-bold ml-2">
-              Rs.{" "}
-              {cart.reduce(
-                (acc, item) => acc + item.price * item.quantity,
-                0
-              )}
-            </span>
+        <div className="fixed bottom-6 right-6 z-50">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden w-72 transition-all duration-300">
+            {/* Cart Header with Toggle */}
+            <div 
+              className="bg-[#FC8A06] text-white p-3 flex items-center justify-between cursor-pointer"
+              onClick={() => setIsCartExpanded(!isCartExpanded)}
+            >
+              <div className="flex items-center gap-2">
+                <ShoppingBag size={18} />
+                <span className="font-medium">Your Cart</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="bg-white text-[#FC8A06] rounded-full w-6 h-6 flex items-center justify-center font-bold">
+                  {cart.reduce((acc, item) => acc + item.quantity, 0)}
+                </span>
+                {isCartExpanded ? (
+                  <ChevronDown size={18} />
+                ) : (
+                  <ChevronUp size={18} />
+                )}
+              </div>
+            </div>
+            
+            {/* Collapsible Cart Content */}
+            {isCartExpanded && (
+              <>
+                {/* Cart Items Preview */}
+                <div className="max-h-52 overflow-y-auto">
+                  {cart.slice(0, 3).map((item) => (
+                    <div key={item._id} className="p-2 border-b border-gray-100 flex items-center gap-2">
+                      <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                        {item.images?.[0] && (
+                          <img
+                            src={getImageUrl(item.images[0])}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{item.name}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-gray-500">x{item.quantity}</span>
+                          <span className="text-sm font-semibold">Rs. {item.price * item.quantity}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {cart.length > 3 && (
+                    <div className="text-center text-sm text-gray-500 py-2">
+                      +{cart.length - 3} more items
+                    </div>
+                  )}
+                </div>
+                
+                {/* Cart Total */}
+                <div className="p-3 border-t border-gray-200">
+                  <div className="flex justify-between items-center mb-1 text-sm">
+                    <span>Items Total:</span>
+                    <span>Rs. {cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</span>
+                  </div>
+                  <div className="flex justify-between items-center mb-2 text-sm">
+                    <span>Delivery Fee (5%):</span>
+                    <span>Rs. {(cart.reduce((acc, item) => acc + item.price * item.quantity, 0) * 0.05).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center font-bold text-[#FC8A06]">
+                    <span>Total:</span>
+                    <span>Rs. {calculateTotal().toFixed(2)}</span>
+                  </div>
+                </div>
+                
+                {/* View Cart Button */}
+                <button
+                  onClick={() => navigate("/cart")}
+                  className="bg-[#FC8A06] text-white w-full py-3 hover:bg-[#E67E22] transition-colors flex items-center justify-center gap-2"
+                >
+                  <ShoppingBag size={18} />
+                  View Cart & Checkout
+                </button>
+              </>
+            )}
           </div>
-
-          <button
-            onClick={() => navigate("/cart")}
-            className="bg-green-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-700 transition-colors w-full"
-          >
-            Place Order
-          </button>
         </div>
       )}
     </div>
