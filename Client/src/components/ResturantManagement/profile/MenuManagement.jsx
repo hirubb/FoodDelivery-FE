@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import restaurantService from '../../../services/restaurant-service';
 import { useNavigate } from 'react-router-dom';
+import restaurantService from '../../../services/restaurant-service';
 
 function MenuManagement() {
   const [restaurants, setRestaurants] = useState([]);
@@ -9,95 +9,236 @@ function MenuManagement() {
   const [activeTab, setActiveTab] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [editingMenu, setEditingMenu] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', description: '' });
+  const [editingMenuItem, setEditingMenuItem] = useState(null);
+  const [menuItemForm, setMenuItemForm] = useState({
+    name: '',
+    description: '',
+    price: '',
+    portion: '',
+    category: ''
+  });
   const navigate = useNavigate();
 
-
-  // Fetch restaurants on mount
   useEffect(() => {
-    const fetchRestaurants = async () => {
+    async function fetchRestaurants() {
       try {
-        const response = await restaurantService.getMyRestaurants();
-        const restaurantList = response.data.restaurants;
-        setRestaurants(restaurantList);
-
-        if (restaurantList.length > 0) {
-          setSelectedRestaurant(restaurantList[0]._id);
+        const { data } = await restaurantService.getMyRestaurants();
+        const list = data.restaurants || [];
+        setRestaurants(list);
+        if (list.length) {
+          setSelectedRestaurant(list[0]._id);
         } else {
-          setLoading(false);
           setError('No restaurants found. Please create one.');
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load restaurants.');
+      } finally {
         setLoading(false);
       }
-    };
-
+    }
     fetchRestaurants();
   }, []);
 
-  // Fetch menus when selected restaurant changes
   useEffect(() => {
     if (!selectedRestaurant) return;
-
-    const fetchMenus = async () => {
+    async function fetchMenus() {
       setLoading(true);
       try {
-        const response = await restaurantService.getMenus(selectedRestaurant);
-        setMenus(response.data);
-        setLoading(false);
-      } catch (err) {
+        const { data } = await restaurantService.getMenus(selectedRestaurant);
+        setMenus(data);
+      } catch {
         setError('Failed to load menus.');
+      } finally {
         setLoading(false);
       }
-    };
-
+    }
     fetchMenus();
   }, [selectedRestaurant]);
 
-  const handleRestaurantChange = (e) => {
-    setSelectedRestaurant(e.target.value);
+  const handleRestaurantChange = (e) => setSelectedRestaurant(e.target.value);
+
+  const filteredMenus = (() => {
+    if (activeTab === 'active') return menus.filter(menu => menu.status === 'active');
+    if (activeTab === 'drafts') return menus.filter(menu => menu.status === 'draft');
+    return menus;
+  })();
+
+  const counts = {
+    all: menus.length,
+    active: menus.filter(m => m.status === 'active').length,
+    drafts: menus.filter(m => m.status === 'draft').length,
   };
 
-  const getFilteredMenus = () => {
-    switch (activeTab) {
-      case 'active':
-        return menus.filter(menu => menu.status === 'active');
-      case 'drafts':
-        return menus.filter(menu => menu.status === 'draft');
-      default:
-        return menus;
+  const selectedRestaurantName = restaurants.find(r => r._id === selectedRestaurant)?.name || '';
+
+  // Menu editing functions
+  const handleEditMenuClick = (menu) => {
+    setEditingMenu(menu);
+    setEditForm({ name: menu.name, description: menu.description });
+    // Close any open menu item editing
+    setEditingMenuItem(null);
+  };
+
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditFormSubmit = async () => {
+    if (!editingMenu) return;
+    try {
+      const updated = {
+        name: editForm.name,
+        description: editForm.description,
+      };
+      await restaurantService.updateMenu(editingMenu._id, updated);
+      setMenus(prev =>
+        prev.map(m => (m._id === editingMenu._id ? { ...m, ...updated } : m))
+      );
+      handleCancelEdit();
+    } catch {
+      alert('Failed to update menu.');
     }
   };
 
-  const filteredMenus = getFilteredMenus();
+  const handleDeleteMenu = async (menuId) => {
+    if (!window.confirm('Are you sure you want to delete this menu?')) return;
+    try {
+      await restaurantService.deleteMenu(selectedRestaurant, menuId);
+      setMenus(prev => prev.filter(m => m._id !== menuId));
+    } catch {
+      alert('Failed to delete menu.');
+    }
+  };
 
-  const allCount = menus.length;
-  const activeCount = menus.filter(menu => menu.status === 'active').length;
-  const draftCount = menus.filter(menu => menu.status === 'draft').length;
+  const handleCancelEdit = () => {
+    setEditingMenu(null);
+    setEditForm({ name: '', description: '' });
+  };
 
-  console.log("selected restaurant id : ",selectedRestaurant)
+  // Menu Item editing functions
+  const handleEditMenuItemClick = (menuId, menuItem) => {
+    // Close any menu editing that might be open
+    setEditingMenu(null);
+    
+    setEditingMenuItem({
+      menuId,
+      itemId: menuItem._id
+    });
+    
+    setMenuItemForm({
+      name: menuItem.name,
+      description: menuItem.description,
+      price: menuItem.price,
+      portion: menuItem.portion,
+      category: menuItem.category
+    });
+  };
 
-  const selectedRestaurantName = restaurants.find(
-    r => r._id === selectedRestaurant
-  )?.name;
+  const handleMenuItemFormChange = (e) => {
+    const { name, value } = e.target;
+    setMenuItemForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleMenuItemFormSubmit = async () => {
+    if (!editingMenuItem) return;
+    
+    try {
+      const { menuId, itemId } = editingMenuItem;
+      
+      // Validate form fields
+      if (!menuItemForm.name || !menuItemForm.price) {
+        alert('Name and price are required fields.');
+        return;
+      }
+      
+      // Format the updated item data
+      const updatedItem = {
+        ...menuItemForm,
+        price: Number(menuItemForm.price)
+      };
+      
+      // Call API to update the menu item
+      await restaurantService.updateMenuItem(itemId, updatedItem);
+      
+      // Update local state
+      setMenus(prevMenus => 
+        prevMenus.map(menu => {
+          if (menu._id === menuId) {
+            return {
+              ...menu,
+              menu_items: menu.menu_items.map(item => 
+                item._id === itemId ? { ...item, ...updatedItem } : item
+              )
+            };
+          }
+          return menu;
+        })
+      );
+      
+      handleCancelMenuItemEdit();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update menu item.');
+    }
+  };
+
+  const handleDeleteMenuItem = async (menuId, itemId) => {
+    if (!window.confirm('Are you sure you want to delete this menu item?')) return;
+    
+    try {
+      await restaurantService.deleteMenuItem(menuId, itemId);
+      
+      // Update local state
+      setMenus(prevMenus => 
+        prevMenus.map(menu => {
+          if (menu._id === menuId) {
+            return {
+              ...menu,
+              menu_items: menu.menu_items.filter(item => item._id !== itemId)
+            };
+          }
+          return menu;
+        })
+      );
+    } catch {
+      alert('Failed to delete menu item.');
+    }
+  };
+
+  const handleCancelMenuItemEdit = () => {
+    setEditingMenuItem(null);
+    setMenuItemForm({
+      name: '',
+      description: '',
+      price: '',
+      portion: '',
+      category: ''
+    });
+  };
+
+  // Function to add a new menu item
+  const handleAddMenuItem = (menuId) => {
+    navigate(`/restaurant/menu/${menuId}/add-item`);
+  };
 
   return (
     <div className="p-6">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Menu Management</h1>
           <p className="text-gray-600 mt-1">Manage all your restaurant menus</p>
         </div>
-
-        <button 
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md flex items-center transition-colors"
-          onClick={() => {
-            if (selectedRestaurant) {
-              navigate(`/restaurant/menu/create/${selectedRestaurant}`);
-            } else {
-              alert('Please select a restaurant first.');
-            }
-          }}
+        <button
+          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md flex items-center transition"
+          onClick={() =>
+            selectedRestaurant
+              ? navigate(`/restaurant/menu/create/${selectedRestaurant}`)
+              : alert('Please select a restaurant first.')
+          }
         >
           <span className="mr-1">+</span> Add New Menu
         </button>
@@ -114,17 +255,17 @@ function MenuManagement() {
               id="restaurant-select"
               value={selectedRestaurant}
               onChange={handleRestaurantChange}
-              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              disabled={loading || restaurants.length === 0}
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+              disabled={loading || !restaurants.length}
             >
               {restaurants.length === 0 ? (
-                <option value="">No restaurants available</option>
+                <option>No restaurants available</option>
               ) : (
                 <>
                   <option value="" disabled>Choose a restaurant</option>
-                  {restaurants.map(restaurant => (
-                    <option key={restaurant._id} value={restaurant._id}>
-                      {restaurant.name}
+                  {restaurants.map(r => (
+                    <option key={r._id} value={r._id}>
+                      {r.name}
                     </option>
                   ))}
                 </>
@@ -137,15 +278,13 @@ function MenuManagement() {
               <h3 className="text-blue-800 font-medium">
                 Viewing menus for: {selectedRestaurantName}
               </h3>
-              <p className="text-blue-600 text-sm">
-                {allCount} total menus found
-              </p>
+              <p className="text-blue-600 text-sm">{counts.all} total menus</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Tab Navigation */}
+      {/* Tabs */}
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8">
           {['all', 'active', 'drafts'].map(tab => (
@@ -158,60 +297,224 @@ function MenuManagement() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)} Menus (
-                {tab === 'all'
-                  ? allCount
-                  : tab === 'active'
-                  ? activeCount
-                  : draftCount}
-              )
+              {tab.charAt(0).toUpperCase() + tab.slice(1)} Menus ({counts[tab]})
             </button>
           ))}
         </nav>
       </div>
 
-      {/* Loading and Error */}
-      {loading && (
+      {/* Content */}
+      {loading ? (
         <div className="flex justify-center items-center h-40">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
         </div>
-      )}
-
-      {error && (
+      ) : error ? (
         <div className="text-red-500 text-center mb-4">{error}</div>
-      )}
-
-      {/* Menu List */}
-      {!loading && !error && filteredMenus.length === 0 && (
+      ) : filteredMenus.length === 0 ? (
         <div className="text-center text-gray-500 mt-10">No menus found.</div>
-      )}
-
-      {!loading && filteredMenus.length > 0 && (
+      ) : (
         <div className="grid gap-6">
           {filteredMenus.map(menu => (
             <div key={menu._id} className="bg-white shadow rounded-lg p-5">
-              <h2 className="text-xl font-semibold text-gray-800 mb-1">{menu.name}</h2>
-              <p className="text-gray-600 mb-3">{menu.description}</p>
-
-              {menu.menu_items && menu.menu_items.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-                  {menu.menu_items.map(item => (
-                    <div key={item._id} className="border p-4 rounded-md shadow-sm">
-                      <img
-                        src={item.images?.[0]}
-                        alt={item.name}
-                        className="w-full h-40 object-cover rounded-md mb-3"
-                      />
-                      <h3 className="text-md font-bold text-gray-800">{item.name}</h3>
-                      <p className="text-sm text-gray-600">{item.description}</p>
-                      <p className="text-sm text-gray-600">Portion: {item.portion}</p>
-                      <p className="text-sm text-gray-600">Category: {item.category}</p>
-                      <p className="text-orange-600 font-semibold mt-1">Rs. {item.price}</p>
-                    </div>
-                  ))}
+              {editingMenu?._id === menu._id ? (
+                <div>
+                  <input
+                    name="name"
+                    value={editForm.name}
+                    onChange={handleEditFormChange}
+                    className="w-full mb-3 px-3 py-2 border border-gray-300 rounded-md"
+                    placeholder="Menu Name"
+                  />
+                  <textarea
+                    name="description"
+                    value={editForm.description}
+                    onChange={handleEditFormChange}
+                    className="w-full mb-3 px-3 py-2 border border-gray-300 rounded-md"
+                    placeholder="Menu Description"
+                  />
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleEditFormSubmit}
+                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <p className="text-gray-500">No items in this menu.</p>
+                <>
+                  <div className="flex justify-between items-center mb-4">
+                    <div>
+                      <h2 className="text-xl font-semibold text-gray-800 mb-1">{menu.name}</h2>
+                      <p className="text-gray-600">{menu.description}</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => handleEditMenuClick(menu)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
+                      >
+                        Edit Menu
+                      </button>
+                      <button
+                        onClick={() => handleAddMenuItem(menu._id)}
+                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm"
+                      >
+                        Add Item
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMenu(menu._id)}
+                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm"
+                      >
+                        Delete Menu
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <h3 className="text-lg font-medium text-gray-700 mb-3">Menu Items</h3>
+                    {menu.menu_items?.length ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {menu.menu_items.map(item => (
+                          <div key={item._id} className="border p-4 rounded-md shadow-sm relative">
+                            {editingMenuItem && editingMenuItem.menuId === menu._id && editingMenuItem.itemId === item._id ? (
+                              <div className="p-3 bg-gray-50 rounded">
+                                <h4 className="text-lg font-semibold mb-3">Edit Menu Item</h4>
+                                <div className="space-y-3">
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Name
+                                    </label>
+                                    <input
+                                      name="name"
+                                      value={menuItemForm.name}
+                                      onChange={handleMenuItemFormChange}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                      placeholder="Item Name"
+                                    />
+                                  </div>
+                                  
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Description
+                                    </label>
+                                    <textarea
+                                      name="description"
+                                      value={menuItemForm.description}
+                                      onChange={handleMenuItemFormChange}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                      placeholder="Item Description"
+                                    />
+                                  </div>
+                                  
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Price (Rs.)
+                                    </label>
+                                    <input
+                                      name="price"
+                                      type="number"
+                                      value={menuItemForm.price}
+                                      onChange={handleMenuItemFormChange}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                      placeholder="Price"
+                                    />
+                                  </div>
+                                  
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Portion
+                                    </label>
+                                    <input
+                                      name="portion"
+                                      value={menuItemForm.portion}
+                                      onChange={handleMenuItemFormChange}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                      placeholder="Portion (e.g., Small, Medium, Large)"
+                                    />
+                                  </div>
+                                  
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Category
+                                    </label>
+                                    <input
+                                      name="category"
+                                      value={menuItemForm.category}
+                                      onChange={handleMenuItemFormChange}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                      placeholder="Category"
+                                    />
+                                  </div>
+                                  
+                                  <div className="flex gap-3 pt-2">
+                                    <button
+                                      onClick={handleMenuItemFormSubmit}
+                                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex-1"
+                                    >
+                                      Save
+                                    </button>
+                                    <button
+                                      onClick={handleCancelMenuItemEdit}
+                                      className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm flex-1"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                {item.images && item.images.length > 0 && (
+                                  <img
+                                    src={item.images[0]}
+                                    alt={item.name}
+                                    className="w-full h-40 object-cover rounded-md mb-3"
+                                  />
+                                )}
+                                <h3 className="text-md font-bold text-gray-800">{item.name}</h3>
+                                <p className="text-sm text-gray-600">{item.description}</p>
+                                <p className="text-sm text-gray-600">Portion: {item.portion}</p>
+                                <p className="text-sm text-gray-600">Category: {item.category}</p>
+                                <p className="text-orange-600 font-semibold mt-1">Rs. {item.price}</p>
+                                
+                                <div className="flex gap-2 mt-3">
+                                  <button
+                                    onClick={() => handleEditMenuItemClick(menu._id, item)}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs flex-1"
+                                  >
+                                    Edit Item
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteMenuItem(menu._id, item._id)}
+                                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs flex-1"
+                                  >
+                                    Delete Item
+                                  </button>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center text-gray-500 py-8 border border-dashed rounded-lg">
+                        <p>No items in this menu.</p>
+                        <button
+                          onClick={() => handleAddMenuItem(menu._id)}
+                          className="mt-2 text-blue-500 hover:text-blue-700 font-medium"
+                        >
+                          + Add your first menu item
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           ))}

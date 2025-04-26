@@ -90,6 +90,20 @@ class RestaurantService {
   getOrders(restaurantId){
     return orderHTTP.get(`/orders/${restaurantId}`)
   }
+
+  updateRestaurant(restaurantId, formdata){
+    
+    return HTTP.put(`/restaurant/edit/${restaurantId}`,formdata)
+  }
+  updateMenu(menuId,formdata){
+    
+   
+    return HTTP.put(`/menu/${menuId}`,formdata)
+  }
+  updateMenuItem(itemId,formdata){
+    return HTTP.put(`/menu-item/${itemId}`,formdata)
+  }
+  
   
 }
 
