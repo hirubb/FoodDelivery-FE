@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import orderService from "../../services/order-service";
 import { jwtDecode } from "jwt-decode";
-
+import OrderLocationMap from "../../components/OrderManagement/OrderLocationMap";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
 
   const getCustomerIdFromToken = () => {
     const token = localStorage.getItem("token");
@@ -46,6 +47,14 @@ const OrdersPage = () => {
     fetchOrders();
   }, []);
 
+  const toggleOrderDetails = (orderId) => {
+    if (expandedOrderId === orderId) {
+      setExpandedOrderId(null); // collapse if already expanded
+    } else {
+      setExpandedOrderId(orderId); // expand this order
+    }
+  };
+
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h2 className="text-2xl font-semibold mb-4">Your Orders</h2>
@@ -61,21 +70,46 @@ const OrdersPage = () => {
         <ul className="space-y-4">
           {orders.map((order) => (
             <li key={order._id} className="border rounded-xl p-4 shadow">
-              <h3 className="text-lg font-medium mb-2">
-                Order ID: {order._id}
-              </h3>
-              <p><strong>Total Amount:</strong> ${order.totalAmount}</p>
-              <p><strong>Status:</strong> {order.status}</p>
-              <div className="mt-2">
-                <p className="font-semibold">Items:</p>
-                <ul className="list-disc pl-5">
-                  {order.items.map((item, idx) => (
-                    <li key={idx}>
-                      {item.name} x {item.quantity} — ${item.price}
-                    </li>
-                  ))}
-                </ul>
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-medium">
+                  Order ID: {order._id}
+                </h3>
+                <button 
+                  onClick={() => toggleOrderDetails(order._id)}
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  {expandedOrderId === order._id ? 'Hide Details' : 'Show Details'}
+                </button>
               </div>
+              
+              <div className="mt-2">
+                <p><strong>Total Amount:</strong> ${order.totalAmount}</p>
+                <p><strong>Status:</strong> {order.status}</p>
+              </div>
+              
+              {/* Expanded order details */}
+              {expandedOrderId === order._id && (
+                <div className="mt-4 border-t pt-4">
+                  <div className="mb-4">
+                    <p className="font-semibold mb-2">Items:</p>
+                    <ul className="list-disc pl-5">
+                      {order.items.map((item, idx) => (
+                        <li key={idx}>
+                          {item.name || `Item ${idx+1}`} x {item.quantity} — ${item.price}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Location Map */}
+                  {order.deliveryLocation && (
+                    <div className="mt-4">
+                      <h4 className="font-medium mb-2">Delivery Location</h4>
+                      <OrderLocationMap location={order.deliveryLocation} />
+                    </div>
+                  )}
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -84,4 +118,4 @@ const OrdersPage = () => {
   );
 };
 
-export default OrdersPage;
+export default OrdersPage
