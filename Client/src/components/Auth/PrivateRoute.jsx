@@ -15,7 +15,7 @@ export default function PrivateRoute({ children, roles }) {
     if (roles && roles.length > 0) {
         if (!user || !roles.includes(user.role)) {
             // Redirect to unauthorized or home page
-            return <Navigate to="/" replace />;
+            return <Navigate to="/unauthorized" replace />;
         }
     }
 
