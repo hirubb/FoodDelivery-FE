@@ -138,21 +138,9 @@ const AppContent = () => {
             }
           />
 
-          <Route path="/checkout" element={
-            <PrivateRoute roles={["Customer"]}>
-            <CheckoutPage />
-          </PrivateRoute>
-            } />
-          <Route path="/payment/success" element={
-            <PrivateRoute roles={["Customer"]}>
-            <PaymentSuccess />
-          </PrivateRoute>
-            } />
-          <Route path="/payment/cancel" element={
-            <PrivateRoute roles={["Customer"]}>
-             <CheckoutPage />
-          </PrivateRoute>
-           } />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/cancel" element={<CheckoutPage />} />
 
           <Route
             path="/admin-dashboard"
@@ -163,11 +151,7 @@ const AppContent = () => {
             }
           />
 
-          <Route path="/customer-dashboard" element={
-            <PrivateRoute roles={["Customer"]}>
-            <CustomerDashboard />
-          </PrivateRoute>
-            } />
+          <Route path="/customer-dashboard" element={<CustomerDashboard />} />
           
           {/* <Route path="/test-payment" element={<TestPayment />} /> */}
 
