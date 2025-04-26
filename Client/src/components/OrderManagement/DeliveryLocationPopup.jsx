@@ -39,21 +39,25 @@ function DeliveryLocationPopup({ isOpen, onClose, onSave, initialLocation }) {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-
+  
     try {
       setIsLoading(true);
-      
-      // In a real app, you would call a geocoding service here
-      // For now, we'll simulate a location search with a timeout
+  
+      // Simulate location search with a timeout
       setTimeout(() => {
-        // Simulated result - in real app, get this from geocoding API
+        // Center coordinates for Malabe, Sri Lanka
+        const malabeLat = 6.9147;
+        const malabeLng = 79.9710;
+  
+        // Generate small random variations around Malabe
         const mockLocation = {
-          latitude: 6.9271 + Math.random() * 0.05,  // Random coords near Colombo
-          longitude: 79.8612 + Math.random() * 0.05,
+          latitude: malabeLat + (Math.random() - 0.5) * 0.01,  // ~0.005 degree variation
+          longitude: malabeLng + (Math.random() - 0.5) * 0.01,
           address: searchQuery,
           timestamp: Date.now(),
           source: "search"
         };
+        
         setSelectedLocation(mockLocation);
         setIsLoading(false);
       }, 1000);
@@ -62,6 +66,7 @@ function DeliveryLocationPopup({ isOpen, onClose, onSave, initialLocation }) {
       setIsLoading(false);
     }
   };
+  
 
   const handleUseCurrentLocation = () => {
     setIsLoading(true);
