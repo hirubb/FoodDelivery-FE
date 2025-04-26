@@ -140,7 +140,7 @@ function CartPage() {
       localStorage.setItem('recentOrders', JSON.stringify(recentOrders.slice(0, 10))); // Keep last 10 orders
       
       alert("Order Placed Successfully! Your order ID is: " + orderId);
-      navigate("/orders");
+      navigate("/checkout", { state: { orderId } });
     } catch (err) {
       console.error("Order placement failed:", err);
       
