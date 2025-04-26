@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, ArrowLeft, ShoppingBag } from 'lucide-react';
+import { Trash2, ArrowLeft, ShoppingBag, MapPin } from 'lucide-react';
 import orderService from '../../services/order-service';
 
 function CartPage() {
@@ -9,6 +9,7 @@ function CartPage() {
   const [loading, setLoading] = useState(true);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderError, setOrderError] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
 
   const getImageUrl = (path) => {
     if (!path) return '/default-food.jpg';
@@ -23,17 +24,46 @@ function CartPage() {
       setCart(JSON.parse(savedCart));
     }
     
+    // Get user location from localStorage (set in RestaurantMenuPage)
+    const locationData = localStorage.getItem('userLocation');
+    if (locationData) {
+      setUserLocation(JSON.parse(locationData));
+    } else {
+      // If location isn't available, try to get it now
+      getCurrentLocation();
+    }
+    
     // Check if user is authenticated
     const token = localStorage.getItem('token');
     if (!token) {
-      // If not authenticated, redirect to login page
       setOrderError("You need to be logged in to view your cart");
-      // You could also automatically redirect to login
-      // navigate('/login', { state: { returnUrl: '/cart' } });
     }
     
     setLoading(false);
   }, []);
+
+  // Function to get current location if not already set
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const locationData = {
+            latitude,
+            longitude,
+            accuracy: position.coords.accuracy,
+            timestamp: position.timestamp
+          };
+          
+          setUserLocation(locationData);
+          localStorage.setItem('userLocation', JSON.stringify(locationData));
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    }
+  };
 
   const updateCart = (newCart) => {
     setCart(newCart);
@@ -85,10 +115,12 @@ function CartPage() {
     
     const totalAmount = calculateTotal();
     
+    // Include location data in the order
     const orderData = {
       restaurantId,
       items: orderItems,
-      totalAmount
+      totalAmount,
+      deliveryLocation: userLocation
     };
     
     try {
@@ -157,6 +189,26 @@ function CartPage() {
           {orderError}
         </div>
       )}
+      
+      {/* Location status */}
+      <div className={`flex items-center p-3 rounded mb-6 ${userLocation ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+        <MapPin size={20} className="mr-2" />
+        {userLocation ? (
+          <div>
+            <span className="font-semibold">Delivery location:</span> Location detected for delivery
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            <span>No delivery location provided</span>
+            <button 
+              onClick={getCurrentLocation}
+              className="text-blue-600 underline text-sm mt-1"
+            >
+              Share your location for delivery
+            </button>
+          </div>
+        )}
+      </div>
       
       <div className="space-y-4">
         {cart.map((item) => (
