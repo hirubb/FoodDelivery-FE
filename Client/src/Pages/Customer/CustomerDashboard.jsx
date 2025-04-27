@@ -184,9 +184,9 @@ function CustomerDashboard() {
       {/* Main Content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm">
+        <header className="bg-[#0C1A39] shadow-sm">
           <div className="flex items-center justify-between px-4 py-3">
-            <h1 className="text-xl font-semibold text-gray-800">
+            <h1 className="text-xl font-semibold text-white-800">
               {activeTab === "welcome" && "Welcome to Ambula.lk"}
               {activeTab === "profile" && "My Profile"}
               {activeTab === "history" && "Order History"}
@@ -238,10 +238,10 @@ function CustomerDashboard() {
                   </div>
                 )}
                 <div className="hidden ml-3 md:block">
-                  <p className="text-sm font-medium text-gray-800">
+                  <p className="text-sm font-medium text-white-800">
                     {customerData ? `${customerData.first_name} ${customerData.last_name}` : "Loading..."}
                   </p>
-                  <p className="text-xs text-gray-500">Customer</p>
+                  <p className="text-xs text-white-500">Customer</p>
                 </div>
               </div>
             </div>
