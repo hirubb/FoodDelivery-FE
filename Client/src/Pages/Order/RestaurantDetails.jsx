@@ -289,10 +289,30 @@ function RestaurantMenuPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <h1 className="text-4xl font-bold mb-2">{restaurant?.name}</h1>
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-4 text-sm flex-wrap">
+            {/* Rating with stars in banner */}
             <div className="flex items-center gap-1">
-              <Star size={16} className="text-yellow-400" />
-              <span>{restaurant?.averageRating || "N/A"}</span>
+              <div className="flex">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star 
+                    key={i} 
+                    size={16} 
+                    className={`${i < Math.floor(restaurant?.averageRating || 0) 
+                      ? "text-yellow-400 fill-yellow-400" 
+                      : "text-gray-300"}`} 
+                  />
+                ))}
+              </div>
+              <span>{restaurant?.averageRating?.toFixed(1) || "N/A"}</span>
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsRatingExpanded(true);
+                }}
+                className="text-xs underline hover:text-yellow-300 ml-1"
+              >
+                Rate
+              </button>
             </div>
             <div className="flex items-center gap-1">
               <Clock size={16} />
