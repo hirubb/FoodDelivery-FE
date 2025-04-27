@@ -1,6 +1,6 @@
-import { HTTP, AuthHTTP,AdminHTTP } from "./httpCommon-service";
+import { HTTP, AuthHTTP,AdminHTTP ,orderHTTP} from "./httpCommon-service";
 
-
+;
 
 class RestaurantService {
   
@@ -61,7 +61,6 @@ class RestaurantService {
     return HTTP.get("/restaurant/top-rated");
   }
   updateRestaurantOwner(id, data){
-    console.log("id : ", id)
     return HTTP.put(`/restaurant-owners/edit/${id}`,
       data,
     );
@@ -73,9 +72,44 @@ class RestaurantService {
   getSystemOffers(){
     return AdminHTTP.get("/system-offers");
   }
+  editRestaurant(formdata,restaurant_id){
+    return HTTP.put(`/restaurant/${restaurant_id}`,formdata,
+      {
+        headers:{
+          "Content-Type": "multipart/form-data",
+        }
+      }
+    )
+  }
+  getMyRestaurantOrders(restaurantId){
+    return HTTP.get(`/restaurant/get-orders/${restaurantId}`);
+  }
+
   
+  getOrders(restaurantId){
+    return orderHTTP.get(`/orders/${restaurantId}`)
+  }
 
+  updateRestaurant(restaurantId, formdata){
+    
+    return HTTP.put(`/restaurant/edit/${restaurantId}`,formdata)
+  }
+  updateMenu(menuId,formdata){
+    
+   
+    return HTTP.put(`/menu/${menuId}`,formdata)
+  }
+  updateMenuItem(itemId,formdata){
+    return HTTP.put(`/menu-item/${itemId}`,formdata)
+  }
 
+  getIncome(restaurantId,formdata){
+    return orderHTTP.post(`/orders/getIncome/${restaurantId}`,
+      formdata
+    )
+  }
+
+  
   
 }
 

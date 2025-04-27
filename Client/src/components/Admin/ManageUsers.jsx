@@ -15,6 +15,9 @@ const ManageUsers = () => {
     setLoading(true);
     try {
       const response = await adminService.getAllCustomers();
+      console.log("response.data.customers.users : ",response.data.customers.users)
+
+  
       
       const data = response.data.customers.users;
       setcustomers(data);
@@ -33,18 +36,14 @@ const ManageUsers = () => {
     }
     
     try {
-      const response = await adminService.deleteRestaurantOwner(id);
-      
-      if (!response.ok) throw new Error('Failed to delete restaurant owner');
-      
-      // Update the local state
-      setcustomers(customers.filter(owner => owner.id !== id));
-      
-      // Show success notification
+      await adminService.deteleCustomer(id); // fixed typo too
       alert('Owner deleted successfully!');
       
+      setcustomers(customers.filter(owner => owner.id !== id));
+      
     } catch (err) {
-      setError(err.message);
+      console.error('Error deleting customer:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to delete customer');
     }
   };
 
@@ -102,13 +101,7 @@ const ManageUsers = () => {
                   <td className="py-4 px-4 text-right">
                     <div className="flex justify-end space-x-3">
                       <button
-                        onClick={() => handleEdit(owner)}
-                        className="text-[#FC8A06] hover:text-[#e67a00] transition-colors font-medium"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(owner.id)}
+                        onClick={() => handleDelete(owner._id)}
                         className="text-red-600 hover:text-red-800 transition-colors font-medium"
                       >
                         Delete

@@ -2,29 +2,36 @@ import React, { createContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import restaurantService from "../services/restaurant-service";
 import adminService from "../services/admin-service";
-import customerService from "../services/customer-service"
-// Create the context
+import customerService from "../services/customer-service";
+
 export const UserContext = createContext();
 
-// Create a provider component
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState({
     username: "",
     userId: "",
     loggedIn: false,
     profile_image: "",
+    role: "", // Add role here
   });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
 
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setUser({ userId: decoded.userId, username: decoded.username, loggedIn: true });
+        setUser((prevUser) => ({
+          ...prevUser,
+          userId: decoded.userId,
+          username: decoded.username,
+          loggedIn: true,
+          role: role || "", // Set role here
+        }));
 
         // Fetch full user info including profile image
-        fetchUsername(decoded.userId);
+        fetchUsername(decoded.userId, role);
       } catch (err) {
         console.error("Invalid token:", err);
       }
@@ -33,24 +40,23 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  const fetchUsername = async (userId) => {
+  const fetchUsername = async (userId, role) => {
     try {
-      const role = localStorage.getItem("role");
       let response = null;
 
       if (role === "Restaurant Owner") {
         response = await restaurantService.getRestaurantOwner(userId);
       } else if (role === "Admin") {
         response = await adminService.getAdminProfile(userId);
-      }else if(role === "Customer"){
+      } else if (role === "Customer") {
         response = await customerService.getCustomerProfile(userId);
       }
 
       if (response && response.data) {
-        const userData = response.data.owner || response.data.admin || response.data.customer ||{};
+        const userData = response.data.owner || response.data.admin || response.data.customer || {};
         setUser((prevUser) => ({
           ...prevUser,
-          username: userData.username || "",
+          username: userData.username || prevUser.username,
           profile_image: userData.profile_image || "",
         }));
       } else {

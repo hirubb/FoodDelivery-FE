@@ -8,14 +8,16 @@ import {
   FaSignOutAlt,
   FaAddressBook,
   FaCcAmazonPay,
+  FaAd,
 } from "react-icons/fa";
 
 import OwnerProfileData from "../../../components/ResturantManagement/profile/OwnerProfile";
 import RestaurantDetails from "../../../components/ResturantManagement/profile/RestaurantDetails";
 import RestaurantOrders from "../../../components/ResturantManagement/profile/RestaurantOrders";
-import EarningsOverview from "../../../components/ResturantManagement/profile/EarningsOverview";
+import Analytics from "../../../components/ResturantManagement/profile/Analytics";
 import RestaurantPaymentInfo from "../../../components/ResturantManagement/profile/RestaurantPaymentInfo";
 import MenuManagement from "../../../components/ResturantManagement/profile/MenuManagement";
+import RestaurantOffers from "../../../components/ResturantManagement/profile/RestaurantOffers";
 
 import Logo from "../../../assets/logo-color.png";
 
@@ -37,7 +39,7 @@ function RestaurantOwnerDashboard() {
           <nav className="px-2 mt-8">
             <SidebarItem
               icon={<FaChartPie />}
-              title="Dashboard"
+              title="Analytics"
               active={activeTab === "dashboard"}
               onClick={() => setActiveTab("dashboard")}
             />
@@ -54,18 +56,25 @@ function RestaurantOwnerDashboard() {
               onClick={() => setActiveTab("restaurant")}
             />
             <SidebarItem
+              icon={<FaAddressBook />} // You can change this icon
+              title="Menus"
+              active={activeTab === "menu"}
+              onClick={() => setActiveTab("menu")}
+            />
+             <SidebarItem
+              icon={<FaAd/>} // You can change this icon
+              title="Offers"
+              active={activeTab === "offers"}
+              onClick={() => setActiveTab("offers")}
+            />
+            <SidebarItem
               icon={<FaClipboardList />}
               title="Orders"
               active={activeTab === "orders"}
               onClick={() => setActiveTab("orders")}
             />
 
-            <SidebarItem
-              icon={<FaChartPie />}
-              title="Earnings"
-              active={activeTab === "earnings"}
-              onClick={() => setActiveTab("earnings")}
-            />
+           
 
             <SidebarItem
               icon={<FaCcAmazonPay/>} // You can change this icon
@@ -73,12 +82,7 @@ function RestaurantOwnerDashboard() {
               active={activeTab === "payment"}
               onClick={() => setActiveTab("payment")}
             />
-            <SidebarItem
-              icon={<FaAddressBook />} // You can change this icon
-              title="Menus"
-              active={activeTab === "menu"}
-              onClick={() => setActiveTab("menu")}
-            />
+            
           </nav>
         </div>
 
@@ -98,18 +102,20 @@ function RestaurantOwnerDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden bg-[#03081F] ">
         {/* Header */}
-        <header className="bg-white shadow-sm">
-          <div className="flex items-center justify-between px-4 py-3">
-            <h1 className="text-xl font-semibold text-gray-800">
-              {activeTab === "dashboard" && "Dashboard Overview"}
+        <header className=" shadow-sm bg-[#03081F]">
+          <div className="flex items-center justify-between px-4 py-3 bg-[#03081F]">
+            <h1 className="text-xl font-semibold text-white">
+              {activeTab === "dashboard" && "Analytics Overview"}
               {activeTab === "profile" && "My Profile"}
               {activeTab === "restaurant" && "Restaurant Details"}
-              {activeTab === "orders" && "Orders Management"}
-              {activeTab === "earnings" && "Earnings Overview"}
-              {activeTab === "payment" && "Payment Info"}
               {activeTab === "menu" && "Menus"}
+              {activeTab === "offers" && "Offers"}
+              {activeTab === "orders" && "Orders Management"}
+             
+              {activeTab === "payment" && "Payment Info"}
+              
             </h1>
 
             <div className="flex items-center space-x-4">
@@ -136,17 +142,14 @@ function RestaurantOwnerDashboard() {
 
         {/* Content Area */}
         <main className="flex-1 p-4 overflow-y-auto">
-          {activeTab === "dashboard" && (
-            <div className="mt-10 text-lg text-center text-gray-600">
-              Welcome to your restaurant dashboard!
-            </div>
-          )}
+          {activeTab === "dashboard" && <Analytics/>}
           {activeTab === "profile" && <OwnerProfileData />}
           {activeTab === "restaurant" && <RestaurantDetails />}
-          {activeTab === "orders" && <RestaurantOrders />}
-          {activeTab === "earnings" && <EarningsOverview />}
-          {activeTab === "payment" && <RestaurantPaymentInfo />}
           {activeTab === "menu" && <MenuManagement />}
+          {activeTab === "offers" && <RestaurantOffers />}
+          {activeTab === "orders" && <RestaurantOrders />}
+          {activeTab === "payment" && <RestaurantPaymentInfo />}
+          
         </main>
       </div>
     </div>

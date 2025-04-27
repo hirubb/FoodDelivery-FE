@@ -1,80 +1,153 @@
 import React, { useEffect, useState } from "react";
+import restaurantService from "../../../services/restaurant-service";
 
 const RestaurantOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedRestaurant, setSelectedRestaurant] = useState("");
+  const [restaurants, setRestaurants] = useState([]);
+  const [error, setError] = useState(null);
 
-  // You can replace this with actual API call
   useEffect(() => {
-    const fetchOrders = async () => {
-      // Mock delay for realism
-      setTimeout(() => {
-        setOrders([
-          {
-            id: "ORD12345",
-            customer: "Jane Doe",
-            items: ["Burger", "Fries"],
-            status: "Pending",
-            time: "Just now",
-          },
-          {
-            id: "ORD12344",
-            customer: "John Smith",
-            items: ["Pizza", "Coke"],
-            status: "Preparing",
-            time: "10 minutes ago",
-          },
-        ]);
-        setLoading(false);
-      }, 1000);
+    const fetchRestaurants = async () => {
+      try {
+        const response = await restaurantService.getMyRestaurants();
+        const restaurantList = response?.data?.restaurants ?? [];
+        setRestaurants(restaurantList);
+        if (restaurantList.length > 0) {
+          setSelectedRestaurant(restaurantList[0]._id);
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load restaurants.");
+        setRestaurants([]);
+      }
     };
 
-    fetchOrders();
+    fetchRestaurants();
   }, []);
 
+  useEffect(() => {
+    if (selectedRestaurant) {
+      fetchOrders(selectedRestaurant);
+    }
+  }, [selectedRestaurant]);
+
+  const fetchOrders = async (restaurantId) => {
+    setLoading(true);
+    try {
+      const response = await restaurantService.getOrders(restaurantId);
+      const orderList = response.data.status.orders;
+      console.log("response :: ",orderList)
+      setOrders(orderList);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load orders.");
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="max-w-3xl mx-auto mt-12 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-[#FC8A06] mb-6">Order Notifications</h2>
+    <div className="max-w-6xl mx-auto px-6 py-10 text-[#000000] bg-[#ffffff29] rounded-xl shadow-md">
+      <h2 className="text-3xl font-bold text-white mb-6">🍽️ Restaurant Orders</h2>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 text-red-600 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
+
+      <div className="mb-6">
+        <label className="block mb-2 font-semibold text-white">Select a Restaurant:</label>
+        <select
+          className="w-full p-3 border border-[#83858E] rounded-md shadow-sm focus:ring-2 focus:ring-[#FC8A06] outline-none"
+          value={selectedRestaurant}
+          onChange={(e) => setSelectedRestaurant(e.target.value)}
+        >
+          {restaurants.map((rest) => (
+            <option key={rest._id} value={rest._id}>
+              {rest.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {loading ? (
-        <p className="text-center text-gray-500">Loading orders...</p>
+        <div className="text-center text-[#83858E] text-lg">Loading orders...</div>
       ) : orders.length === 0 ? (
-        <p className="text-center text-gray-500">No new orders yet.</p>
+        <div className="text-center text-red-400">No orders found for this restaurant.</div>
       ) : (
-        <ul className="space-y-4">
-          {orders.map((order) => (
-            <li
-              key={order.id}
-              className="p-4 border border-gray-200 rounded-lg hover:shadow-sm transition"
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-semibold text-gray-800">
-                    Order #{order.id}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Customer: {order.customer}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Items: {order.items.join(", ")}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <span
-                    className={`px-3 py-1 text-sm font-medium rounded-full ${
-                      order.status === "Pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-green-100 text-green-800"
-                    }`}
-                  >
-                    {order.status}
-                  </span>
-                  <p className="text-xs text-gray-400 mt-1">{order.time}</p>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm bg-white border border-[#e5e7eb] rounded-md">
+            <thead className="bg-[#FC8A06] text-white text-left">
+              <tr>
+                <th className="p-4">Order ID</th>
+                <th className="p-4">Items</th>
+                <th className="p-4">Total (Rs.)</th>
+                <th className="p-4">Status</th>
+                <th className="p-4">Payment</th>
+                <th className="p-4">Ordered On</th>
+              </tr>
+            </thead>
+            <tbody className="text-[#03081F]">
+              {orders.map((order, index) => {
+                const total = order.items.reduce(
+                  (acc, item) => acc + item.menuItem.price * item.quantity,
+                  0
+                );
+
+                return (
+                  <tr key={index} className="border-t border-gray-200 hover:bg-[#f9fafb]">
+                    <td className="p-4 font-medium">{order.orderId}</td>
+                    <td className="p-4">
+                      <ul className="list-disc pl-5 space-y-1">
+                        {order.items.map((item, idx) => (
+                          <li key={idx}>
+                            <div className="font-semibold">{item.menuItem.name}</div>
+                            <div className="text-sm text-gray-600">
+                              Portion: {item.menuItem.portion} | Qty: {item.quantity} | Rs.{" "}
+                              {item.menuItem.price.toFixed(2)}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td className="p-4">Rs. {total.toFixed(2)}</td>
+                    <td className="p-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
+                          order.status === "Completed"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {order.status || "Pending"}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
+                          order.paymentStatus === "Paid"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-gray-200 text-gray-700"
+                        }`}
+                      >
+                        {order.paymentStatus || "Unpaid"}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      {order.createdAt
+                        ? new Date(order.createdAt).toLocaleString("en-GB")
+                        : "-"}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

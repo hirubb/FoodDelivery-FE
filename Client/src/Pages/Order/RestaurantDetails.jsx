@@ -1,10 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Star, Clock, MapPin, ShoppingCart } from "lucide-react";
-import axios from "axios";
+import { Star, Clock, MapPin, AlertCircle, ShoppingBag, ChevronUp, ChevronDown } from "lucide-react";
 import restaurantService from "../../services/restaurant-service";
-import orderService from "../../services/order-service";
-
+import DeliveryLocationPopup from "../../components/OrderManagement/DeliveryLocationPopup";
 
 function RestaurantMenuPage() {
   const { id } = useParams();
@@ -16,19 +14,20 @@ function RestaurantMenuPage() {
   const [cart, setCart] = useState([]);
   const [notification, setNotification] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [isCartExpanded, setIsCartExpanded] = useState(true);
+  
+  // Location related state
+  const [userLocation, setUserLocation] = useState(null);
+  
+  // Always show location popup on first load
+  const [isLocationPopupOpen, setIsLocationPopupOpen] = useState(true);
 
   const menuIcons = {
-    Appetizers: "🥗",
-    "Main Course": "🍱",
-    Desserts: "🍰",
+    Breakfast: "🥗",
+    kottuspecial: "🍰",
     Beverages: "🥤",
-    Snacks: "🍟",
-    Soups: "🥣",
-    Salads: "🥬",
-    Rice: "🍚",
-    Noodles: "🍜",
-    Pizza: "🍕",
-    Burgers: "🍔",
+    dinner: "🍟",
+    lunch: "🍚",
     Others: "🍽️",
   };
 
@@ -38,6 +37,25 @@ function RestaurantMenuPage() {
       ? path
       : `${import.meta.env.VITE_API_URL}${path}`;
   };
+
+  // Check for saved location on component mount
+  useEffect(() => {
+    const savedLocation = localStorage.getItem('userLocation');
+    
+    if (savedLocation) {
+      try {
+        const parsedLocation = JSON.parse(savedLocation);
+        if (parsedLocation.latitude && parsedLocation.longitude) {
+          setUserLocation(parsedLocation);
+          // Even if we have a saved location, we still show the popup
+          // but we'll pass the saved location as initialLocation
+        }
+      } catch (error) {
+        console.error("Error parsing saved location:", error);
+      }
+    }
+    // No need to set isLocationPopupOpen to true here as it's already true by default
+  }, []);
 
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
@@ -75,7 +93,33 @@ function RestaurantMenuPage() {
     fetchRestaurantDetails();
   }, [id]);
 
+  const handleSaveLocation = (locationData) => {
+    // Set the user location
+    setUserLocation(locationData);
+    
+    // Save to localStorage for future use
+    localStorage.setItem('userLocation', JSON.stringify(locationData));
+    
+    // Show confirmation notification
+    const message = locationData.source === "current" 
+      ? "Using your current location for delivery" 
+      : "Delivery location has been set";
+    
+    setNotification(message);
+    setTimeout(() => setNotification(null), 2000);
+  };
+
   const addToCart = (item) => {
+    // Check if location is set before adding to cart
+    if (!userLocation) {
+      setNotification("Please set your delivery location first");
+      setTimeout(() => {
+        setNotification(null);
+        setIsLocationPopupOpen(true);
+      }, 1500);
+      return;
+    }
+    
     setCart((prevCart) => {
       const existingItem = prevCart.find((i) => i._id === item._id);
 
@@ -95,38 +139,32 @@ function RestaurantMenuPage() {
             images: item.images,
             quantity: 1,
             restaurant_id: id,
+            // Include user's location in the cart item
+            userLocation: userLocation,
           },
         ];
       }
 
       localStorage.setItem("cart", JSON.stringify(newCart));
       setNotification(`${item.name} added to cart`);
-      setTimeout(() => setNotification(null), 2000);
+      
+      // Auto expand cart when adding items
+      setIsCartExpanded(true);
+      
+      setTimeout(() => setNotification(null), 1000);
       return newCart;
     });
   };
 
-
-const placeOrder = async () => {
-  const orderData = {
-    customerId: "cust001",
-    restaurantId: id,
-    items: cart.map(item => ({
-      menuItemId: item._id,
-      quantity: item.quantity
-    }))
+  // Calculate total amount with delivery fee
+  const calculateTotal = () => {
+    const itemsTotal = cart.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+    const deliveryFee = itemsTotal * 0.05; // 5% delivery fee
+    return itemsTotal + deliveryFee;
   };
-
-  try {
-    await orderService.placeOrder(orderData);
-    alert("Order Placed!");
-    navigate("/orders");
-  } catch (err) {
-    console.error(err);
-    alert("Failed to place order");
-  }
-};
-
 
   const displayedItems = menus
     .filter((menu) => !selectedCategory || selectedCategory === menu._id)
@@ -153,12 +191,56 @@ const placeOrder = async () => {
     );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-24">
+      {/* Delivery Location Popup - shows on page load */}
+      <DeliveryLocationPopup 
+        isOpen={isLocationPopupOpen}
+        onClose={() => setIsLocationPopupOpen(false)}
+        onSave={handleSaveLocation}
+        initialLocation={userLocation}
+      />
+
       {notification && (
         <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-out z-50">
           {notification}
         </div>
       )}
+
+      {/* Location Banner/Button */}
+      <div className="mb-4">
+        {userLocation ? (
+          <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between shadow-sm">
+            <div className="flex items-center">
+              <MapPin size={18} className="text-[#FC8A06] mr-2" />
+              <div>
+                <p className="font-medium">Delivery Location</p>
+                <p className="text-sm text-gray-600 truncate max-w-md">
+                  {userLocation.address || `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}`}
+                </p>
+              </div>
+            </div>
+            <button 
+              onClick={() => setIsLocationPopupOpen(true)}
+              className="text-[#FC8A06] hover:text-[#E67E22] text-sm font-medium"
+            >
+              Change
+            </button>
+          </div>
+        ) : (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-center justify-between">
+            <div className="flex items-center">
+              <AlertCircle size={18} className="text-yellow-500 mr-2" />
+              <p className="text-yellow-700">Delivery location not set</p>
+            </div>
+            <button 
+              onClick={() => setIsLocationPopupOpen(true)}
+              className="bg-[#FC8A06] text-white px-3 py-1 rounded hover:bg-[#E67E22] text-sm"
+            >
+              Set Location
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Restaurant Banner */}
       <div className="relative h-[300px] mb-8 rounded-xl overflow-hidden">
@@ -266,33 +348,90 @@ const placeOrder = async () => {
         ))}
       </div>
 
-      {/* Floating Cart + Place Order */}
+      {/* Enhanced Floating Cart */}
       {cart.length > 0 && (
-        <div className="fixed bottom-6 right-6 space-y-2">
-          <button
-            onClick={() => navigate("/cart")}
-            className="bg-[#03081F] text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors flex items-center space-x-2"
-          >
-            <ShoppingCart size={20} />
-            <span>
-              View Cart ({cart.reduce((acc, item) => acc + item.quantity, 0)}{" "}
-              items)
-            </span>
-            <span className="font-bold ml-2">
-              Rs.{" "}
-              {cart.reduce(
-                (acc, item) => acc + item.price * item.quantity,
-                0
-              )}
-            </span>
-          </button>
-
-          <button
-            onClick={placeOrder}
-            className="bg-green-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-700 transition-colors w-full"
-          >
-            Place Order
-          </button>
+        <div className="fixed bottom-6 right-6 z-50">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden w-72 transition-all duration-300">
+            {/* Cart Header with Toggle */}
+            <div 
+              className="bg-[#FC8A06] text-white p-3 flex items-center justify-between cursor-pointer"
+              onClick={() => setIsCartExpanded(!isCartExpanded)}
+            >
+              <div className="flex items-center gap-2">
+                <ShoppingBag size={18} />
+                <span className="font-medium">Your Cart</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="bg-white text-[#FC8A06] rounded-full w-6 h-6 flex items-center justify-center font-bold">
+                  {cart.reduce((acc, item) => acc + item.quantity, 0)}
+                </span>
+                {isCartExpanded ? (
+                  <ChevronDown size={18} />
+                ) : (
+                  <ChevronUp size={18} />
+                )}
+              </div>
+            </div>
+            
+            {/* Collapsible Cart Content */}
+            {isCartExpanded && (
+              <>
+                {/* Cart Items Preview */}
+                <div className="max-h-52 overflow-y-auto">
+                  {cart.slice(0, 3).map((item) => (
+                    <div key={item._id} className="p-2 border-b border-gray-100 flex items-center gap-2">
+                      <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                        {item.images?.[0] && (
+                          <img
+                            src={getImageUrl(item.images[0])}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{item.name}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-gray-500">x{item.quantity}</span>
+                          <span className="text-sm font-semibold">Rs. {item.price * item.quantity}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {cart.length > 3 && (
+                    <div className="text-center text-sm text-gray-500 py-2">
+                      +{cart.length - 3} more items
+                    </div>
+                  )}
+                </div>
+                
+                {/* Cart Total */}
+                <div className="p-3 border-t border-gray-200">
+                  <div className="flex justify-between items-center mb-1 text-sm">
+                    <span>Items Total:</span>
+                    <span>Rs. {cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</span>
+                  </div>
+                  <div className="flex justify-between items-center mb-2 text-sm">
+                    <span>Delivery Fee (5%):</span>
+                    <span>Rs. {(cart.reduce((acc, item) => acc + item.price * item.quantity, 0) * 0.05).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center font-bold text-[#FC8A06]">
+                    <span>Total:</span>
+                    <span>Rs. {calculateTotal().toFixed(2)}</span>
+                  </div>
+                </div>
+                
+                {/* View Cart Button */}
+                <button
+                  onClick={() => navigate("/cart")}
+                  className="bg-[#FC8A06] text-white w-full py-3 hover:bg-[#E67E22] transition-colors flex items-center justify-center gap-2"
+                >
+                  <ShoppingBag size={18} />
+                  View Cart & Checkout
+                </button>
+              </>
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -50,9 +50,9 @@ export default function Login() {
             // Redirect based on role
             switch(response.role) {
                 case 'CUSTOMER': navigate('/customer/dashboard'); break;
-                case 'RESTAURANT_ADMIN': navigate('/restaurant/dashboard'); break;
+                case 'Restaurant Owner': navigate('/owner/profile'); break;
                 case 'DELIVERY_PERSONNEL': navigate('/delivery/orders'); break;
-                case 'ADMIN': navigate('/admin/dashboard'); break;
+                case 'Admin': navigate('/admin-dashboard'); break;
                 default: navigate('/');
             }
         } catch (err) {

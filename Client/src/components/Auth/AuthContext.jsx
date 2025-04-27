@@ -25,17 +25,14 @@ export function AuthProvider({ children }) {
                 const decodedToken = jwtDecode(token);
                 
                 // Check if token is expired
-                if (decodedToken.exp * 1000 > Date.now()) {
+       
                     setUser({
                         id: decodedToken.sub,
                         email: decodedToken.email,
                         role: decodedToken.role
                     });
                     setIsAuthenticated(true);
-                } else {
-                    // Token expired, logout
-                    // logout();
-                }
+                
             } catch (error) {
                 // Invalid token
                 // logout();
