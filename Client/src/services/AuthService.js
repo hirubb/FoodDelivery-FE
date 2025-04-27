@@ -1,13 +1,78 @@
 import { AuthHTTP } from "./httpCommon-service";
 
 class AuthService {
-  // Generic login method that works for all user types
+  // Regular login method
   login(credentials) {
-    // Make a clean copy of credentials without modification
     const apiCredentials = {...credentials};
-    
-    // Send credentials to API
     return AuthHTTP.post("/login", apiCredentials);
+  }
+
+  // Google login - initiates the OAuth flow
+  googleLogin() {
+    window.location.href = "http://localhost:4003/api/auth/google";
+  }
+
+  // Process Google login response
+  processGoogleLogin(response) {
+    if (response?.data?.token) {
+      this.setAuthData(response.data);
+      return response;
+    }
+    throw new Error('Invalid response from Google authentication');
+  }
+
+  // Handle Google OAuth callback
+  handleGoogleCallback(code) {
+    return AuthHTTP.get(`/auth/google/callback?code=${code}`)
+      .then(response => {
+        // Check if the role is Customer
+        const responseData = response.data;
+        const userRole = this.getUserRoleFromResponse(responseData);
+        
+        // Only process login if it's a customer
+        if (userRole === 'Customer') {
+          return this.processGoogleLogin(response);
+        } else {
+          throw new Error('Google authentication is only available for customers');
+        }
+      })
+      .catch(error => {
+        console.error("Google callback error:", error);
+        if (error.response?.data?.message) {
+          throw new Error(error.response.data.message);
+        }
+        throw error;
+      });
+  }
+
+  // Helper method to extract role from response
+  getUserRoleFromResponse(data) {
+    let userRole = null;
+    
+    // Check all possible locations for role
+    if (data.role) {
+      userRole = data.role;
+    } else if (data.user?.role) {
+      userRole = data.user.role;
+    } else if (data.customer?.role) {
+      userRole = data.customer.role;
+    }
+    
+    return this.normalizeRoleName(userRole);
+  }
+
+  // Helper to normalize role names
+  normalizeRoleName(role) {
+    if (!role) return null;
+    
+    const roleStr = String(role);
+    
+    if (roleStr.toLowerCase() === 'customer' || 
+        roleStr.toLowerCase() === 'user') {
+      return 'Customer';
+    }
+    
+    return roleStr;
   }
 
   // Logout function to clear stored credentials
@@ -29,7 +94,7 @@ class AuthService {
     return localStorage.getItem('role');
   }
 
-  // Store authentication data
+  // Store authentication data - enhanced to handle direct token auth
   setAuthData(data) {
     // Handle token
     if (data?.token) {
@@ -51,17 +116,9 @@ class AuthService {
     else if (data?.customer?.role) {
       role = data.customer.role;
     }
-    // Restaurant owner object
-    else if (data?.restaurantOwner?.role) {
-      role = data.restaurantOwner.role;
-    }
-    // Admin object
-    else if (data?.admin?.role) {
-      role = data.admin.role;
-    }
 
     if (role) {
-      localStorage.setItem("role", role);
+      localStorage.setItem("role", this.normalizeRoleName(role));
     }
     
     // Handle user ID - check all possible locations
@@ -73,10 +130,6 @@ class AuthService {
       userId = data.user._id || data.user.id;
     } else if (data?.customer?._id || data?.customer?.id) {
       userId = data.customer._id || data.customer.id;
-    } else if (data?.restaurantOwner?._id || data?.restaurantOwner?.id) {
-      userId = data.restaurantOwner._id || data.restaurantOwner.id;
-    } else if (data?.admin?._id || data?.admin?.id) {
-      userId = data.admin._id || data.admin.id;
     }
     
     if (userId) {
@@ -97,6 +150,9 @@ class AuthService {
       } else {
         username = data.customer.username || data.customer.first_name;
       }
+    } else if (data?.email) {
+      // Use email as fallback for username
+      username = data.email.split('@')[0]; // Use part before @ as username
     }
     
     if (username) {
