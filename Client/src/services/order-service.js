@@ -28,6 +28,11 @@ const orderService = {
     return axios.get(`${API_URL}/customer/${customerId}`, { headers: getAuthHeader() });
   },
 
+  // Delete/cancel an order
+  deleteOrder: (orderId) => {
+    return axios.delete(`${API_URL}/${orderId}`, { headers: getAuthHeader() });
+  },//orde
+
   // Get customer's active order
   getActiveOrder: (customerId) => {
     if (!customerId) throw new Error('Customer ID is required');
