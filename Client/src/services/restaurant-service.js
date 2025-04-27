@@ -124,6 +124,14 @@ class RestaurantService {
   submitRating(id, userRating) {
     return HTTP.post(`/restaurant/${id}/rate`, { rating: userRating });
   }
+  updateAvailability(restaurantId, updatedAvailability){
+    console.log("here : ")
+    return HTTP.patch(`/restaurant/availability/${restaurantId}`,
+
+      {availability:updatedAvailability}
+      
+      )
+  }
 
   
   
