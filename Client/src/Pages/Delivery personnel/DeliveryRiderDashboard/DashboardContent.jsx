@@ -122,7 +122,7 @@ function EarningsTrendChart({ data }) {
 }
 
 function DashboardContent() {
-    // This week's data for the chart
+
     const chartData = {
         labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         datasets: [

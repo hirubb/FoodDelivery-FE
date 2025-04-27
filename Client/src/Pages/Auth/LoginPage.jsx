@@ -7,8 +7,8 @@ import bannerImage2 from '../../assets/Login&Register/logo3.png';
 import bannerImage3 from '../../assets/Login&Register/logo6.png';
 
 export default function LoginPage() {
-    const [formData, setFormData] = useState({ 
-        email: "", 
+    const [formData, setFormData] = useState({
+        email: "",
         password: ""
     });
     const [error, setError] = useState("");
@@ -26,10 +26,10 @@ export default function LoginPage() {
 
     useEffect(() => {
         const rememberedEmail = localStorage.getItem('rememberedEmail');
-        
+
         if (rememberedEmail) {
-            setFormData(prev => ({ 
-                ...prev, 
+            setFormData(prev => ({
+                ...prev,
                 email: rememberedEmail
             }));
             setRememberMe(true);
@@ -97,15 +97,15 @@ export default function LoginPage() {
             // Get user role from response - check all possible locations
             // IMPORTANT: The role could be in different places depending on user type
             let userRole = null;
-            
+
             // Check direct role property
             if (response.data.role) {
                 userRole = response.data.role;
-            } 
+            }
             // Check user object if it exists
             else if (response.data.user && response.data.user.role) {
                 userRole = response.data.user.role;
-            } 
+            }
             // Check customer object if it exists (specific to customer login)
             else if (response.data.customer && response.data.customer.role) {
                 userRole = response.data.customer.role;
@@ -121,9 +121,9 @@ export default function LoginPage() {
 
             // Normalize role format if needed
             userRole = normalizeRoleName(userRole);
-            
+
             console.log("Detected user role:", userRole);
-            
+
             // Route based on role
             if (userRole === 'Admin') {
                 navigate('/admin-dashboard');
@@ -131,6 +131,10 @@ export default function LoginPage() {
                 navigate('/owner/profile');
             } else if (userRole === 'Customer') {
                 navigate('/customer-dashboard');
+            } else if (userRole === 'DeliveryPerson') {
+                navigate('/deliveryPersonnel/DriverDashboard');
+
+
             } else {
                 // Default fallback - should rarely happen if the backend is properly configured
                 console.warn("Unknown or missing role:", userRole);
@@ -138,12 +142,12 @@ export default function LoginPage() {
             }
         } catch (err) {
             console.error("Login error:", err);
-            
+
             // Extract error message from the response with fallback messages
-            const errorMessage = err?.response?.data?.message || 
-                                err?.response?.data?.error || 
-                                err?.message || 
-                                'Login failed. Please check your credentials and try again.';
+            const errorMessage = err?.response?.data?.message ||
+                err?.response?.data?.error ||
+                err?.message ||
+                'Login failed. Please check your credentials and try again.';
             setError(errorMessage);
         } finally {
             setLoading(false);
@@ -153,27 +157,32 @@ export default function LoginPage() {
     // Helper function to normalize role names
     const normalizeRoleName = (role) => {
         if (!role) return null;
-        
+
         // Convert to string in case it's not
         const roleStr = String(role);
-        
+
         // Handle different formats of the same role
-        if (roleStr.toLowerCase() === 'restaurantowner' || 
+        if (roleStr.toLowerCase() === 'restaurantowner' ||
             roleStr.toLowerCase() === 'restaurant owner' ||
             roleStr.toLowerCase() === 'restaurant_owner') {
             return 'RestaurantOwner';
         }
-        
-        if (roleStr.toLowerCase() === 'admin' || 
+
+        if (roleStr.toLowerCase() === 'admin' ||
             roleStr.toLowerCase() === 'administrator') {
             return 'Admin';
         }
-        
-        if (roleStr.toLowerCase() === 'customer' || 
+
+        if (roleStr.toLowerCase() === 'customer' ||
             roleStr.toLowerCase() === 'user') {
             return 'Customer';
         }
-        
+
+        if (roleStr.toLowerCase() === 'delivery person') {
+            return 'DeliveryPerson';
+        }
+
+
         // If no mapping found, return the original
         return roleStr;
     };

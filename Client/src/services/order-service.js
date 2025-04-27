@@ -1,11 +1,12 @@
-import axios from 'axios';
+import { orderHTTP } from "./httpCommon-service";
 
-const ORDER_BASE_URL = "http://localhost:5001";
 
-const orderService = {
-  placeOrder: (orderData) => axios.post(`${ORDER_BASE_URL}/orders`, orderData),
-  getOrders: () => axios.get(`${ORDER_BASE_URL}/orders`),
-  getOrderById: (id) => axios.get(`${ORDER_BASE_URL}/orders/${id}`)
-};
+class orderService {
+  placeOrder(orderData) {
+    return orderHTTP.post("/orders", orderData);
+  }
 
-export default orderService;
+}
+export default new orderService();
+
+

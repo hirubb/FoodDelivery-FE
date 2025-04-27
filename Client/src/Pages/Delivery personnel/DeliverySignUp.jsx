@@ -155,28 +155,28 @@ function DeliverySignUp() {
                             <div>
                                 <label className="block mb-1.5 text-sm font-medium text-gray-700">Gender</label>
                                 <div className="grid grid-cols-2 gap-3">
-                                    <label className={`flex items-center justify-center gap-2 border ${formData.gender === 'male' ? 'bg-blue-50 border-blue-500 text-blue-700' : 'bg-white border-gray-300 text-gray-700'} px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-50`}>
+                                    <label className={`flex items-center justify-center gap-2 border ${formData.gender === 'Male' ? 'bg-blue-50 border-blue-500 text-blue-700' : 'bg-white border-gray-300 text-gray-700'} px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-50`}>
                                         <input
                                             type="radio"
                                             name="gender"
-                                            value="male"
-                                            checked={formData.gender === "male"}
+                                            value="Male"
+                                            checked={formData.gender === "Male"}
                                             onChange={handleChange}
                                             className="text-blue-600 focus:ring-blue-500 h-4 w-4"
                                         />
-                                        <FaMale className={formData.gender === 'male' ? 'text-blue-600' : 'text-gray-500'} />
+                                        <FaMale className={formData.gender === 'Male' ? 'text-blue-600' : 'text-gray-500'} />
                                         <span className="font-medium">Male</span>
                                     </label>
-                                    <label className={`flex items-center justify-center gap-2 border ${formData.gender === 'female' ? 'bg-blue-50 border-blue-500 text-blue-700' : 'bg-white border-gray-300 text-gray-700'} px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-50`}>
+                                    <label className={`flex items-center justify-center gap-2 border ${formData.gender === 'Female' ? 'bg-blue-50 border-blue-500 text-blue-700' : 'bg-white border-gray-300 text-gray-700'} px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-50`}>
                                         <input
                                             type="radio"
                                             name="gender"
-                                            value="female"
-                                            checked={formData.gender === "female"}
+                                            value="Female"
+                                            checked={formData.gender === "Female"}
                                             onChange={handleChange}
                                             className="text-blue-600 focus:ring-blue-500 h-4 w-4"
                                         />
-                                        <FaFemale className={formData.gender === 'female' ? 'text-blue-600' : 'text-gray-500'} />
+                                        <FaFemale className={formData.gender === 'Female' ? 'text-blue-600' : 'text-gray-500'} />
                                         <span className="font-medium">Female</span>
                                     </label>
                                 </div>

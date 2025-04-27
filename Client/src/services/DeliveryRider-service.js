@@ -4,6 +4,9 @@ import { DeliveryRiderHTTP } from "./httpCommon-service";
 
 class DeliveryRiderService {
 
+    // <=========================================Delivery Registration===================================>
+
+
 
     RegisterDeliveryRider(data) {
         return DeliveryRiderHTTP.post("/auth/DriverRegister", data, {
@@ -28,6 +31,61 @@ class DeliveryRiderService {
             }
         });
     }
+
+    // <=========================================Driver Dashboard===================================>
+
+    GetDriverDetails(data) {
+        return DeliveryRiderHTTP.get("/driver/getdriver", data, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+    }
+
+
+    DriverProfileImageUpdate(data) {
+        return DeliveryRiderHTTP.put("/driver/updatedriverprofileimage", data, {
+            headers: {
+                "Content-Type": "Multipart/form-data",
+            }
+        });
+    }
+
+
+    UpdateDriverDetails(data) {
+        return DeliveryRiderHTTP.put("/driver/updatedriver", data, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+    }
+    UpdateVehicleDetails(data) {
+        return DeliveryRiderHTTP.put("/vehicle/EditVehicleDetails", data, {
+            headers: {
+                "Content-Type": "Multipart/form-data",
+            }
+        });
+    }
+
+    GetVehicleDetails(data) {
+        return DeliveryRiderHTTP.get("/vehicle/Get", data, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+    }
+    UpdateVehicleDetails(data) {
+        return DeliveryRiderHTTP.put("/vehicle/EditVehicleDetails", data, {
+            headers: {
+                "Content-Type": "Multipart/form-data",
+            }
+        });
+    }
+
+
+
+
+
 
 
 }
