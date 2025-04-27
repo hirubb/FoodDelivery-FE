@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Star, Clock, MapPin, AlertCircle, ShoppingBag, ChevronUp, ChevronDown } from "lucide-react";
 import restaurantService from "../../services/restaurant-service";
 import DeliveryLocationPopup from "../../components/OrderManagement/DeliveryLocationPopup";
+import RestaurantRatingSystem from "../../components/Rating/RestaurantRatingSystem";
 
 function RestaurantMenuPage() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ function RestaurantMenuPage() {
   const [notification, setNotification] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isCartExpanded, setIsCartExpanded] = useState(true);
+  const [isRatingExpanded, setIsRatingExpanded] = useState(false);
   
   // Location related state
   const [userLocation, setUserLocation] = useState(null);
@@ -107,6 +109,29 @@ function RestaurantMenuPage() {
     
     setNotification(message);
     setTimeout(() => setNotification(null), 2000);
+  };
+
+  const handleRatingSubmitted = (newRating) => {
+    // Update the restaurant data with new rating
+    // In a real app, you would fetch updated data from server
+    // This is a simplified example
+    if (restaurant) {
+      const totalRatings = (restaurant.totalRatings || 0) + 1;
+      const totalRatingValue = (restaurant.averageRating || 0) * (totalRatings - 1) + newRating;
+      const newAverageRating = totalRatingValue / totalRatings;
+      
+      setRestaurant({
+        ...restaurant,
+        averageRating: newAverageRating,
+        totalRatings: totalRatings
+      });
+    }
+    
+    setNotification("Thank you for rating this restaurant!");
+    setTimeout(() => setNotification(null), 2000);
+    
+    // Collapse rating section after submission
+    setTimeout(() => setIsRatingExpanded(false), 3000);
   };
 
   const addToCart = (item) => {
@@ -206,40 +231,72 @@ function RestaurantMenuPage() {
         </div>
       )}
 
-      {/* Location Banner/Button */}
-      <div className="mb-4">
-        {userLocation ? (
-          <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between shadow-sm">
-            <div className="flex items-center">
-              <MapPin size={18} className="text-[#FC8A06] mr-2" />
-              <div>
-                <p className="font-medium">Delivery Location</p>
-                <p className="text-sm text-gray-600 truncate max-w-md">
-                  {userLocation.address || `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}`}
-                </p>
+      {/* Location Banner with Rating System */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        {/* Location Info */}
+        <div className="col-span-2">
+          {userLocation ? (
+            <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between shadow-sm">
+              <div className="flex items-center">
+                <MapPin size={18} className="text-[#FC8A06] mr-2" />
+                <div>
+                  <p className="font-medium">Delivery Location</p>
+                  <p className="text-sm text-gray-600 truncate max-w-md">
+                    {userLocation.address || `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}`}
+                  </p>
+                </div>
               </div>
+              <button 
+                onClick={() => setIsLocationPopupOpen(true)}
+                className="text-[#FC8A06] hover:text-[#E67E22] text-sm font-medium"
+              >
+                Change
+              </button>
             </div>
-            <button 
-              onClick={() => setIsLocationPopupOpen(true)}
-              className="text-[#FC8A06] hover:text-[#E67E22] text-sm font-medium"
-            >
-              Change
-            </button>
-          </div>
-        ) : (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-center justify-between">
-            <div className="flex items-center">
-              <AlertCircle size={18} className="text-yellow-500 mr-2" />
-              <p className="text-yellow-700">Delivery location not set</p>
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-center justify-between">
+              <div className="flex items-center">
+                <AlertCircle size={18} className="text-yellow-500 mr-2" />
+                <p className="text-yellow-700">Delivery location not set</p>
+              </div>
+              <button 
+                onClick={() => setIsLocationPopupOpen(true)}
+                className="bg-[#FC8A06] text-white px-3 py-1 rounded hover:bg-[#E67E22] text-sm"
+              >
+                Set Location
+              </button>
             </div>
-            <button 
-              onClick={() => setIsLocationPopupOpen(true)}
-              className="bg-[#FC8A06] text-white px-3 py-1 rounded hover:bg-[#E67E22] text-sm"
+          )}
+        </div>
+
+        {/* Rating Section */}
+        <div className="col-span-1">
+          <div className="bg-white border  rounded-lg shadow-sm overflow-hidden">
+            {/* Rating Header/Toggle */}
+            <div 
+              className="flex items-center justify-between p-3 cursor-pointer bg-gray-500 hover:bg-gray-100 text-black"
+              onClick={() => setIsRatingExpanded(!isRatingExpanded)}
             >
-              Set Location
-            </button>
+              <div className="flex items-center gap-2">
+                <Star size={18} className="text-yellow-400" />
+                <span className="font-medium">{restaurant?.averageRating?.toFixed(1) || "N/A"} Rating</span>
+              </div>
+              <button className="text-gray-500 hover:text-gray-700">
+                {isRatingExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </button>
+            </div>
+
+            {/* Expandable Rating Form */}
+            {isRatingExpanded && (
+              <div className="p-3 border-t border-gray-100">
+                <RestaurantRatingSystem 
+                  restaurant={restaurant} 
+                  onRatingSubmitted={handleRatingSubmitted} 
+                />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       {/* Restaurant Banner */}
@@ -262,10 +319,30 @@ function RestaurantMenuPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <h1 className="text-4xl font-bold mb-2">{restaurant?.name}</h1>
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-4 text-sm flex-wrap">
+            {/* Rating with stars in banner */}
             <div className="flex items-center gap-1">
-              <Star size={16} className="text-yellow-400" />
-              <span>{restaurant?.averageRating || "N/A"}</span>
+              <div className="flex">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star 
+                    key={i} 
+                    size={16} 
+                    className={`${i < Math.floor(restaurant?.averageRating || 0) 
+                      ? "text-yellow-400 fill-yellow-400" 
+                      : "text-gray-300"}`} 
+                  />
+                ))}
+              </div>
+              <span>{restaurant?.averageRating?.toFixed(1) || "N/A"}</span>
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsRatingExpanded(true);
+                }}
+                className="text-xs underline hover:text-yellow-300 ml-1"
+              >
+                Rate
+              </button>
             </div>
             <div className="flex items-center gap-1">
               <Clock size={16} />
