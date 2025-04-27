@@ -121,6 +121,9 @@ class RestaurantService {
       }
     );
   }
+  submitRating(id, userRating) {
+    return HTTP.post(`/restaurant/${id}/rate`, { rating: userRating });
+  }
 
   
   
