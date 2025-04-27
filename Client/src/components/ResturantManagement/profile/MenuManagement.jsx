@@ -227,10 +227,10 @@ function MenuManagement() {
   return (
     <div className="p-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 text-white">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Menu Management</h1>
-          <p className="text-gray-600 mt-1">Manage all your restaurant menus</p>
+          <h1 className="text-3xl font-bold text-white">Menu Management</h1>
+          <p className="text-white mt-1">Manage all your restaurant menus</p>
         </div>
         <button
           className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md flex items-center transition"
@@ -245,17 +245,17 @@ function MenuManagement() {
       </div>
 
       {/* Restaurant Selector */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+      <div className="bg-[#FFFFFF08] rounded-lg shadow-sm p-4 mb-6">
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           <div className="w-full md:w-1/3">
-            <label htmlFor="restaurant-select" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="restaurant-select" className="block text-sm font-medium text-white mb-1 bg-[#FFFFFF08]">
               Select Restaurant
             </label>
             <select
               id="restaurant-select"
               value={selectedRestaurant}
               onChange={handleRestaurantChange}
-              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 text-white bg-[#FFFFFF08] border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
               disabled={loading || !restaurants.length}
             >
               {restaurants.length === 0 ? (
@@ -274,11 +274,11 @@ function MenuManagement() {
           </div>
 
           {selectedRestaurantName && (
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-3 md:flex-1">
-              <h3 className="text-blue-800 font-medium">
+            <div className="bg-[#04203c08] border-l-4 border-blue-500 p-3 md:flex-1">
+              <h3 className="text-orange-500 font-medium">
                 Viewing menus for: {selectedRestaurantName}
               </h3>
-              <p className="text-blue-600 text-sm">{counts.all} total menus</p>
+              <p className="text-orange-500 text-sm">{counts.all} total menus</p>
             </div>
           )}
         </div>
@@ -305,17 +305,17 @@ function MenuManagement() {
 
       {/* Content */}
       {loading ? (
-        <div className="flex justify-center items-center h-40">
+        <div className="flex justify-center items-center h-40 ">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
         </div>
       ) : error ? (
         <div className="text-red-500 text-center mb-4">{error}</div>
       ) : filteredMenus.length === 0 ? (
-        <div className="text-center text-gray-500 mt-10">No menus found.</div>
+        <div className="text-center text-white mt-10">No menus found.</div>
       ) : (
-        <div className="grid gap-6">
+        <div className="grid gap-6 ">
           {filteredMenus.map(menu => (
-            <div key={menu._id} className="bg-white shadow rounded-lg p-5">
+            <div key={menu._id} className="bg-[#FFFFFF08]  text-white shadow rounded-lg p-5">
               {editingMenu?._id === menu._id ? (
                 <div>
                   <input
@@ -349,10 +349,10 @@ function MenuManagement() {
                 </div>
               ) : (
                 <>
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex justify-between items-center mb-4 text-white">
                     <div>
-                      <h2 className="text-xl font-semibold text-gray-800 mb-1">{menu.name}</h2>
-                      <p className="text-gray-600">{menu.description}</p>
+                      <h2 className="text-xl font-semibold text-orange-500 mb-1">{menu.name}</h2>
+                      <p className="text-white">{menu.description}</p>
                     </div>
                     <div className="flex gap-3">
                       <button
@@ -377,17 +377,17 @@ function MenuManagement() {
                   </div>
 
                   <div className="mt-4">
-                    <h3 className="text-lg font-medium text-gray-700 mb-3">Menu Items</h3>
+                    <h3 className="text-lg font-medium text-white mb-3">Menu Items</h3>
                     {menu.menu_items?.length ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ">
                         {menu.menu_items.map(item => (
-                          <div key={item._id} className="border p-4 rounded-md shadow-sm relative">
+                          <div key={item._id} className=" p-4 rounded-md shadow-sm relative bg-[#ffffff28]">
                             {editingMenuItem && editingMenuItem.menuId === menu._id && editingMenuItem.itemId === item._id ? (
                               <div className="p-3 bg-gray-50 rounded">
-                                <h4 className="text-lg font-semibold mb-3">Edit Menu Item</h4>
+                                <h4 className="text-lg font-semibold mb-3 text-black">Edit Menu Item</h4>
                                 <div className="space-y-3">
                                   <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium text-black mb-1">
                                       Name
                                     </label>
                                     <input
@@ -400,7 +400,7 @@ function MenuManagement() {
                                   </div>
                                   
                                   <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium text-black mb-1">
                                       Description
                                     </label>
                                     <textarea
@@ -413,7 +413,7 @@ function MenuManagement() {
                                   </div>
                                   
                                   <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium text-black mb-1">
                                       Price (Rs.)
                                     </label>
                                     <input
@@ -421,13 +421,13 @@ function MenuManagement() {
                                       type="number"
                                       value={menuItemForm.price}
                                       onChange={handleMenuItemFormChange}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-black"
                                       placeholder="Price"
                                     />
                                   </div>
                                   
                                   <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium text-black mb-1">
                                       Portion
                                     </label>
                                     <input
@@ -440,7 +440,7 @@ function MenuManagement() {
                                   </div>
                                   
                                   <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium text-black mb-1">
                                       Category
                                     </label>
                                     <input
@@ -455,13 +455,13 @@ function MenuManagement() {
                                   <div className="flex gap-3 pt-2">
                                     <button
                                       onClick={handleMenuItemFormSubmit}
-                                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex-1"
+                                      className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-md text-sm flex-1"
                                     >
                                       Save
                                     </button>
                                     <button
                                       onClick={handleCancelMenuItemEdit}
-                                      className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm flex-1"
+                                      className="bg-gray-400 hover:bg-gray-500 text-black px-4 py-2 rounded-md text-sm flex-1"
                                     >
                                       Cancel
                                     </button>
@@ -477,10 +477,10 @@ function MenuManagement() {
                                     className="w-full h-40 object-cover rounded-md mb-3"
                                   />
                                 )}
-                                <h3 className="text-md font-bold text-gray-800">{item.name}</h3>
-                                <p className="text-sm text-gray-600">{item.description}</p>
-                                <p className="text-sm text-gray-600">Portion: {item.portion}</p>
-                                <p className="text-sm text-gray-600">Category: {item.category}</p>
+                                <h3 className="text-md font-bold text-white">{item.name}</h3>
+                                <p className="text-sm text-white">{item.description}</p>
+                                <p className="text-sm text-white">Portion: {item.portion}</p>
+                                <p className="text-sm text-white">Category: {item.category}</p>
                                 <p className="text-orange-600 font-semibold mt-1">Rs. {item.price}</p>
                                 
                                 <div className="flex gap-2 mt-3">

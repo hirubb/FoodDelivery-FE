@@ -36,11 +36,11 @@ function Header() {
 
   return (
     <>
-      <nav className="bg-[#03081F] shadow-md w-full top-0 left-0 z-40">
-        <div className="container mx-auto my-10 px-4 md:px-10 flex items-center justify-between h-28">
+      <nav className="relative shadow-md w-full top-0 left-0 z-40">
+        <div className="container mx-auto px-4 md:px-10 flex items-center justify-between h-28">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="FoodDelivery Logo" className="h-40 mr-2" />
+            <img src={logo} alt="FoodDelivery Logo" className="h-20 mr-2" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -51,12 +51,7 @@ function Header() {
             >
               Home
             </Link>
-            <Link
-              to="#"
-              className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]"
-            >
-              Browse Menu
-            </Link>
+
             <Link
               to="/restaurants"
               className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]"
