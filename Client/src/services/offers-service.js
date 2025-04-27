@@ -13,6 +13,11 @@ class OffersService {
     console.log("restaurantId : ", restaurantId)
     return HTTP.get(`/offers/restaurant/${restaurantId}`);
   }
+  updateRestaurantOffer(id,data){
+    console.log("here")
+    return HTTP.put(`/offers/${id}`,data)
+
+  }
 }
 
 export default new OffersService();

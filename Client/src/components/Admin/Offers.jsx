@@ -84,9 +84,7 @@ export default function Offers() {
     }
 
     try {
-      const response = await adminService.deleteOffer(id);
-
-      if (!response.ok) throw new Error("Failed to delete Offer");
+       await adminService.deleteOffer(id);
 
       // Update the local state
       setOffers(offers.filter((offer) => offer.id !== id));
@@ -276,7 +274,7 @@ export default function Offers() {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(offer.id)}
+                        onClick={() => handleDelete(offer._id)}
                         className="text-red-600 hover:text-red-800 transition-colors font-medium"
                       >
                         Delete
