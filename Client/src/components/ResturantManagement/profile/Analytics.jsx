@@ -277,7 +277,7 @@ function Analytics() {
                   />
                   <YAxis 
                     tick={{ fill: '#83858E' }}
-                    tickFormatter={(value) => `₹${value}`}
+                    tickFormatter={(value) => `Rs${value}`}
                   />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />

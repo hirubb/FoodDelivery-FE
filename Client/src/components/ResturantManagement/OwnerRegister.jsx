@@ -57,14 +57,10 @@ const OwnerRegister = () => {
       const response = await restaurantService.registerRestaurantOwner(formDataToSend);
   
       if (response.status === 201) {
-        const token = response.data.token; // Get token from response
-        console.log("token  : ", token);
-        localStorage.setItem("token", token); // Store token in localStorage
-  
         setError(null);
         setSuccess("Registration successful");
         setTimeout(() => {
-          navigate("/restaurant-register");
+          navigate("/login");
         }, 1000);
       }
     } catch (error) {
@@ -73,8 +69,6 @@ const OwnerRegister = () => {
     }
   };
   
-  
-
   return (
   <div className="flex h-auto w-[50%] mx-auto shadow-lg rounded-lg mt-44 mb-40">
 

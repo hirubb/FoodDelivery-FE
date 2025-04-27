@@ -87,7 +87,7 @@ class RestaurantService {
 
   
   getOrders(restaurantId){
-    return orderHTTP.get(`/orders/${restaurantId}`)
+    return orderHTTP.get(`/orders/restaurantOrders/${restaurantId}`)
   }
 
   updateRestaurant(restaurantId, formdata){
@@ -107,6 +107,30 @@ class RestaurantService {
     return orderHTTP.post(`/orders/getIncome/${restaurantId}`,
       formdata
     )
+  }
+
+  updateOrderStatus(orderId, status) {
+    console.log("status : ", orderId, status);
+    return orderHTTP.put(
+      `/orders/status/update/${orderId}`,
+      { newStatus: status }, // This is the data/body parameter in axios
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+  }
+  submitRating(id, userRating) {
+    return HTTP.post(`/restaurant/${id}/rate`, { rating: userRating });
+  }
+  updateAvailability(restaurantId, updatedAvailability){
+    console.log("here : ")
+    return HTTP.patch(`/restaurant/availability/${restaurantId}`,
+
+      {availability:updatedAvailability}
+      
+      )
   }
 
   

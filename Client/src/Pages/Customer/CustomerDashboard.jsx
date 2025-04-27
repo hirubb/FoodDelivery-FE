@@ -89,6 +89,8 @@ function CustomerDashboard() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("cart");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userId");
     setCart([]);
     setCartItems(0); // Reset the cart count to zero
     navigate("/login");

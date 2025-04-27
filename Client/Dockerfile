@@ -1,27 +1,20 @@
+# Specify the base image
+FROM node:18-alpine
 
-# Base image
-FROM node:18-alpine as build
-
+# Set the working directory inside the container
 WORKDIR /app
 
-COPY package*.json ./ 
+# Copy the package.json and package-lock.json files to the container
+COPY package*.json ./
 
+# Install the dependencies
 RUN npm install
 
+# Copy the rest of the application code to the container
 COPY . .
 
-RUN npm run build
-
-# Production stage
-FROM nginx:alpine
-
-# Serve with nginx
+# Expose the port that the microservice will listen on
 EXPOSE 3000
 
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Start the microservice
+CMD ["npm", "start"]
