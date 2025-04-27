@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import authService from '../../services/AuthService';
 
 import bannerImage1 from '../../assets/Login&Register/logo5.png';
 import bannerImage2 from '../../assets/Login&Register/logo3.png';
 import bannerImage3 from '../../assets/Login&Register/logo6.png';
+import googleIcon from '../../assets/Login&Register/google.png'; // Add this Google icon to your assets
 
 export default function LoginPage() {
     const [formData, setFormData] = useState({ 
@@ -13,10 +14,12 @@ export default function LoginPage() {
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [currentImage, setCurrentImage] = useState(0);
     const [zoomLevel, setZoomLevel] = useState(100);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const images = [
         `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${bannerImage1})`,
@@ -25,6 +28,25 @@ export default function LoginPage() {
     ];
 
     useEffect(() => {
+        // Handle Google OAuth callback if code is present in URL
+        const params = new URLSearchParams(location.search);
+        const code = params.get('code');
+        
+        if (code) {
+            setGoogleLoading(true);
+            authService.handleGoogleCallback(code)
+                .then(response => {
+                    console.log("Google auth response:", response.data);
+                    const userRole = getUserRoleFromResponse(response.data);
+                    routeBasedOnRole(userRole);
+                })
+                .catch(err => {
+                    console.error("Google auth error:", err);
+                    setError('Google authentication failed. Please try again.');
+                })
+                .finally(() => setGoogleLoading(false));
+        }
+        
         const rememberedEmail = localStorage.getItem('rememberedEmail');
         
         if (rememberedEmail) {
@@ -34,7 +56,7 @@ export default function LoginPage() {
             }));
             setRememberMe(true);
         }
-    }, []);
+    }, [location.search]);
 
     useEffect(() => {
         const imageInterval = setInterval(() => {
@@ -94,48 +116,11 @@ export default function LoginPage() {
                 localStorage.removeItem('rememberedEmail');
             }
 
-            // Get user role from response - check all possible locations
-            // IMPORTANT: The role could be in different places depending on user type
-            let userRole = null;
-            
-            // Check direct role property
-            if (response.data.role) {
-                userRole = response.data.role;
-            } 
-            // Check user object if it exists
-            else if (response.data.user && response.data.user.role) {
-                userRole = response.data.user.role;
-            } 
-            // Check customer object if it exists (specific to customer login)
-            else if (response.data.customer && response.data.customer.role) {
-                userRole = response.data.customer.role;
-            }
-            // Check restaurant owner object if it exists
-            else if (response.data.restaurantOwner && response.data.restaurantOwner.role) {
-                userRole = response.data.restaurantOwner.role;
-            }
-            // Check admin object if it exists
-            else if (response.data.admin && response.data.admin.role) {
-                userRole = response.data.admin.role;
-            }
-
-            // Normalize role format if needed
-            userRole = normalizeRoleName(userRole);
-            
-            console.log("Detected user role:", userRole);
+            // Get user role from response
+            const userRole = getUserRoleFromResponse(response.data);
             
             // Route based on role
-            if (userRole === 'Admin') {
-                navigate('/admin-dashboard');
-            } else if (userRole === 'RestaurantOwner') {
-                navigate('/owner/profile');
-            } else if (userRole === 'Customer') {
-                navigate('/customer-dashboard');
-            } else {
-                // Default fallback - should rarely happen if the backend is properly configured
-                console.warn("Unknown or missing role:", userRole);
-                setError('Login successful but user role is unknown. Please contact support.');
-            }
+            routeBasedOnRole(userRole);
         } catch (err) {
             console.error("Login error:", err);
             
@@ -147,6 +132,63 @@ export default function LoginPage() {
             setError(errorMessage);
         } finally {
             setLoading(false);
+        }
+    };
+    
+    const handleGoogleLogin = () => {
+        setGoogleLoading(true);
+        try {
+            authService.googleLogin();
+        } catch (err) {
+            console.error("Google login error:", err);
+            setError('Failed to initiate Google login. Please try again.');
+            setGoogleLoading(false);
+        }
+    };
+
+    // Helper function to extract role from response
+    const getUserRoleFromResponse = (data) => {
+        let userRole = null;
+        
+        // Check direct role property
+        if (data.role) {
+            userRole = data.role;
+        } 
+        // Check user object if it exists
+        else if (data.user && data.user.role) {
+            userRole = data.user.role;
+        } 
+        // Check customer object if it exists (specific to customer login)
+        else if (data.customer && data.customer.role) {
+            userRole = data.customer.role;
+        }
+        // Check restaurant owner object if it exists
+        else if (data.restaurantOwner && data.restaurantOwner.role) {
+            userRole = data.restaurantOwner.role;
+        }
+        // Check admin object if it exists
+        else if (data.admin && data.admin.role) {
+            userRole = data.admin.role;
+        }
+
+        // Normalize role format if needed
+        return normalizeRoleName(userRole);
+    };
+
+    // Helper function to route based on role
+    const routeBasedOnRole = (userRole) => {
+        console.log("Routing based on role:", userRole);
+        
+        if (userRole === 'Admin') {
+            navigate('/admin-dashboard');
+        } else if (userRole === 'RestaurantOwner') {
+            navigate('/owner/profile');
+        } else if (userRole === 'Customer') {
+            navigate('/customer-dashboard');
+        } else {
+            // Default fallback - should rarely happen if the backend is properly configured
+            console.warn("Unknown or missing role:", userRole);
+            setError('Login successful but user role is unknown. Please contact support.');
         }
     };
 
@@ -196,7 +238,7 @@ export default function LoginPage() {
                 </div>
             </div>
 
-            <div className="flex items-center justify-center flex-1 p-8 bg-black">
+            <div className="flex items-center justify-center flex-1 p-8 bg-[#03081F]">
                 <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
                     <div className="mb-8 text-center">
                         <h2 className="text-2xl font-semibold text-gray-800">Login</h2>
@@ -211,6 +253,37 @@ export default function LoginPage() {
                             {error}
                         </div>
                     )}
+
+                    {/* Google Sign-in button */}
+                    <div className="mb-6">
+                        <button
+                            type="button"
+                            onClick={handleGoogleLogin}
+                            disabled={googleLoading}
+                            className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:bg-gray-200 disabled:cursor-not-allowed"
+                        >
+                            {googleLoading ? (
+                                <>
+                                    <svg className="w-5 h-5 mr-2 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Signing in with Google...
+                                </>
+                            ) : (
+                                <>
+                                    <img src={googleIcon} alt="Google" className="w-5 h-5 mr-2" />
+                                    Sign in with Google
+                                </>
+                            )}
+                        </button>
+                    </div>
+
+                    <div className="flex items-center mb-6">
+                        <div className="flex-grow border-t border-gray-300"></div>
+                        <span className="px-3 text-sm text-gray-500">OR</span>
+                        <div className="flex-grow border-t border-gray-300"></div>
+                    </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
