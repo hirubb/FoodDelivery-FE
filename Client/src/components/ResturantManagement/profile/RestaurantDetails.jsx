@@ -22,28 +22,55 @@ function RestaurantDetails() {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editId, setEditId] = useState(null);
+  const [editedRestaurant, setEditedRestaurant] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        setLoading(true);
-        const response = await restaurantService.getMyRestaurants();
-        setRestaurants(response.data.restaurants || []);
-      } catch (err) {
-        setError("Failed to fetch restaurant details");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRestaurants();
   }, []);
 
+  const fetchRestaurants = async () => {
+    try {
+      setLoading(true);
+      const response = await restaurantService.getMyRestaurants();
+      setRestaurants(response.data.restaurants || []);
+    } catch (err) {
+      setError("Failed to fetch restaurant details");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
- 
-  
+  const startEditing = (restaurant) => {
+    setEditId(restaurant._id);
+    setEditedRestaurant({ ...restaurant });
+  };
+
+  const cancelEditing = () => {
+    setEditId(null);
+    setEditedRestaurant({});
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedRestaurant((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const saveRestaurant = async () => {
+    try {
+      await restaurantService.updateRestaurant(editId, editedRestaurant);
+      setRestaurants((prev) =>
+        prev.map((rest) => (rest._id === editId ? editedRestaurant : rest))
+      );
+      setEditId(null);
+      setEditedRestaurant({});
+    } catch (err) {
+      console.error("Failed to save restaurant", err);
+      alert("Failed to save changes");
+    }
+  };
 
   const getStatusBadgeClass = (status) => {
     switch (status?.toLowerCase()) {
@@ -133,15 +160,21 @@ function RestaurantDetails() {
                   className="w-full h-56 object-cover"
                 />
                 <div className="absolute top-4 right-4 flex gap-2">
-                  <button
-                    className="bg-[#FFFFFF20] hover:bg-[#FFFFFF30] p-2 rounded-lg backdrop-blur-sm transition-all"
-                    onClick={() => navigate(`/restaurant/edit/${restaurant._id}`)}
-                  >
-                    <Edit size={18} className="text-white" />
-                  </button>
-                  <button className="bg-[#FFFFFF20] hover:bg-[#FFFFFF30] p-2 rounded-lg backdrop-blur-sm transition-all">
-                    <Settings size={18} className="text-white" />
-                  </button>
+                  {editId === restaurant._id ? (
+                    <button
+                      className="bg-green-500 hover:bg-green-600 p-2 rounded-lg backdrop-blur-sm transition-all"
+                      onClick={saveRestaurant}
+                    >
+                      <FaSave size={18} className="text-white" />
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-[#FFFFFF20] hover:bg-[#FFFFFF30] p-2 rounded-lg backdrop-blur-sm transition-all"
+                      onClick={() => startEditing(restaurant)}
+                    >
+                      <FaEdit size={18} className="text-white" />
+                    </button>
+                  )}
                 </div>
                 <div className="absolute -bottom-10 left-6 rounded-xl overflow-hidden border-4 border-[#03081F] shadow-xl">
                   <img
@@ -158,9 +191,19 @@ function RestaurantDetails() {
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-2xl font-bold text-white">
-                        {restaurant.name}
-                      </h3>
+                      {editId === restaurant._id ? (
+                        <input
+                          type="text"
+                          name="name"
+                          value={editedRestaurant.name}
+                          onChange={handleInputChange}
+                          className="text-2xl font-bold bg-transparent border-b border-[#FC8A06] text-white outline-none"
+                        />
+                      ) : (
+                        <h3 className="text-2xl font-bold text-white">
+                          {restaurant.name}
+                        </h3>
+                      )}
                       <span
                         className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusBadgeClass(
                           restaurant.status
@@ -185,9 +228,34 @@ function RestaurantDetails() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <DetailCard icon={<Utensils />} label="Cuisine Type" value={restaurant.cuisine_type} />
-                  <DetailCard icon={<Phone />} label="Contact Phone" value={restaurant.phone} />
-                  <DetailCard icon={<Mail />} label="Email Address" value={restaurant.email} />
+                  {editId === restaurant._id ? (
+                    <>
+                      <EditableDetail
+                        label="Cuisine Type"
+                        name="cuisine_type"
+                        value={editedRestaurant.cuisine_type}
+                        onChange={handleInputChange}
+                      />
+                      <EditableDetail
+                        label="Phone"
+                        name="phone"
+                        value={editedRestaurant.phone}
+                        onChange={handleInputChange}
+                      />
+                      <EditableDetail
+                        label="Email"
+                        name="email"
+                        value={editedRestaurant.email}
+                        onChange={handleInputChange}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <DetailCard icon={<Utensils />} label="Cuisine Type" value={restaurant.cuisine_type} />
+                      <DetailCard icon={<Phone />} label="Contact Phone" value={restaurant.phone} />
+                      <DetailCard icon={<Mail />} label="Email Address" value={restaurant.email} />
+                    </>
+                  )}
                 </div>
 
                 <div className="bg-[#FFFFFF08] rounded-lg p-5">
@@ -229,6 +297,22 @@ const DetailCard = ({ icon, label, value }) => (
         <div className="text-[#83858E] text-sm mb-1">{label}</div>
         <div className="font-medium text-white">{value || "Not specified"}</div>
       </div>
+    </div>
+  </div>
+);
+
+// Editable fields while editing
+const EditableDetail = ({ label, name, value, onChange }) => (
+  <div className="bg-[#FFFFFF08] rounded-lg p-4 hover:bg-[#FFFFFF10] transition-colors">
+    <div className="flex flex-col">
+      <div className="text-[#83858E] text-sm mb-1">{label}</div>
+      <input
+        type="text"
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="bg-transparent border-b border-[#FC8A06] text-white outline-none"
+      />
     </div>
   </div>
 );

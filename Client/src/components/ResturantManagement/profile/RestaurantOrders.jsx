@@ -50,8 +50,8 @@ const RestaurantOrders = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 text-[#000000] bg-white rounded-xl shadow-md">
-      <h2 className="text-3xl font-bold text-[#03081F] mb-6">🍽️ Restaurant Orders</h2>
+    <div className="max-w-6xl mx-auto px-6 py-10 text-[#000000] bg-[#ffffff29] rounded-xl shadow-md">
+      <h2 className="text-3xl font-bold text-white mb-6">🍽️ Restaurant Orders</h2>
 
       {error && (
         <div className="mb-6 p-4 bg-red-50 text-red-600 border border-red-200 rounded-md">
@@ -60,7 +60,7 @@ const RestaurantOrders = () => {
       )}
 
       <div className="mb-6">
-        <label className="block mb-2 font-semibold text-[#03081F]">Select a Restaurant:</label>
+        <label className="block mb-2 font-semibold text-white">Select a Restaurant:</label>
         <select
           className="w-full p-3 border border-[#83858E] rounded-md shadow-sm focus:ring-2 focus:ring-[#FC8A06] outline-none"
           value={selectedRestaurant}
@@ -77,7 +77,7 @@ const RestaurantOrders = () => {
       {loading ? (
         <div className="text-center text-[#83858E] text-lg">Loading orders...</div>
       ) : orders.length === 0 ? (
-        <div className="text-center text-[#83858E]">No orders found for this restaurant.</div>
+        <div className="text-center text-red-400">No orders found for this restaurant.</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm bg-white border border-[#e5e7eb] rounded-md">
