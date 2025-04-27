@@ -38,7 +38,8 @@ const RestaurantOrders = () => {
     try {
       const response = await restaurantService.getOrders(restaurantId);
       const orderList = response.data.status.orders;
-      console.log("response :: ",orderList)
+      console.log("order list : ", orderList);
+  
       setOrders(orderList);
     } catch (err) {
       console.error(err);
@@ -48,7 +49,20 @@ const RestaurantOrders = () => {
       setLoading(false);
     }
   };
-
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      await restaurantService.updateOrderStatus(orderId, newStatus); // Assuming you have an API for this
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.orderId === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (err) {
+      console.error(err);
+      setError("Failed to update order status.");
+    }
+  };
+  
   return (
     <div className="max-w-6xl mx-auto px-6 py-10 text-[#000000] bg-[#ffffff29] rounded-xl shadow-md">
       <h2 className="text-3xl font-bold text-white mb-6">🍽️ Restaurant Orders</h2>
@@ -116,15 +130,21 @@ const RestaurantOrders = () => {
                     </td>
                     <td className="p-4">Rs. {total.toFixed(2)}</td>
                     <td className="p-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
-                          order.status === "Completed"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
+                      <select
+                        className="p-2 border rounded-md"
+                        value={order.status}
+                        onChange={(e) =>
+                          handleStatusChange(order.orderId, e.target.value)
+                        }
                       >
-                        {order.status || "Pending"}
-                      </span>
+                        {["Pending", "Confirmed", "Preparing", "Out for Delivery", "Delivered"].map(
+                          (status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          )
+                        )}
+                      </select>
                     </td>
                     <td className="p-4">
                       <span
