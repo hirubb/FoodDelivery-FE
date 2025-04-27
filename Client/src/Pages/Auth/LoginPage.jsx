@@ -5,7 +5,7 @@ import authService from '../../services/AuthService';
 import bannerImage1 from '../../assets/Login&Register/logo5.png';
 import bannerImage2 from '../../assets/Login&Register/logo3.png';
 import bannerImage3 from '../../assets/Login&Register/logo6.png';
-import googleIcon from '../../assets/Login&Register/google.png'; // Add this Google icon to your assets
+import googleIcon from '../../assets/Login&Register/google.png'; 
 
 export default function LoginPage() {
     const [formData, setFormData] = useState({ 
