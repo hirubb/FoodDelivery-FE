@@ -103,6 +103,13 @@ class RestaurantService {
   updateMenuItem(itemId,formdata){
     return HTTP.put(`/menu-item/${itemId}`,formdata)
   }
+
+  getIncome(restaurantId,formdata){
+    return orderHTTP.post(`/orders/getIncome/${restaurantId}`,
+      formdata
+    )
+  }
+
   
   
 }

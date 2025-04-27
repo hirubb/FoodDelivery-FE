@@ -16,7 +16,7 @@ function Banner() {
   return (
     <div>
       {/* Banner Section */}
-      <div className="relative w-full h-screen flex items-center justify-center text-center">
+      <div className="relative w-full h-screen flex items-center justify-center text-center ">
         <video
           src="/src/assets/website video.mp4"
           autoPlay
