@@ -1,4 +1,4 @@
-import { AdminHTTP } from "./httpCommon-service";
+import { AdminHTTP,CustomerHTTP,HTTP } from "./httpCommon-service";
 
 
 class AdminService {
@@ -43,6 +43,20 @@ class AdminService {
   }
   getAllNotifications(){
     return AdminHTTP.get("/admin/notifications");
+  }
+  updateAdmin(id,formData){
+    return AdminHTTP.put(`/admin/${id}`,formData)
+
+  }
+  deteleCustomer(id){
+    return CustomerHTTP.delete(`/customers/delete/${id}`)
+  }
+  deleteRestaurantOwner(id){
+    return HTTP.delete(`/restaurant-owners/delete/${id}`)
+
+  }
+  deleteOffer(id){
+    return AdminHTTP.delete(`/system-offers/${id}`)
   }
  
   
