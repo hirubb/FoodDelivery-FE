@@ -47,7 +47,7 @@ function VehicleContent() {
                     revenueLicenseExpiry: response.data.Vehicle.documents.revenueLicense.expiryDate,
                     driverLicenseExpiry: response.data.Vehicle.documents.driverLicense.expiryDate,
                     emissionTestExpiry: response.data.Vehicle.documents.emissionCertificate.expiryDate,
-                    color: response.data.Vehicle.color || 'Black'
+
                 });
 
                 // Update vehicle images
