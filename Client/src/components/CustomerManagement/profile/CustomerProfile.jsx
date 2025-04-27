@@ -266,30 +266,6 @@ const CustomerProfile = ({ setCustomerData: setDashboardCustomerData }) => {
                   required
                 />
                 <input
-                  name="delivery_address"
-                  type="text"
-                  placeholder="DELIVERY ADDRESS"
-                  value={formData.delivery_address}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
-                />
-                <input
-                  name="city"
-                  type="text"
-                  placeholder="CITY"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
-                />
-                <input
-                  name="postal_code"
-                  type="text"
-                  placeholder="POSTAL CODE"
-                  value={formData.postal_code}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
-                />
-                <input
                   name="password"
                   type="password"
                   placeholder="PASSWORD (Leave blank to keep unchanged)"

@@ -104,7 +104,9 @@ function AdminDashboard() {
         <div className="p-4">
           <button
             onClick={() => {
-              localStorage.removeItem("token");
+              localStorage.removeItem("token")
+              localStorage.removeItem("role");
+              localStorage.removeItem("userId");
               window.location.href = "/login";
             }}
             className="flex items-center justify-center w-full py-2 text-sm text-white transition-colors rounded md:justify-start hover:bg-gray-700"

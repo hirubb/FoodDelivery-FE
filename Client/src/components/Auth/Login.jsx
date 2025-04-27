@@ -40,7 +40,7 @@ export default function Login() {
         try {
             const response = await login(formData.email, formData.password);
             localStorage.setItem('token', response.token);
-            
+
             if (rememberMe) {
                 localStorage.setItem('rememberedEmail', formData.email);
             } else {
