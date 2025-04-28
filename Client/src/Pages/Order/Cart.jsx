@@ -196,7 +196,7 @@ function CartPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
+      <h1 className="text-3xl font-bold mb-6">Your Order</h1>
 
       {orderError && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
@@ -246,30 +246,36 @@ function CartPage() {
 
             {/* Item Details */}
             <div className="flex-1">
-              <h3 className="text-lg font-semibold">{item.name}</h3>
-              <p className="text-sm text-gray-600 mb-1">
+              <h3 className="text-black font-bold">{item.name}</h3>
+              <p className="text-black text-gray-600 mb-1 font-bold">
                 Portion: {item.portion}
               </p>
-              <p className="text-sm text-gray-700 mb-1">
+              <p className="text-black text-gray-700 mb-1 font-bold">
                 Price: Rs. {item.price}
               </p>
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() =>
-                    updateQuantity(item._id, Math.max(item.quantity - 1, 0))
-                  }
-                  className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                >
-                  -
-                </button>
-                <span>{item.quantity}</span>
-                <button
-                  onClick={() => updateQuantity(item._id, item.quantity + 1)}
-                  className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                >
-                  +
-                </button>
-              </div>
+  {/* Decrease Button */}
+  <button
+    onClick={() =>
+      updateQuantity(item._id, Math.max(item.quantity - 1, 0))
+    }
+    className="px-2 py-1 bg-gray-200 text-black rounded hover:bg-gray-300"
+  >
+    -
+  </button>
+
+  {/* Quantity Text */}
+  <span className="text-black">{item.quantity}</span>
+
+  {/* Increase Button */}
+  <button
+    onClick={() => updateQuantity(item._id, item.quantity + 1)}
+    className="px-2 py-1 bg-gray-200 text-black rounded hover:bg-gray-300"
+  >
+    +
+  </button>
+</div>
+
             </div>
 
             {/* Price and Remove */}
@@ -302,12 +308,12 @@ function CartPage() {
             Back to Menu
           </button>
           <div className="text-xl font-bold">
-            <div className="text-lg text-gray-700">
+            <div className="text- text-gray-200">
               Items Total: Rs.{" "}
               {cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}
             </div>
-            <div className="text-lg text-gray-700">
-              Delivery Fee (5%): Rs.{" "}
+            <div className="text-lg text-gray-200">
+              Delivery Fee: Rs.{" "}
               {cart.reduce((acc, item) => acc + item.price * item.quantity, 0) *
                 0.05}
             </div>
