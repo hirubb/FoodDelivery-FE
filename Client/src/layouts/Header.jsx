@@ -7,6 +7,7 @@ import { UserContext } from "../context/UserContext";
 import { FaUserCircle } from "react-icons/fa";
 import { CartContext } from "../context/CartContext";
 
+
 function Header() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const role = localStorage.getItem("role");
@@ -102,15 +103,14 @@ const cartItemCount = getCartCount();
               </Link>
             )}
 
-            {/* Cart Icon */}
-            <button onClick={() => setIsCartOpen(true)} className="relative">
-                <FaShoppingCart size={24} className="text-white" />
-                {cartItemCount > 0 && (
-    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-      {cartItemCount}
-    </span>
-  )}
-</button>
+             {/* Cart Icon */}
+             <Link to="/cart" className="relative">
+              <FaShoppingCart size={24} className="text-white" />
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                {cartItemCount > 0 ? cartItemCount : ""}
+              </span>
+            </Link>
+
 
             {/* Menu Icon */}
             <button
