@@ -13,6 +13,7 @@ function Header() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const role = localStorage.getItem("role");
   const token = localStorage.getItem("token");
+  const isCustomer = localStorage.getItem("role") === "Customer";
 
   let profileLink = "";
 
@@ -61,12 +62,16 @@ function Header() {
             >
               Restaurants
             </Link>
-            <Link
-              to="/orders"
-              className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]"
-            >
-              Track Order
-            </Link>
+            <>
+      {isCustomer && ( // Render the link only if the user is a 'Customer'
+        <Link
+          to="/orders"
+          className="text-white px-4 py-2 rounded hover:bg-[#FC8A06]"
+        >
+          Track Order
+        </Link>
+      )}
+    </>
           </div>
 
           {/* Right Section */}

@@ -78,9 +78,8 @@ const AppContent = () => {
           <Route
             path="/owner/profile"
             element={
-              <PrivateRoute roles={["Restaurant Owner"]}>
                 <RestaurantOwnerDashboard />
-              </PrivateRoute>
+            
             }
           />
           <Route
