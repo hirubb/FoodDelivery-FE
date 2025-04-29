@@ -200,7 +200,7 @@ function RestaurantMenuPage() {
     );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 pb-24 bg-gray-900">
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-24 ">
       {/* Delivery Location Popup - shows on page load */}
       <DeliveryLocationPopup
         isOpen={isLocationPopupOpen}
