@@ -96,7 +96,12 @@
   
 
   <h2>👥 Team Members</h2>
-  <p>See <code>members.txt</code> for group member names, registration numbers, and contributions.</p>
+  <pre>
+    IT22066770 - Athukorala H.H.B 
+    IT22070630 - Perera K.D.N 
+    IT22220424 - Kaushalya P.L.P.D
+    IT22187178 - Vijithapala T.G.K.G
+  </pre>
 
   <h2>📄 Report</h2>
   <p>See <code>report.pdf</code> for:</p>
