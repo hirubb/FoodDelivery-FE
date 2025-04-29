@@ -291,7 +291,7 @@ function RestaurantMenuPage() {
         {displayedItems.map((item) => (
           <div
             key={item._id}
-            className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden transform transition duration-300 hover:shadow-2xl hover:scale-[1.03]"
+            className="bg-transparent rounded-2xl shadow-md border border-gray-100 overflow-hidden transform transition duration-300 hover:shadow-2xl hover:scale-[1.03]"
           >
             {item.images?.[0] && (
               <img
@@ -307,7 +307,7 @@ function RestaurantMenuPage() {
             <div className="p-4">
               {/* Name and Rating in one row */}
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
+                <h3 className="text-lg font-semibold text-white">{item.name}</h3>
                 <div className="flex items-center">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -323,14 +323,14 @@ function RestaurantMenuPage() {
               </div>
 
               {/* Description */}
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2 min-h-[36px]">{item.description}</p>
+              <p className="text-white text-sm mb-4 line-clamp-2 min-h-[36px]">{item.description}</p>
 
               {/* Price and Add Button */}
               <div className="flex items-center justify-between">
-                <span className="text-green-600 font-bold text-lg">Rs. {item.price}</span>
+                <span className="text-orange-500 font-bold text-lg">Rs. {item.price}</span>
                 <button
                   onClick={() => addToCart(item)}
-                  className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-md hover:from-green-600 hover:to-green-700 transition"
+                  className="bg-gradient-to-r bg-[#FC8A06] text-black px-4 py-2 rounded-full text-sm font-medium shadow-md hover:from-green-600 hover:to-green-700 transition"
                 >
                   Add
                 </button>
