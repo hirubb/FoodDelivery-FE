@@ -91,6 +91,7 @@ function CustomerDashboard() {
     localStorage.removeItem("cart");
     localStorage.removeItem("role");
     localStorage.removeItem("userId");
+    localStorage.removeItem("rememberedEmail");
     setCart([]);
     setCartItems(0); // Reset the cart count to zero
     navigate("/login");

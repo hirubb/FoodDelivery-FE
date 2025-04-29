@@ -8,6 +8,7 @@ import { FaUserCircle } from "react-icons/fa";
 
 
 
+
 function Header() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const role = localStorage.getItem("role");
@@ -35,9 +36,6 @@ function Header() {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-
-
-
 
   return (
     <>
