@@ -132,6 +132,16 @@ class RestaurantService {
       
       )
   }
+  updateRestaurantWithImages(id,formData){
+    return HTTP.put(`/restaurant/edit/${id}`,formData,{
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  }
+  deleteMenuItem(menuItemId){
+    return HTTP.delete(`/menu-item/${menuItemId}`,)
+  }
 
   
   

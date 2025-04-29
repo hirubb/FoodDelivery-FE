@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaEdit, FaSave } from "react-icons/fa";
+import { FaEdit, FaSave, FaTimes } from "react-icons/fa";
 import restaurantService from "../../../services/restaurant-service";
 import {
   Star,
@@ -16,6 +16,8 @@ import {
   Plus,
   AlertTriangle,
   Settings,
+  Upload,
+  Image,
 } from "lucide-react";
 import { Switch } from "@headlessui/react";
 
@@ -25,6 +27,11 @@ function RestaurantDetails() {
   const [error, setError] = useState("");
   const [editId, setEditId] = useState(null);
   const [editedRestaurant, setEditedRestaurant] = useState({});
+  const [logoFile, setLogoFile] = useState(null);
+  const [bannerFile, setBannerFile] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [bannerPreview, setBannerPreview] = useState(null);
+  const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,11 +54,17 @@ function RestaurantDetails() {
   const startEditing = (restaurant) => {
     setEditId(restaurant._id);
     setEditedRestaurant({ ...restaurant });
+    setLogoPreview(restaurant.logo);
+    setBannerPreview(restaurant.banner_image);
   };
 
   const cancelEditing = () => {
     setEditId(null);
     setEditedRestaurant({});
+    setLogoFile(null);
+    setBannerFile(null);
+    setLogoPreview(null);
+    setBannerPreview(null);
   };
 
   const handleInputChange = (e) => {
@@ -59,17 +72,88 @@ function RestaurantDetails() {
     setEditedRestaurant((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setLogoFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setLogoPreview(previewUrl);
+      setEditedRestaurant((prev) => ({ ...prev, logoChanged: true }));
+    }
+  };
+
+  const handleBannerChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setBannerFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setBannerPreview(previewUrl);
+      setEditedRestaurant((prev) => ({ ...prev, bannerChanged: true }));
+    }
+  };
+
   const saveRestaurant = async () => {
     try {
-      await restaurantService.updateRestaurant(editId, editedRestaurant);
+      setImageUploadLoading(true);
+      
+      // Create a FormData object for multipart/form-data submission
+      const formData = new FormData();
+      
+      // Add all edited restaurant fields
+      Object.keys(editedRestaurant).forEach(key => {
+        if (key !== 'logoChanged' && key !== 'bannerChanged') {
+          formData.append(key, editedRestaurant[key]);
+        }
+      });
+      
+      // Add image files if they were changed
+      if (logoFile) {
+        formData.append('logo', logoFile);
+      }
+      
+      if (bannerFile) {
+        formData.append('banner_image', bannerFile);
+      }
+      
+      // Send the update request
+      const response = await restaurantService.updateRestaurantWithImages(editId, formData);
+      
+      // Update the restaurants list with new data
       setRestaurants((prev) =>
-        prev.map((rest) => (rest._id === editId ? editedRestaurant : rest))
+        prev.map((rest) => {
+          if (rest._id === editId) {
+            // Create a new object with all edited fields
+            const updatedRestaurant = { ...editedRestaurant };
+            
+            // Update image URLs if they were returned in the response
+            if (response.data.restaurant) {
+              if (response.data.restaurant.logo) {
+                updatedRestaurant.logo = response.data.restaurant.logo;
+              }
+              if (response.data.restaurant.banner_image) {
+                updatedRestaurant.banner_image = response.data.restaurant.banner_image;
+              }
+            }
+            
+            return updatedRestaurant;
+          }
+          return rest;
+        })
       );
+      
+      // Clean up
       setEditId(null);
       setEditedRestaurant({});
+      setLogoFile(null);
+      setBannerFile(null);
+      setLogoPreview(null);
+      setBannerPreview(null);
+      
     } catch (err) {
       console.error("Failed to save restaurant", err);
-      alert("Failed to save changes");
+      alert("Failed to save changes: " + (err.response?.data?.message || err.message));
+    } finally {
+      setImageUploadLoading(false);
     }
   };
 
@@ -85,6 +169,7 @@ function RestaurantDetails() {
         return "bg-[#83858E]/20 text-[#83858E]";
     }
   };
+  
   const toggleAvailability = async (restaurantId, currentStatus) => {
     try {
       const updatedAvailability = currentStatus === "available" ? false : true; // Toggle between true and false
@@ -159,7 +244,6 @@ function RestaurantDetails() {
           </button>
         </div>
         
-
         <div className="grid grid-cols-1 gap-8">
           {restaurants.map((restaurant) => (
             <div
@@ -167,23 +251,59 @@ function RestaurantDetails() {
               className="bg-[#FFFFFF08] rounded-xl border border-[#83858E]/20 overflow-hidden transition-all hover:border-[#FC8A06]/50 hover:shadow-lg"
             >
               <div className="relative">
+                {/* Banner Image */}
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#03081F]/80"></div>
-                <img
-                  src={
-                    restaurant.banner_image ||
-                    "https://via.placeholder.com/800x300?text=Restaurant+Banner"
-                  }
-                  alt="Banner"
-                  className="w-full h-56 object-cover"
-                />
+                
+                {editId === restaurant._id ? (
+                  <div className="relative">
+                    <img
+                      src={bannerPreview || restaurant.banner_image || "https://via.placeholder.com/800x300?text=Restaurant+Banner"}
+                      alt="Banner"
+                      className="w-full h-56 object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                      <label className="bg-[#FC8A06] hover:bg-[#FC8A06]/90 text-white cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
+                        <Upload size={18} />
+                        Change Banner
+                        <input 
+                          type="file" 
+                          className="hidden" 
+                          accept="image/*"
+                          onChange={handleBannerChange}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                ) : (
+                  <img
+                    src={restaurant.banner_image || "https://via.placeholder.com/800x300?text=Restaurant+Banner"}
+                    alt="Banner"
+                    className="w-full h-56 object-cover"
+                  />
+                )}
+                
+                {/* Action buttons */}
                 <div className="absolute top-4 right-4 flex gap-2">
                   {editId === restaurant._id ? (
-                    <button
-                      className="bg-green-500 hover:bg-green-600 p-2 rounded-lg backdrop-blur-sm transition-all"
-                      onClick={saveRestaurant}
-                    >
-                      <FaSave size={18} className="text-white" />
-                    </button>
+                    <>
+                      <button
+                        className="bg-red-500 hover:bg-red-600 p-2 rounded-lg backdrop-blur-sm transition-all"
+                        onClick={cancelEditing}
+                      >
+                        <FaTimes size={18} className="text-white" />
+                      </button>
+                      <button
+                        className="bg-green-500 hover:bg-green-600 p-2 rounded-lg backdrop-blur-sm transition-all"
+                        onClick={saveRestaurant}
+                        disabled={imageUploadLoading}
+                      >
+                        {imageUploadLoading ? (
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <FaSave size={18} className="text-white" />
+                        )}
+                      </button>
+                    </>
                   ) : (
                     <button
                       className="bg-[#FFFFFF20] hover:bg-[#FFFFFF30] p-2 rounded-lg backdrop-blur-sm transition-all"
@@ -194,18 +314,37 @@ function RestaurantDetails() {
                   )}
                 </div>
                 
+                {/* Restaurant Logo */}
                 <div className="absolute -bottom-10 left-6 rounded-xl overflow-hidden border-4 border-[#03081F] shadow-xl">
-                  <img
-                    src={
-                      restaurant.logo || "https://via.placeholder.com/100?text=Logo"
-                    }
-                    alt="Logo"
-                    className="w-20 h-20 object-cover bg-[#FFFFFF08]"
-                  />
+                  {editId === restaurant._id ? (
+                    <div className="relative">
+                      <img
+                        src={logoPreview || restaurant.logo || "https://via.placeholder.com/100?text=Logo"}
+                        alt="Logo"
+                        className="w-20 h-20 object-cover bg-[#FFFFFF08]"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60">
+                        <label className="cursor-pointer">
+                          <Image size={18} className="text-white hover:text-[#FC8A06]" />
+                          <input 
+                            type="file" 
+                            className="hidden" 
+                            accept="image/*"
+                            onChange={handleLogoChange}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  ) : (
+                    <img
+                      src={restaurant.logo || "https://via.placeholder.com/100?text=Logo"}
+                      alt="Logo"
+                      className="w-20 h-20 object-cover bg-[#FFFFFF08]"
+                    />
+                  )}
                 </div>
               </div>
               
-
               <div className="px-6 pt-14 pb-6">
                 <div className="flex justify-between items-start mb-6">
                   <div>
@@ -246,26 +385,28 @@ function RestaurantDetails() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                <Switch
-  checked={restaurant.availability}
-  onChange={() =>
-    toggleAvailability(restaurant._id, restaurant.availability ? "available" : "unavailable")
-  }
-  className={`${
-    restaurant.availability ? "bg-green-500" : "bg-red-500"
-  } relative inline-flex items-center h-6 rounded-full w-11`}
->
-  <span className="sr-only">Availability</span>
-  <span
-    className={`${
-      restaurant.availability ? "translate-x-6" : "translate-x-1"
-    } inline-block w-4 h-4 transform bg-white rounded-full`}
-  />
-</Switch>
-                  </div>
+                <div className="flex items-center gap-3 mb-6">
+                  <Switch
+                    checked={restaurant.availability}
+                    onChange={() =>
+                      toggleAvailability(restaurant._id, restaurant.availability ? "available" : "unavailable")
+                    }
+                    className={`${
+                      restaurant.availability ? "bg-green-500" : "bg-red-500"
+                    } relative inline-flex items-center h-6 rounded-full w-11`}
+                  >
+                    <span className="sr-only">Availability</span>
+                    <span
+                      className={`${
+                        restaurant.availability ? "translate-x-6" : "translate-x-1"
+                      } inline-block w-4 h-4 transform bg-white rounded-full`}
+                    />
+                  </Switch>
+                  <span className="text-sm text-[#83858E]">
+                    {restaurant.availability ? "Restaurant is Available" : "Restaurant is Unavailable"}
+                  </span>
+                </div>
                 
-
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   {editId === restaurant._id ? (
                     <>
@@ -297,30 +438,75 @@ function RestaurantDetails() {
                   )}
                 </div>
                 
-
                 <div className="bg-[#FFFFFF08] rounded-lg p-5">
                   <h4 className="font-medium text-white text-lg mb-2">
                     Additional Information
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-[#CCCCCC]">
-                    <div>
-                      <strong>Operating Hours:</strong>{" "}
-                      {restaurant.opHrs || "Not specified"}
-                    </div>
-                    <div>
-                      <strong>Operating Days:</strong>{" "}
-                      {restaurant.opDays || "Not specified"}
-                    </div>
-                    <div>
-                      <strong>License:</strong> {restaurant.license || "N/A"}
-                    </div>
-                    <div>
-                      <strong>Postal Code:</strong> {restaurant.postal_code || "N/A"}
-                    </div>
+                    {editId === restaurant._id ? (
+                      <>
+                        <div>
+                          <strong>Operating Hours:</strong>{" "}
+                          <input
+                            type="text"
+                            name="opHrs"
+                            value={editedRestaurant.opHrs || ""}
+                            onChange={handleInputChange}
+                            className="bg-transparent border-b border-[#FC8A06] text-white outline-none ml-2"
+                          />
+                        </div>
+                        <div>
+                          <strong>Operating Days:</strong>{" "}
+                          <input
+                            type="text"
+                            name="opDays"
+                            value={editedRestaurant.opDays || ""}
+                            onChange={handleInputChange}
+                            className="bg-transparent border-b border-[#FC8A06] text-white outline-none ml-2"
+                          />
+                        </div>
+                        <div>
+                          <strong>License:</strong>{" "}
+                          <input
+                            type="text"
+                            name="license"
+                            value={editedRestaurant.license || ""}
+                            onChange={handleInputChange}
+                            className="bg-transparent border-b border-[#FC8A06] text-white outline-none ml-2"
+                          />
+                        </div>
+                        <div>
+                          <strong>Postal Code:</strong>{" "}
+                          <input
+                            type="text"
+                            name="postal_code"
+                            value={editedRestaurant.postal_code || ""}
+                            onChange={handleInputChange}
+                            className="bg-transparent border-b border-[#FC8A06] text-white outline-none ml-2"
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div>
+                          <strong>Operating Hours:</strong>{" "}
+                          {restaurant.opHrs || "Not specified"}
+                        </div>
+                        <div>
+                          <strong>Operating Days:</strong>{" "}
+                          {restaurant.opDays || "Not specified"}
+                        </div>
+                        <div>
+                          <strong>License:</strong> {restaurant.license || "N/A"}
+                        </div>
+                        <div>
+                          <strong>Postal Code:</strong> {restaurant.postal_code || "N/A"}
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
-              
             </div>
           ))}
         </div>
@@ -350,7 +536,7 @@ const EditableDetail = ({ label, name, value, onChange }) => (
       <input
         type="text"
         name={name}
-        value={value}
+        value={value || ""}
         onChange={onChange}
         className="bg-transparent border-b border-[#FC8A06] text-white outline-none"
       />

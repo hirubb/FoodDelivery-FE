@@ -189,7 +189,7 @@ function MenuManagement() {
     if (!window.confirm('Are you sure you want to delete this menu item?')) return;
     
     try {
-      await restaurantService.deleteMenuItem(menuId, itemId);
+      await restaurantService.deleteMenuItem(itemId);
       
       // Update local state
       setMenus(prevMenus => 
@@ -360,12 +360,6 @@ function MenuManagement() {
                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
                       >
                         Edit Menu
-                      </button>
-                      <button
-                        onClick={() => handleAddMenuItem(menu._id)}
-                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm"
-                      >
-                        Add Item
                       </button>
                       <button
                         onClick={() => handleDeleteMenu(menu._id)}
