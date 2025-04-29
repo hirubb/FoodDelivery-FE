@@ -8,6 +8,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { CartContext } from "../context/CartContext";
 
 
+
 function Header() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const role = localStorage.getItem("role");
@@ -36,8 +37,8 @@ function Header() {
     setSidebarOpen(!sidebarOpen);
   };
 
-const { getCartCount, setIsCartOpen } = useContext(CartContext);
-const cartItemCount = getCartCount();
+  const { getItemCount } = useContext(CartContext);
+  const cartItemCount = getItemCount();
 
 
   return (
