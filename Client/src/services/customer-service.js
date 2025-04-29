@@ -60,6 +60,14 @@ class CustomerService {
   getShoppingCart() {
     return CustomerHTTP.get("/cart");
   }
+
+  GetCustomerById(id) {
+    return CustomerHTTP.get(`/customers/${id}`);
+  }
+
+
+
+
 }
 
 export default new CustomerService();

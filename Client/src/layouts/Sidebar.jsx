@@ -33,9 +33,8 @@ const Sidebar = ({
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-white z-50 shadow-lg transform ${
-          sidebarOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 ease-in-out`}
+        className={`fixed top-0 right-0 h-full w-64 bg-white z-50 shadow-lg transform ${sidebarOpen ? "translate-x-0" : "translate-x-full"
+          } transition-transform duration-300 ease-in-out`}
       >
         <div className="p-5">
           <div className="flex justify-between items-center mb-6">
@@ -111,7 +110,7 @@ const Sidebar = ({
             </Link>
 
             <Link
-              to="#"
+              to="/deliveryPersonnel-SignUp"
               onClick={sidebarOpen}
               className="flex items-center space-x-3 text-gray-700 hover:text-[#FC8A06] p-2 rounded hover:bg-gray-100"
             >

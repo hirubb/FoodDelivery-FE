@@ -5,18 +5,18 @@ import DeliveryRiderService from '../../../services/DeliveryRider-service';
 
 function ProfileContent() {
     const [editMode, setEditMode] = useState(false);
-    const [profileImg, setProfileImg] = useState('https://randomuser.me/api/portraits/men/32.jpg');
+    const [profileImg, setProfileImg] = useState('https://wallpapers.com/images/hd/contact-profile-icon-orange-background-akpgd1xj0pcgm9n7.jpg');
     const fileInputRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [formData, setFormData] = useState({
-        firstName: 'John',
-        lastName: 'Driver',
+        firstName: '',
+        lastName: '',
         age: 30,
-        gender: "Male",
-        mobile: '(555) 123-4567',
-        email: 'john.driver@example.com',
-        password: 'password123',
+        gender: "",
+        mobile: '',
+        email: '',
+        password: '',
         isVerified: true,
         profileImage: ''
     });

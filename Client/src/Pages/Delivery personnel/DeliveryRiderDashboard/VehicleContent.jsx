@@ -13,15 +13,15 @@ function VehicleContent() {
     const [sideImageFile, setSideImageFile] = useState(null);
 
     const [vehicleData, setVehicleData] = useState({
-        vehicleModel: 'Honda CBR 150',
-        vehicleType: 'Motorbike',
-        manufactureYear: '2022',
-        licensePlate: 'ABC 123',
-        insuranceExpiry: '2024-09-30',
-        revenueLicenseExpiry: '2025-10-15',
-        driverLicenseExpiry: '2025-04-16',
-        emissionTestExpiry: '2025-08-15',
-        color: 'Black'
+        vehicleModel: '',
+        vehicleType: '',
+        manufactureYear: '',
+        licensePlate: '',
+        insuranceExpiry: '',
+        revenueLicenseExpiry: '',
+        driverLicenseExpiry: '',
+        emissionTestExpiry: '',
+        color: ''
     });
 
     const [vehicleImages, setVehicleImages] = useState({
@@ -249,7 +249,7 @@ function VehicleContent() {
                     <div className="p-6 border-b border-gray-200 flex items-center justify-between">
                         <div>
                             <h1 className="text-2xl font-bold text-gray-800">{vehicleData.model}</h1>
-                            <p className="text-gray-500">{vehicleData.type} • {vehicleData.year} • {vehicleData.color}</p>
+                            <p className="text-gray-500">{vehicleData.type} • {vehicleData.year} </p>
                         </div>
                         <div>
                             {editMode ? (
@@ -343,26 +343,26 @@ function VehicleContent() {
                             <h2 className="text-lg font-semibold text-gray-800">Vehicle Information</h2>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Model</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Model</label>
                                 {editMode ? (
                                     <input
                                         type="text"
                                         name="model"
-                                        value={vehicleData.vehicleModel}
+                                        value={vehicleData.model}
                                         onChange={handleChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-black"
                                     />
                                 ) : (
-                                    <p className="text-gray-800">{vehicleData.vehicleModel}</p>
+                                    <p className="text-gray-800">{vehicleData.model}</p>
                                 )}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Type</label>
                                 {editMode ? (
                                     <select
                                         name="type"
-                                        value={vehicleData.vehicleType}
+                                        value={vehicleData.type}
                                         onChange={handleChange}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                                     >
@@ -372,27 +372,27 @@ function VehicleContent() {
                                         <option>Tuk/auto</option>
                                     </select>
                                 ) : (
-                                    <p className="text-gray-800">{vehicleData.vehicleType}</p>
+                                    <p className="text-gray-800">{vehicleData.type}</p>
                                 )}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1 ">Year</label>
                                 {editMode ? (
                                     <input
                                         type="text"
                                         name="year"
-                                        value={vehicleData.manufactureYear}
+                                        value={vehicleData.year}
                                         onChange={handleChange}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                                     />
                                 ) : (
-                                    <p className="text-gray-800">{vehicleData.manufactureYear}</p>
+                                    <p className="text-gray-800">{vehicleData.year}</p>
                                 )}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">License Plate</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">License Plate</label>
                                 {editMode ? (
                                     <input
                                         type="text"

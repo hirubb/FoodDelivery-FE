@@ -1,3 +1,8 @@
+import { orderHTTP } from "./httpCommon-service";
+
+
+
+
 // services/order-service.js
 import axios from 'axios';
 
@@ -54,7 +59,33 @@ const orderService = {
 
       throw error;
     });
+  },
+
+
+
+  // Get Order Details by ID for the delivery person - Gayashan 
+
+  getOrderDetailsById(order_ID) {
+    return orderHTTP.get(`/orders/DeliveryPerson/GetOrderById/${order_ID}`, {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+  },
+
+  // Update order status - Gayashan
+
+  UpdateOrderStatus(orderId, status) {
+    return orderHTTP.patch(`/orders/${orderId}/status`, { status }, {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
   }
+
+
+
+
 };
 
 export default orderService;
