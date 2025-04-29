@@ -200,7 +200,7 @@ function RestaurantMenuPage() {
     );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 pb-24 bg-gray-200">
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-24 bg-gray-900">
       {/* Delivery Location Popup - shows on page load */}
       <DeliveryLocationPopup
         isOpen={isLocationPopupOpen}
@@ -256,13 +256,13 @@ function RestaurantMenuPage() {
 
       {/* Menu Categories */}
       <div className="mb-8">
-        <h2 className="text-2xl text-black font-bold mb-6">Menu Categories</h2>
+        <h2 className="text-2xl text-white font-bold mb-6">Menu Categories</h2>
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
           <button
             onClick={() => setSelectedCategory("")}
             className={`flex flex-col items-center p-4 rounded-lg min-w-[100px] ${selectedCategory === ""
                 ? "bg-[#FC8A06] text-white"
-                : "bg-[#03081F] text-white hover:bg-gray-900 border border-gray-800"
+                : "bg-[#03081F] text-white hover:bg-gray-600 border border-gray-200"
               }`}
           >
             <span className="text-2xl mb-2">🍽️</span>
@@ -274,7 +274,7 @@ function RestaurantMenuPage() {
               onClick={() => setSelectedCategory(menu._id)}
               className={`flex flex-col items-center p-4 rounded-lg min-w-[100px] ${selectedCategory === menu._id
                   ? "bg-[#FC8A06] text-white"
-                  : "bg-[#03081F] text-white hover:bg-gray-900 border border-gray-800"
+                  : "bg-[#03081F] text-white hover:bg-gray-900 border border-gray-100"
                 }`}
             >
               <span className="text-2xl mb-2">
