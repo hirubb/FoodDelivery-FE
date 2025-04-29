@@ -17,8 +17,10 @@ function MenuManagement() {
     description: '',
     price: '',
     portion: '',
-    category: ''
+    category: '',
+    image: null
   });
+  const [imagePreview, setImagePreview] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -133,13 +135,28 @@ function MenuManagement() {
       description: menuItem.description,
       price: menuItem.price,
       portion: menuItem.portion,
-      category: menuItem.category
+      category: menuItem.category,
+      image: null
     });
+
+    // Set image preview if available
+    if (menuItem.images && menuItem.images.length > 0) {
+      setImagePreview(menuItem.images[0]);
+    } else {
+      setImagePreview('');
+    }
   };
 
   const handleMenuItemFormChange = (e) => {
-    const { name, value } = e.target;
-    setMenuItemForm(prev => ({ ...prev, [name]: value }));
+    const { name, value, files } = e.target;
+    
+    if (name === 'image' && files && files[0]) {
+      setMenuItemForm(prev => ({ ...prev, image: files[0] }));
+      // Create a preview URL for the selected image
+      setImagePreview(URL.createObjectURL(files[0]));
+    } else {
+      setMenuItemForm(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleMenuItemFormSubmit = async () => {
@@ -154,29 +171,25 @@ function MenuManagement() {
         return;
       }
       
-      // Format the updated item data
-      const updatedItem = {
-        ...menuItemForm,
-        price: Number(menuItemForm.price)
-      };
+      // Create form data to handle file upload
+      const formData = new FormData();
+      formData.append('name', menuItemForm.name);
+      formData.append('description', menuItemForm.description);
+      formData.append('price', Number(menuItemForm.price));
+      formData.append('portion', menuItemForm.portion);
+      formData.append('category', menuItemForm.category);
+      
+      // Only append image if a new one was selected
+      if (menuItemForm.image) {
+        formData.append('images', menuItemForm.image);
+      }
       
       // Call API to update the menu item
-      await restaurantService.updateMenuItem(itemId, updatedItem);
+      await restaurantService.updateMenuItemWithImage(itemId, formData);
       
-      // Update local state
-      setMenus(prevMenus => 
-        prevMenus.map(menu => {
-          if (menu._id === menuId) {
-            return {
-              ...menu,
-              menu_items: menu.menu_items.map(item => 
-                item._id === itemId ? { ...item, ...updatedItem } : item
-              )
-            };
-          }
-          return menu;
-        })
-      );
+      // Refresh menus to get updated data including new image
+      const { data } = await restaurantService.getMenus(selectedRestaurant);
+      setMenus(data);
       
       handleCancelMenuItemEdit();
     } catch (err) {
@@ -189,7 +202,7 @@ function MenuManagement() {
     if (!window.confirm('Are you sure you want to delete this menu item?')) return;
     
     try {
-      await restaurantService.deleteMenuItem(menuId, itemId);
+      await restaurantService.deleteMenuItem(itemId);
       
       // Update local state
       setMenus(prevMenus => 
@@ -215,8 +228,14 @@ function MenuManagement() {
       description: '',
       price: '',
       portion: '',
-      category: ''
+      category: '',
+      image: null
     });
+    setImagePreview('');
+    // Revoke any object URLs to avoid memory leaks
+    if (imagePreview && imagePreview.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreview);
+    }
   };
 
   // Function to add a new menu item
@@ -362,12 +381,6 @@ function MenuManagement() {
                         Edit Menu
                       </button>
                       <button
-                        onClick={() => handleAddMenuItem(menu._id)}
-                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm"
-                      >
-                        Add Item
-                      </button>
-                      <button
                         onClick={() => handleDeleteMenu(menu._id)}
                         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm"
                       >
@@ -386,6 +399,34 @@ function MenuManagement() {
                               <div className="p-3 bg-gray-50 rounded">
                                 <h4 className="text-lg font-semibold mb-3 text-black">Edit Menu Item</h4>
                                 <div className="space-y-3">
+                                  {/* Image Upload Field */}
+                                  <div>
+                                    <label className="block text-sm font-medium text-black mb-1">
+                                      Image
+                                    </label>
+                                    <div className="flex flex-col items-center mb-3">
+                                      {imagePreview && (
+                                        <div className="mb-2">
+                                          <img 
+                                            src={imagePreview} 
+                                            alt="Preview" 
+                                            className="w-full h-40 object-cover rounded-md"
+                                          />
+                                        </div>
+                                      )}
+                                      <input
+                                        type="file"
+                                        name="image"
+                                        accept="image/*"
+                                        onChange={handleMenuItemFormChange}
+                                        className="w-full text-sm text-black file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                      />
+                                      <p className="mt-1 text-xs text-gray-500">
+                                        {imagePreview ? "Change image or keep current one" : "Upload an image"}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  
                                   <div>
                                     <label className="block text-sm font-medium text-black mb-1">
                                       Name
