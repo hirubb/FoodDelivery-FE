@@ -112,7 +112,7 @@ const Sidebar = ({
                 </Link>
 
                 <Link
-                  to="#"
+                  to="/deliveryPersonnel-SignUp"
                   onClick={sidebarOpen}
                   className="flex items-center space-x-3 text-gray-700 hover:text-[#FC8A06] p-2 rounded hover:bg-gray-100"
                 >
