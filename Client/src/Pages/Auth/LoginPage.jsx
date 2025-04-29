@@ -37,8 +37,17 @@ export default function LoginPage() {
             authService.handleGoogleCallback(code)
                 .then(response => {
                     console.log("Google auth response:", response.data);
-                    const userRole = getUserRoleFromResponse(response.data);
-                    routeBasedOnRole(userRole);
+                    if (response && response.data) {
+                        // Store authentication data including token
+                        if (response.data.token) {
+                            authService.setAuthData(response.data);
+                        }
+                        const userRole = getUserRoleFromResponse(response.data);
+                        console.log("Determined role from Google auth:", userRole);
+                        routeBasedOnRole(userRole);
+                    } else {
+                        throw new Error('Invalid response from server');
+                    }
                 })
                 .catch(err => {
                     console.error("Google auth error:", err);
@@ -187,8 +196,13 @@ export default function LoginPage() {
         }
     };
 
-    // Helper function to extract role from response
+    // Helper function to extract role from response - Improved version
     const getUserRoleFromResponse = (data) => {
+        if (!data) return null;
+
+        // Direct debug log of the full response structure
+        console.log("Full auth data structure:", JSON.stringify(data));
+
         let userRole = null;
 
         // Check direct role property
@@ -202,21 +216,54 @@ export default function LoginPage() {
         // Check customer object if it exists (specific to customer login)
         else if (data.customer && data.customer.role) {
             userRole = data.customer.role;
+            console.log("Found role in data.customer.role:", userRole);
         }
         // Check restaurant owner object if it exists
         else if (data.restaurantOwner && data.restaurantOwner.role) {
             userRole = data.restaurantOwner.role;
+            console.log("Found role in data.restaurantOwner.role:", userRole);
+        }
+        // Check if the direct userData or user object contains the role
+        else if (data.userData && data.userData.role) {
+            userRole = data.userData.role;
+            console.log("Found role in data.userData.role:", userRole);
         }
         // Check admin object if it exists
         else if (data.admin && data.admin.role) {
             userRole = data.admin.role;
+            console.log("Found role in data.admin.role:", userRole);
+        }
+        // If role is still not found, attempt to parse the user type from available data
+        else {
+            // Check if restaurantOwner object exists at all (even without role property)
+            if (data.restaurantOwner) {
+                userRole = 'Restaurant Owner';
+                console.log("Inferred role from restaurantOwner object presence");
+            }
+            // Check if customer object exists at all
+            else if (data.customer) {
+                userRole = 'Customer';
+                console.log("Inferred role from customer object presence");
+            }
+            // Check if admin object exists at all
+            else if (data.admin) {
+                userRole = 'Admin';
+                console.log("Inferred role from admin object presence");
+            }
+            // Check if user object exists and has a type property
+            else if (data.user && data.user.type) {
+                userRole = data.user.type;
+                console.log("Found role in data.user.type:", userRole);
+            }
         }
 
         // Normalize role format if needed
-        return normalizeRoleName(userRole);
+        const normalizedRole = normalizeRoleName(userRole);
+        console.log("Final normalized role:", normalizedRole);
+        return normalizedRole;
     };
 
-    // Helper function to route based on role
+    // Helper function to route based on role - Improved version with additional safeguards
     const routeBasedOnRole = (userRole) => {
         console.log("Routing based on role:", userRole);
 
@@ -233,7 +280,7 @@ export default function LoginPage() {
         }
     };
 
-    // Helper function to normalize role names
+    // Helper function to normalize role names - Improved version
     const normalizeRoleName = (role) => {
         if (!role) return null;
 

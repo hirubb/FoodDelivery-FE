@@ -40,6 +40,7 @@ export default function Login() {
         try {
             const response = await login(formData.email, formData.password);
             localStorage.setItem('token', response.token);
+            console.log("responsesssssss : ",response)
 
             if (rememberMe) {
                 localStorage.setItem('rememberedEmail', formData.email);
@@ -50,7 +51,7 @@ export default function Login() {
             // Redirect based on role
             switch (response.role) {
                 case 'CUSTOMER': navigate('/customer/dashboard'); break;
-                case 'Restaurant Owner': navigate('/owner/profile'); break;
+                case 'Restaurant Owner': navigate('/'); break;
                 case 'DELIVERY_PERSONNEL': navigate('/delivery/orders'); break;
                 case 'Admin': navigate('/admin-dashboard'); break;
                 default: navigate('/');
