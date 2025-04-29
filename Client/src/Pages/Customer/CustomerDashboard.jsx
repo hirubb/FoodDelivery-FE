@@ -57,18 +57,18 @@ function CustomerDashboard() {
 
       const data = await response.json();
       setCustomerData(data);
-      
+
       // Simulate fetching cart data
       const cartResponse = await fetch("https://api.ambula.lk/customer/cart", {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      
+
       if (cartResponse.ok) {
         const cartData = await cartResponse.json();
         setCartItems(cartData.items.length);
-        
+
         // Update localStorage with the fresh cart data
         localStorage.setItem("cart", JSON.stringify(cartData.items));
       } else {
@@ -102,7 +102,7 @@ function CustomerDashboard() {
     if (searchQuery.trim()) {
       // You could navigate to a dedicated search page
       // navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-      
+
       // Or set state to show filtered results in the current view
       setActiveTab("restaurants");
       // Implement search functionality in the restaurants component
@@ -158,7 +158,7 @@ function CustomerDashboard() {
               onClick={() => setActiveTab("payment")}
             />
             <SidebarItem
-              icon={<FaMapMarkerAlt />} 
+              icon={<FaMapMarkerAlt />}
               title="Address Book"
               active={activeTab === "addresses"}
               onClick={() => setActiveTab("addresses")}
@@ -208,16 +208,16 @@ function CustomerDashboard() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button 
+                <button
                   type="submit"
                   className="absolute right-0 p-2 text-gray-500 transform -translate-y-1/2 top-1/2"
                 >
                   <FaSearch className="w-4 h-4" />
                 </button>
               </form>
-              
+
               {/* Notifications */}
-              <button 
+              <button
                 className="relative p-1 text-gray-400 rounded-full hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                 onClick={() => setActiveTab("notifications")}
               >
@@ -226,7 +226,7 @@ function CustomerDashboard() {
                   <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500"></span>
                 )}
               </button>
-              
+
               {/* User Profile */}
               <div className="flex items-center">
                 {customerData?.profile_image ? (
@@ -261,12 +261,12 @@ function CustomerDashboard() {
               <p className="mb-4 text-gray-600">
                 Hungry? We've got you covered! Browse through our wide selection of restaurants and order your favorite meals delivered straight to your doorstep.
               </p>
-              
+
               {/* Current/Active Order Status (if any) */}
               <div className="p-4 mb-8 border border-orange-200 rounded-lg bg-orange-50">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-800">Your Active Order</h3>
-                  <button 
+                  <button
                     className="px-3 py-1 text-sm text-orange-600 border border-orange-600 rounded-full hover:bg-orange-600 hover:text-white"
                     onClick={() => setActiveTab("history")}
                   >
@@ -287,7 +287,7 @@ function CustomerDashboard() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 gap-4 mt-8 md:grid-cols-3">
                 <div className="p-4 transition-all rounded-lg bg-blue-50 hover:shadow-md">
                   <div className="flex items-center space-x-3">
@@ -297,14 +297,14 @@ function CustomerDashboard() {
                     <h3 className="font-semibold text-gray-800">Order Again</h3>
                   </div>
                   <p className="mt-2 text-sm text-gray-600">Quickly reorder from your past orders.</p>
-                  <button 
+                  <button
                     className="w-full px-4 py-2 mt-4 text-white transition-all bg-blue-500 rounded-lg hover:bg-blue-600"
                     onClick={() => setActiveTab("history")}
                   >
                     View History
                   </button>
                 </div>
-                
+
                 <div className="p-4 transition-all rounded-lg bg-purple-50 hover:shadow-md">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 text-white bg-purple-500 rounded-full">
@@ -313,14 +313,14 @@ function CustomerDashboard() {
                     <h3 className="font-semibold text-gray-800">Manage Addresses</h3>
                   </div>
                   <p className="mt-2 text-sm text-gray-600">Update or add delivery locations.</p>
-                  <button 
+                  <button
                     className="w-full px-4 py-2 mt-4 text-white transition-all bg-purple-500 rounded-lg hover:bg-purple-600"
                     onClick={() => setActiveTab("addresses")}
                   >
                     My Addresses
                   </button>
                 </div>
-                
+
                 <div className="p-4 transition-all rounded-lg bg-teal-50 hover:shadow-md">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 text-white bg-teal-500 rounded-full">
@@ -329,7 +329,7 @@ function CustomerDashboard() {
                     <h3 className="font-semibold text-gray-800">Payment Methods</h3>
                   </div>
                   <p className="mt-2 text-sm text-gray-600">Manage your payment options.</p>
-                  <button 
+                  <button
                     className="w-full px-4 py-2 mt-4 text-white transition-all bg-teal-500 rounded-lg hover:bg-teal-600"
                     onClick={() => setActiveTab("payment")}
                   >
@@ -339,7 +339,7 @@ function CustomerDashboard() {
               </div>
             </div>
           )}
-          
+
           {activeTab === "profile" && <CustomerProfile setCustomerData={setCustomerData} customerData={customerData} />}
           {activeTab === "history" && <OrderHistory />}
           {activeTab === "payment" && <PaymentMethods />}
@@ -355,9 +355,8 @@ function SidebarItem({ icon, title, active, onClick, badge }) {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center justify-center md:justify-start w-full py-3 px-2 mb-2 rounded-lg transition-colors relative ${
-        active ? "bg-[#FF8A00] text-white" : "text-gray-300 hover:bg-gray-700"
-      }`}
+      className={`flex items-center justify-center md:justify-start w-full py-3 px-2 mb-2 rounded-lg transition-colors relative ${active ? "bg-[#FF8A00] text-white" : "text-gray-300 hover:bg-gray-700"
+        }`}
     >
       <div className="w-5 h-5">{icon}</div>
       <span className="hidden ml-3 md:block">{title}</span>

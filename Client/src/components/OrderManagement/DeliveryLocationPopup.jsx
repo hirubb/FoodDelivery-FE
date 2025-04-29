@@ -22,7 +22,7 @@ function DeliveryLocationPopup({ isOpen, onClose, onSave, initialLocation }) {
     if (selectedLocation?.latitude && selectedLocation?.longitude) {
       const lat = selectedLocation.latitude;
       const lng = selectedLocation.longitude;
-      
+
       // Set map URL based on selected location
       const googleMapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBUTPe2A_fLIr6l51kJJxQ2GZNutWiHe8c&q=${lat},${lng}&zoom=15`;
       setMapUrl(googleMapsEmbedUrl);
@@ -39,16 +39,16 @@ function DeliveryLocationPopup({ isOpen, onClose, onSave, initialLocation }) {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-  
+
     try {
       setIsLoading(true);
-  
+
       // Simulate location search with a timeout
       setTimeout(() => {
         // Center coordinates for Malabe, Sri Lanka
         const malabeLat = 6.9147;
         const malabeLng = 79.9710;
-  
+
         // Generate small random variations around Malabe
         const mockLocation = {
           latitude: malabeLat + (Math.random() - 0.5) * 0.01,  // ~0.005 degree variation
@@ -57,7 +57,7 @@ function DeliveryLocationPopup({ isOpen, onClose, onSave, initialLocation }) {
           timestamp: Date.now(),
           source: "search"
         };
-        
+
         setSelectedLocation(mockLocation);
         setIsLoading(false);
       }, 1000);
@@ -66,18 +66,18 @@ function DeliveryLocationPopup({ isOpen, onClose, onSave, initialLocation }) {
       setIsLoading(false);
     }
   };
-  
+
 
   const handleUseCurrentLocation = () => {
     setIsLoading(true);
-    
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        
+
         // Reverse geocode to get address (simulated here)
         // In a real app, you would use a service like Google's Geocoding API
-        
+
         const locationData = {
           latitude,
           longitude,
@@ -86,7 +86,7 @@ function DeliveryLocationPopup({ isOpen, onClose, onSave, initialLocation }) {
           address: "Current Location", // In real app, get this from geocoding service
           source: "current"
         };
-        
+
         setSelectedLocation(locationData);
         setIsLoading(false);
       },
@@ -117,7 +117,7 @@ function DeliveryLocationPopup({ isOpen, onClose, onSave, initialLocation }) {
             <MapPin className="text-[#FC8A06] mr-2" size={20} />
             Delivery Location
           </h2>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 transition-colors"
           >

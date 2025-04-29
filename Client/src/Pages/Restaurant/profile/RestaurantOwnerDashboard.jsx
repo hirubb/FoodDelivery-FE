@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaUser,
   FaUtensils,
@@ -84,8 +84,8 @@ function RestaurantOwnerDashboard() {
               active={activeTab === "menu"}
               onClick={() => setActiveTab("menu")}
             />
-             <SidebarItem
-              icon={<FaAd/>} // You can change this icon
+            <SidebarItem
+              icon={<FaAd />} // You can change this icon
               title="Offers"
               active={activeTab === "offers"}
               onClick={() => setActiveTab("offers")}
@@ -97,15 +97,15 @@ function RestaurantOwnerDashboard() {
               onClick={() => setActiveTab("orders")}
             />
 
-           
+
 
             <SidebarItem
-              icon={<FaCcAmazonPay/>} // You can change this icon
+              icon={<FaCcAmazonPay />} // You can change this icon
               title="Payment Info"
               active={activeTab === "payment"}
               onClick={() => setActiveTab("payment")}
             />
-            
+
           </nav>
         </div>
 
@@ -138,13 +138,13 @@ function RestaurantOwnerDashboard() {
               {activeTab === "menu" && "Menus"}
               {activeTab === "offers" && "Offers"}
               {activeTab === "orders" && "Orders Management"}
-             
+
               {activeTab === "payment" && "Payment Info"}
-              
+
             </h1>
 
             <div className="flex items-center space-x-4">
-            <button
+              <button
                 onClick={() => setShowNotifications(!showNotifications)}
                 className="relative p-1 text-gray-400 rounded-full hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               >
@@ -170,39 +170,39 @@ function RestaurantOwnerDashboard() {
 
         {/* Content Area */}
         <main className="flex-1 p-4 overflow-y-auto">
-          {activeTab === "dashboard" && <Analytics/>}
+          {activeTab === "dashboard" && <Analytics />}
           {activeTab === "profile" && <OwnerProfileData />}
           {activeTab === "restaurant" && <RestaurantDetails />}
           {activeTab === "menu" && <MenuManagement />}
           {activeTab === "offers" && <RestaurantOffers />}
           {activeTab === "orders" && <RestaurantOrders />}
           {activeTab === "payment" && <RestaurantPaymentInfo />}
-          
+
         </main>
       </div>
       {showNotifications && (
-  <div className="absolute top-64 right-6 z-50 w-80 h-96 bg-[#03081F] border border-gray-300 shadow-lg rounded-lg p-4 overflow-hidden">
-    <h2 className="text-lg font-semibold mb-2 text-white">Notifications</h2>
-    <div className="h-[20rem] overflow-y-auto space-y-2 pr-2">
-      {Array.isArray(notifications) && notifications.length > 0 ? (
-        notifications
-          .slice()
-          .reverse()
-          .map((note, index) => (
-            <div
-              key={index}
-              className="p-3 border border-gray-200 rounded-md shadow-sm bg-gray-50"
-            >
-              <p className="text-sm text-gray-700">{note.message}</p>
-              <p className="text-xs text-gray-400">{formatTime(note.createdAt)}</p>
-            </div>
-          ))
-      ) : (
-        <p className="text-sm text-gray-300">No new notifications.</p>
+        <div className="absolute top-64 right-6 z-50 w-80 h-96 bg-[#03081F] border border-gray-300 shadow-lg rounded-lg p-4 overflow-hidden">
+          <h2 className="text-lg font-semibold mb-2 text-white">Notifications</h2>
+          <div className="h-[20rem] overflow-y-auto space-y-2 pr-2">
+            {Array.isArray(notifications) && notifications.length > 0 ? (
+              notifications
+                .slice()
+                .reverse()
+                .map((note, index) => (
+                  <div
+                    key={index}
+                    className="p-3 border border-gray-200 rounded-md shadow-sm bg-gray-50"
+                  >
+                    <p className="text-sm text-gray-700">{note.message}</p>
+                    <p className="text-xs text-gray-400">{formatTime(note.createdAt)}</p>
+                  </div>
+                ))
+            ) : (
+              <p className="text-sm text-gray-300">No new notifications.</p>
+            )}
+          </div>
+        </div>
       )}
-    </div>
-  </div>
-)}
     </div>
   );
 }
@@ -211,9 +211,8 @@ function SidebarItem({ icon, title, active, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center justify-center md:justify-start w-full py-3 px-2 mb-2 rounded-lg transition-colors ${
-        active ? "bg-[#FF8A00] text-white" : "text-gray-300 hover:bg-gray-700"
-      }`}
+      className={`flex items-center justify-center md:justify-start w-full py-3 px-2 mb-2 rounded-lg transition-colors ${active ? "bg-[#FF8A00] text-white" : "text-gray-300 hover:bg-gray-700"
+        }`}
     >
       <div className="w-5 h-5">{icon}</div>
       <span className="hidden ml-3 md:block">{title}</span>

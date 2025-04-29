@@ -52,7 +52,7 @@ const CustomerProfile = ({ setCustomerData: setDashboardCustomerData }) => {
     e.preventDefault();
     setUpdateLoading(true);
     setError(null);
-    
+
     try {
       // Create a clean update object with only the properties that have values
       const updateData = {};
@@ -65,7 +65,7 @@ const CustomerProfile = ({ setCustomerData: setDashboardCustomerData }) => {
       });
 
       const response = await customerService.updateCustomerProfile(updateData);
-      
+
       if (response.data && response.data.customer) {
         setCustomerData(response.data.customer);
         if (setDashboardCustomerData) {
@@ -92,14 +92,14 @@ const CustomerProfile = ({ setCustomerData: setDashboardCustomerData }) => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        
+
         if (!token) {
           navigate("/login");
           return;
         }
 
         const response = await customerService.getCustomerProfile();
-        
+
         if (response.data && response.data.customer) {
           setCustomerData(response.data.customer);
           if (setDashboardCustomerData) {
@@ -205,19 +205,19 @@ const CustomerProfile = ({ setCustomerData: setDashboardCustomerData }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white shadow-xl rounded-2xl w-[90%] max-w-lg">
             <h2 className="mb-4 text-xl font-bold text-[#FC8A06]">Edit Profile</h2>
-            
+
             {updateSuccess && (
               <div className="p-3 mb-4 text-green-700 bg-green-100 rounded-md">
                 Profile updated successfully!
               </div>
             )}
-            
+
             {error && (
               <div className="p-3 mb-4 text-red-700 bg-red-100 rounded-md">
                 {error}
               </div>
             )}
-            
+
             <form onSubmit={handleUpdate}>
               <div className="space-y-3">
                 <input

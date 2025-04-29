@@ -53,12 +53,12 @@ const CheckoutPage = () => {
         postalCode: userData.postalCode || ''
       }));
     }
-    
+
     // Check for payment status from URL params (redirect from payment gateway)
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('status');
     const orderId = urlParams.get('order_id') || location.state?.orderId || localStorage.getItem('currentOrderId');
-    
+
     if (paymentStatus === 'success' && orderId) {
       setSuccess(`Payment completed successfully! Order ID: ${orderId}`);
       // Verify payment status with backend
@@ -68,7 +68,7 @@ const CheckoutPage = () => {
     } else if (paymentStatus === 'canceled' && orderId) {
       setError(`Payment was canceled.`);
     }
-    
+
     fetchOrderData();
   }, [location]);
 
@@ -93,36 +93,36 @@ const CheckoutPage = () => {
     try {
       // Clear any previous errors
       setError('');
-      
+
       // First check for orderId from location state
       let orderId = location.state?.orderId;
       console.log("Order ID from location state:", orderId);
-      
+
       // Then try localStorage if not found in state
       if (!orderId) {
         orderId = localStorage.getItem('currentOrderId');
         console.log("Order ID from localStorage:", orderId);
       }
-      
+
       // As a last resort, check URL params
       if (!orderId) {
         const params = new URLSearchParams(window.location.search);
         orderId = params.get('orderId') || params.get('order_id');
         console.log("Order ID from URL params:", orderId);
       }
-      
+
       console.log("Final orderId being used:", orderId);
-      
+
       if (!orderId) {
         setError('No order ID found. Please add items to your cart first.');
         setIsLoading(false);
         return;
       }
-      
+
       console.log("Fetching order with ID:", orderId);
       const response = await OrderService.getOrderById(orderId);
       console.log("Order API response:", response);
-      
+
       if (response.data && response.data.success && response.data.order) {
         const orderData = response.data.order;
         console.log("Order successfully loaded:", orderData);
@@ -191,12 +191,12 @@ const CheckoutPage = () => {
         items: formattedItems,
         customerDetails
       };
-      
+
       console.log('Initializing payment with:', paymentData);
-      
+
       const response = await PaymentService.initializePayment(paymentData);
       console.log('Payment initialized:', response.data);
-      
+
       // Handle payment initialization response
       if (response.data && response.data.paymentData) {
         openPayHereForm(response.data.paymentData);
@@ -223,7 +223,7 @@ const CheckoutPage = () => {
     window.payhere.onCompleted = function onCompleted(orderId) {
       console.log("Payment completed. OrderID:" + orderId);
       setSuccess(`Payment completed successfully! Order ID: ${orderId}`);
-      
+
       // Wait a moment to allow the payment notification to be processed by the backend
       setTimeout(() => {
         // Verify payment status with backend
@@ -291,7 +291,7 @@ const CheckoutPage = () => {
           <h1 className="text-3xl font-bold text-gray-800 md:text-4xl">Complete Your Order</h1>
           <p className="max-w-2xl mx-auto mt-3 text-gray-600">Please provide your information to finalize your purchase</p>
         </div>
-        
+
         {success && (
           <div className="max-w-3xl mx-auto mb-8">
             <div className="flex items-center p-4 border border-green-200 rounded-lg shadow-sm bg-green-50">
@@ -304,7 +304,7 @@ const CheckoutPage = () => {
             </div>
           </div>
         )}
-        
+
         <div className="flex flex-col gap-8 mx-auto lg:flex-row max-w-7xl">
           {/* Form Fields */}
           <div className="w-full lg:w-2/3">
@@ -484,7 +484,7 @@ const CheckoutPage = () => {
                       <div className="p-4 transition-all duration-200 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow">
                         <div className="flex items-center mb-2">
                           <svg className="w-6 h-6 mr-2 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M4 4h2.5v2.5h-2.5v-2.5zm3.5 0h2.5v2.5h-2.5v-2.5zm3.5 0h2.5v2.5h-2.5v-2.5zm3.5 0h2.5v2.5h-2.5v-2.5zm3.5 0h2v2.5h-2v-2.5zm2 3.5v2.5h-2v-2.5h2zm-17 2.5v-2.5h2.5v2.5h-2.5zm0 3.5v-2.5h2.5v2.5h-2.5zm0 3.5v-2.5h2.5v2.5h-2.5zm17-7v2.5h-2v-2.5h2zm-3 10h-2.5v-2.5h2.5v2.5zm-3.5 0h-2.5v-2.5h2.5v2.5zm-3.5 0h-2.5v-2.5h2.5v2.5zm-3.5 0h-2.5v-2.5h2.5v2.5z"/>
+                            <path d="M4 4h2.5v2.5h-2.5v-2.5zm3.5 0h2.5v2.5h-2.5v-2.5zm3.5 0h2.5v2.5h-2.5v-2.5zm3.5 0h2.5v2.5h-2.5v-2.5zm3.5 0h2v2.5h-2v-2.5zm2 3.5v2.5h-2v-2.5h2zm-17 2.5v-2.5h2.5v2.5h-2.5zm0 3.5v-2.5h2.5v2.5h-2.5zm0 3.5v-2.5h2.5v2.5h-2.5zm17-7v2.5h-2v-2.5h2zm-3 10h-2.5v-2.5h2.5v2.5zm-3.5 0h-2.5v-2.5h2.5v2.5zm-3.5 0h-2.5v-2.5h2.5v2.5zm-3.5 0h-2.5v-2.5h2.5v2.5z" />
                           </svg>
                           <span className="font-semibold text-gray-800">Visa</span>
                         </div>
@@ -493,7 +493,7 @@ const CheckoutPage = () => {
                       <div className="p-4 transition-all duration-200 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow">
                         <div className="flex items-center mb-2">
                           <svg className="w-6 h-6 mr-2 text-red-600" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M11.343 18.031c.058-.049.12-.098.181-.146-1.177.783-2.59 1.238-4.107 1.238-4.113 0-7.447-3.334-7.447-7.447 0-4.113 3.334-7.447 7.447-7.447 1.517 0 2.93.455 4.107 1.238-.061-.049-.123-.098-.181-.146-2.02-1.651-5.303-2.469-8.015-.724-2.672 1.719-2.139 5.825-2.139 5.825l.009-.013c-.023 0-.076.063-.076.063.021.428.088.839.189 1.235h3.315v1.484h-2.912c.488 1.335 1.454 2.415 2.679 3.037v-1.684h1.484v2.01c.358.062.725.098 1.097.098.372 0 .739-.036 1.097-.098v-2.01h1.484v1.684c1.225-.622 2.191-1.702 2.679-3.037h-2.912v-1.484h3.315c.101-.396.168-.807.189-1.235 0 0-.053-.063-.076-.063l.009.013s.533-4.106-2.139-5.825c-2.712-1.745-5.995-.927-8.015.724zm8.223-.015c.063-.499.269-.938.578-1.285.618-.694 1.512-.822 2-.822s1.382.128 2 .822c.309.347.515.786.578 1.285h.568c-.089-.698-.334-1.339-.736-1.864-.687-.9-1.696-1.419-2.78-1.419-1.246 0-2.385.637-3.047 1.668h-7.55c-.662-1.031-1.801-1.668-3.047-1.668-1.084 0-2.093.519-2.78 1.419-.402.525-.647 1.166-.736 1.864h.568c.063-.499.269-.938.578-1.285.618-.694 1.512-.822 2-.822s1.382.128 2 .822c.309.347.515.786.578 1.285h1.889v-1.541h3.919v1.541h1.994z"/>
+                            <path d="M11.343 18.031c.058-.049.12-.098.181-.146-1.177.783-2.59 1.238-4.107 1.238-4.113 0-7.447-3.334-7.447-7.447 0-4.113 3.334-7.447 7.447-7.447 1.517 0 2.93.455 4.107 1.238-.061-.049-.123-.098-.181-.146-2.02-1.651-5.303-2.469-8.015-.724-2.672 1.719-2.139 5.825-2.139 5.825l.009-.013c-.023 0-.076.063-.076.063.021.428.088.839.189 1.235h3.315v1.484h-2.912c.488 1.335 1.454 2.415 2.679 3.037v-1.684h1.484v2.01c.358.062.725.098 1.097.098.372 0 .739-.036 1.097-.098v-2.01h1.484v1.684c1.225-.622 2.191-1.702 2.679-3.037h-2.912v-1.484h3.315c.101-.396.168-.807.189-1.235 0 0-.053-.063-.076-.063l.009.013s.533-4.106-2.139-5.825c-2.712-1.745-5.995-.927-8.015.724zm8.223-.015c.063-.499.269-.938.578-1.285.618-.694 1.512-.822 2-.822s1.382.128 2 .822c.309.347.515.786.578 1.285h.568c-.089-.698-.334-1.339-.736-1.864-.687-.9-1.696-1.419-2.78-1.419-1.246 0-2.385.637-3.047 1.668h-7.55c-.662-1.031-1.801-1.668-3.047-1.668-1.084 0-2.093.519-2.78 1.419-.402.525-.647 1.166-.736 1.864h.568c.063-.499.269-.938.578-1.285.618-.694 1.512-.822 2-.822s1.382.128 2 .822c.309.347.515.786.578 1.285h1.889v-1.541h3.919v1.541h1.994z" />
                           </svg>
                           <span className="font-semibold text-gray-800">MasterCard</span>
                         </div>
@@ -502,7 +502,7 @@ const CheckoutPage = () => {
                       <div className="p-4 transition-all duration-200 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow">
                         <div className="flex items-center mb-2">
                           <svg className="w-6 h-6 mr-2 text-blue-800" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M23 5v14h-22v-14h22zm1-2h-24v18h24v-18zm-3 3h-18v12h18v-12zm-2 9h-14v1h14v-1zm0-2h-14v1h14v-1zm0-2h-14v1h14v-1zm-7-4h7v2h-7v-2z"/>
+                            <path d="M23 5v14h-22v-14h22zm1-2h-24v18h24v-18zm-3 3h-18v12h18v-12zm-2 9h-14v1h14v-1zm0-2h-14v1h14v-1zm0-2h-14v1h14v-1zm-7-4h7v2h-7v-2z" />
                           </svg>
                           <span className="font-semibold text-gray-800">AMEX</span>
                         </div>
@@ -529,7 +529,7 @@ const CheckoutPage = () => {
               )}
             </form>
           </div>
-          
+
           {/* Order Summary */}
           <div className="w-full mt-8 lg:w-1/3 lg:mt-0">
             {orderDetails && (
@@ -559,12 +559,12 @@ const CheckoutPage = () => {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="pt-4 mt-2 space-y-3 border-t border-gray-200">
-                  <div className="flex justify-between text-gray-600">
-                    <span>Subtotal</span>
-                    <span>LKR {orderDetails.items.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}</span>
-                  </div>
+                    <div className="flex justify-between text-gray-600">
+                      <span>Subtotal</span>
+                      <span>LKR {orderDetails.items.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}</span>
+                    </div>
                     <div className="flex justify-between text-gray-600">
                       <span>Delivery Fee</span>
                       <span>LKR {(orderDetails.totalAmount * 0.05).toFixed(2)}</span>
@@ -574,7 +574,7 @@ const CheckoutPage = () => {
                       <span className="text-orange-600">LKR {(orderDetails.totalAmount).toFixed(2)}</span>
                     </div>
                   </div>
-                  
+
                   {/* Added buttons to order summary */}
                   <div className="flex flex-col gap-4 mt-6">
                     <button
@@ -601,7 +601,7 @@ const CheckoutPage = () => {
                         </>
                       )}
                     </button>
-                    
+
                     <button
                       type="button"
                       onClick={() => navigate('/restaurants')}

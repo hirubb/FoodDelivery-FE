@@ -1,21 +1,87 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FaCamera, FaEdit, FaSave, FaTimes, FaLock, FaIdCard, FaUserCircle, FaExclamationTriangle } from 'react-icons/fa';
 import React from 'react';
+import DeliveryRiderService from '../../../services/DeliveryRider-service';
 
 function ProfileContent() {
     const [editMode, setEditMode] = useState(false);
-    const [profileImg, setProfileImg] = useState('https://randomuser.me/api/portraits/men/32.jpg');
+    const [profileImg, setProfileImg] = useState('https://wallpapers.com/images/hd/contact-profile-icon-orange-background-akpgd1xj0pcgm9n7.jpg');
     const fileInputRef = useRef(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const [formData, setFormData] = useState({
-        firstName: 'John',
-        lastName: 'Driver',
+        firstName: '',
+        lastName: '',
         age: 30,
-        gender: "Male",
-        phone: '(555) 123-4567',
-        email: 'john.driver@example.com',
-        password: 'password123',
+        gender: "",
+        mobile: '',
+        email: '',
+        password: '',
         isVerified: true,
+        profileImage: ''
     });
+
+
+
+
+    // =================== Fetch driver details  ===================
+    useEffect(() => {
+        const fetchDriverDetails = async () => {
+            setLoading(true);
+            try {
+                const response = await DeliveryRiderService.GetDriverDetails();
+                console.log("Driver details fetched:", response.data);
+                setFormData({
+                    ...formData,
+                    firstName: response.data.driver.firstName,
+                    lastName: response.data.driver.lastName,
+                    age: response.data.driver.age,
+                    gender: response.data.driver.gender,
+                    mobile: response.data.driver.mobile,
+                    email: response.data.driver.email,
+                    password: response.data.driver.password,
+                    profileImage: response.data.driver.profileImage,
+                });
+            } catch (err) {
+                console.error("Error fetching driver details:", err);
+                setError(err.response?.data?.message || "Failed to load driver details.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDriverDetails();
+    }, []);
+
+
+
+    // =================== Update Profile Image  ===================
+
+    const UpdateProfileImage = async (file) => {
+        setLoading(true);
+        try {
+
+
+            const formData = new FormData();
+            formData.append('ProfileImage', file);
+
+
+
+            const response = await DeliveryRiderService.DriverProfileImageUpdate(formData);
+
+            console.log("Profile Image updated successfully:", response.data);
+            setFormData(prev => ({
+                ...prev,
+                profileImage: response.data.driver.profileImage,
+
+            }));
+        } catch (err) {
+            console.error("Error updating profile image:", err);
+            setError(err.response?.data?.message || "Failed to update profile image.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -25,6 +91,7 @@ function ProfileContent() {
                 setProfileImg(e.target.result);
             };
             reader.readAsDataURL(file);
+            UpdateProfileImage(file);
         }
     };
 
@@ -34,6 +101,21 @@ function ProfileContent() {
             ...prev,
             [name]: value
         }));
+    };
+
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            const response = await DeliveryRiderService.UpdateDriverDetails(formData);
+            console.log("Profile updated:", response.data);
+            setEditMode(false);
+        } catch (err) {
+            console.error("Update error:", err);
+            setError("Failed to update profile. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -48,7 +130,7 @@ function ProfileContent() {
                         <div className="relative mb-6 sm:mb-0 sm:mr-8">
                             <div className="h-36 w-36 rounded-full bg-gradient-to-r from-orange-400 to-orange-600 p-1 shadow-2xl">
                                 <img
-                                    src={profileImg}
+                                    src={formData.profileImage || profileImg}
                                     alt="Profile"
                                     className="h-full w-full rounded-full object-cover border-4 border-white"
                                 />
@@ -83,10 +165,11 @@ function ProfileContent() {
                                 {editMode ? (
                                     <div className="flex space-x-3">
                                         <button
-                                            onClick={() => setEditMode(false)}
+                                            onClick={handleSave}
                                             className="flex items-center px-6 py-2.5 bg-orange-500 text-white rounded-full text-sm font-semibold hover:bg-orange-600 transition-all shadow-md"
+                                            disabled={loading}
                                         >
-                                            <FaSave className="mr-2" /> Save Changes
+                                            <FaSave className="mr-2" /> {loading ? "Saving..." : "Save Changes"}
                                         </button>
                                         <button
                                             onClick={() => setEditMode(false)}
@@ -108,15 +191,30 @@ function ProfileContent() {
                     </div>
                 </div>
 
+                {/* Display error message if present */}
+                {error && (
+                    <div className="bg-red-50 border-l-4 border-red-500 p-4 m-4">
+                        <div className="flex">
+                            <div className="flex-shrink-0">
+                                <FaExclamationTriangle className="h-5 w-5 text-red-500" />
+                            </div>
+                            <div className="ml-3">
+                                <p className="text-sm text-red-700">{error}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Profile Details - Enhanced layout and styling */}
                 <div className="p-6 sm:p-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        {/* Personal Information */}
                         <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 shadow-sm">
                             <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
                                 <FaUserCircle className="text-orange-500 mr-3" /> Personal Information
                             </h2>
                             <div className="space-y-5">
-                                <div className="transition-all duration-200">
+                                <div>
                                     <label className="block text-sm font-medium text-gray-600 mb-1.5">First Name</label>
                                     {editMode ? (
                                         <input
@@ -166,19 +264,20 @@ function ProfileContent() {
                                     {editMode ? (
                                         <input
                                             type="tel"
-                                            name="phone"
-                                            value={formData.phone}
+                                            name="mobile"
+                                            value={formData.mobile}
                                             onChange={handleChange}
                                             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-colors"
                                             placeholder="Enter your phone number"
                                         />
                                     ) : (
-                                        <p className="text-gray-800 border-b border-gray-200 pb-1">{formData.phone}</p>
+                                        <p className="text-gray-800 border-b border-gray-200 pb-1">{formData.mobile}</p>
                                     )}
                                 </div>
                             </div>
                         </div>
 
+                        {/* Additional Information */}
                         <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 shadow-sm">
                             <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
                                 <FaIdCard className="text-orange-500 mr-3" /> Additional Information
@@ -213,12 +312,12 @@ function ProfileContent() {
                                                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-colors"
                                                 placeholder="Enter new password"
                                             />
-                                            <FaLock className="absolute right-3 top-3 text-gray-400" />
                                         </div>
                                     ) : (
                                         <p className="text-gray-800 border-b border-gray-200 pb-1">••••••••••</p>
                                     )}
                                 </div>
+
                                 <div>
                                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Age</label>
                                     {editMode ? (
@@ -235,8 +334,7 @@ function ProfileContent() {
                                         <p className="text-gray-800 border-b border-gray-200 pb-1">{formData.age}</p>
                                     )}
                                 </div>
-
-                                {/* License Information with Upload */}
+                                {/* License Information */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Driver's License</label>
                                     <div className="flex items-center p-3 bg-blue-50 border border-blue-100 rounded-lg">
@@ -260,12 +358,6 @@ function ProfileContent() {
                                                     <p className="text-red-600 text-xs">Unverified</p>
                                                 </div>
                                             </>
-                                        )}
-                                        {editMode && (
-                                            <label className="cursor-pointer bg-blue-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors shadow-sm">
-                                                Update
-                                                <input type="file" className="hidden" accept="image/*" />
-                                            </label>
                                         )}
                                     </div>
                                 </div>

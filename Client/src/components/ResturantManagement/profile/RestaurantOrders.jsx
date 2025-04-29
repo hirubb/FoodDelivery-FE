@@ -39,7 +39,7 @@ const RestaurantOrders = () => {
       const response = await restaurantService.getOrders(restaurantId);
       const orderList = response.data.status.orders;
       console.log("order list : ", orderList);
-  
+
       setOrders(orderList);
     } catch (err) {
       console.error(err);
@@ -62,7 +62,7 @@ const RestaurantOrders = () => {
       setError("Failed to update order status.");
     }
   };
-  
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-10 text-[#000000] bg-[#ffffff29] rounded-xl shadow-md">
       <h2 className="text-3xl font-bold text-white mb-6">🍽️ Restaurant Orders</h2>
@@ -148,11 +148,10 @@ const RestaurantOrders = () => {
                     </td>
                     <td className="p-4">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
-                          order.paymentStatus === "Paid"
+                        className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${order.paymentStatus === "Paid"
                             ? "bg-blue-100 text-blue-700"
                             : "bg-gray-200 text-gray-700"
-                        }`}
+                          }`}
                       >
                         {order.paymentStatus || "Unpaid"}
                       </span>

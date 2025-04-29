@@ -17,10 +17,10 @@ function Analytics() {
     const today = new Date();
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(today.getDate() - 30);
-    
+
     setEndDate(formatDate(today));
     setStartDate(formatDate(thirtyDaysAgo));
-    
+
     // Helper function to format date as YYYY-MM-DD
     function formatDate(date) {
       return date.toISOString().split('T')[0];
@@ -37,7 +37,7 @@ function Analytics() {
         if (response && response.data.restaurants) {
           const restaurantList = response.data.restaurants || [];
           setRestaurants(restaurantList);
-          
+
           // Auto-select the first restaurant if available
           if (restaurantList.length > 0 && !restaurantId) {
             setRestaurantId(restaurantList[0]._id);
@@ -69,7 +69,7 @@ function Analytics() {
 
     setLoading(true);
     setError('');
-    
+
     try {
       const formData = {
         dateRange: { start: startDate, end: endDate },
@@ -109,7 +109,7 @@ function Analytics() {
       maximumFractionDigits: 0
     }).format(value);
   };
-  
+
   // Custom tooltip for the chart
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -128,14 +128,14 @@ function Analytics() {
   // Calculate summary statistics
   const calculateSummary = () => {
     if (data.length === 0) return { total: 0, average: 0, highest: 0 };
-    
+
     const total = data.reduce((sum, item) => sum + item.income, 0);
     const average = total / data.length;
     const highest = Math.max(...data.map(item => item.income));
-    
+
     return { total, average, highest };
   };
-  
+
   const summary = calculateSummary();
 
   return (
@@ -148,7 +148,7 @@ function Analytics() {
       {/* Filter Cards */}
       <div className="bg-[#FFFFFF08] rounded-lg shadow-md p-6 mb-8">
         <h2 className="text-xl font-semibold  mb-4">Filters</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 ">
           {/* Restaurant Selector */}
           <div>
@@ -259,7 +259,7 @@ function Analytics() {
       {/* Chart Section */}
       <div className="bg-[#FFFFFF08] rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-white mb-6">Revenue Trend</h2>
-        
+
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FC8A06]"></div>
@@ -270,30 +270,30 @@ function Analytics() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data} margin={{ top: 10, right: 30, left: 20, bottom: 30 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis 
-                    dataKey="date" 
+                  <XAxis
+                    dataKey="date"
                     tick={{ fill: '#83858E' }}
                     tickMargin={10}
                   />
-                  <YAxis 
+                  <YAxis
                     tick={{ fill: '#83858E' }}
                     tickFormatter={(value) => `Rs${value}`}
                   />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="income" 
-                    name="Revenue" 
-                    stroke="#FC8A06" 
+                  <Line
+                    type="monotone"
+                    dataKey="income"
+                    name="Revenue"
+                    stroke="#FC8A06"
                     strokeWidth={3}
                     dot={{ stroke: '#FC8A06', strokeWidth: 2, r: 4, fill: 'white' }}
-                    activeDot={{ r: 8 }} 
+                    activeDot={{ r: 8 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            
+
             {/* Data Table for detailed view */}
             <div className="mt-8">
               <h3 className="text-lg font-medium text-[#03081F] mb-4">Detailed Revenue Data</h3>

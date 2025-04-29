@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { baseURL, adminURL, authURL, customerURL, DeliveryRider_BaseURL, paymentURL,orderURL } from '../config/setting';
+import { baseURL, adminURL, authURL, customerURL, DeliveryRider_BaseURL, paymentURL, orderURL } from '../config/setting';
 import { getAuthToken } from '../utils/auth';
 
 

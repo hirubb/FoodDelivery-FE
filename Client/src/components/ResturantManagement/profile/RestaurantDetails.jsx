@@ -244,6 +244,8 @@ function RestaurantDetails() {
           </button>
         </div>
         
+
+
         <div className="grid grid-cols-1 gap-8">
           {restaurants.map((restaurant) => (
             <div
@@ -315,6 +317,7 @@ function RestaurantDetails() {
                 </div>
                 
                 {/* Restaurant Logo */}
+
                 <div className="absolute -bottom-10 left-6 rounded-xl overflow-hidden border-4 border-[#03081F] shadow-xl">
                   {editId === restaurant._id ? (
                     <div className="relative">
@@ -345,6 +348,8 @@ function RestaurantDetails() {
                 </div>
               </div>
               
+
+
               <div className="px-6 pt-14 pb-6">
                 <div className="flex justify-between items-start mb-6">
                   <div>
@@ -370,7 +375,7 @@ function RestaurantDetails() {
                         {restaurant.status || "Unknown"}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center gap-1 text-[#83858E] text-sm">
                       <MapPin size={14} />
                       <span>

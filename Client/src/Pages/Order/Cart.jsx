@@ -94,6 +94,7 @@ function CartPage() {
     return itemsTotal + deliveryFee;
   };
 
+  
   // Handle place order
   const placeOrder = async () => {
     // Check for authentication
@@ -170,7 +171,6 @@ function CartPage() {
       setIsPlacingOrder(false);
     }
   };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -206,11 +206,10 @@ function CartPage() {
 
       {/* Location status */}
       <div
-        className={`flex items-center p-3 rounded mb-6 ${
-          userLocation
+        className={`flex items-center p-3 rounded mb-6 ${userLocation
             ? "bg-green-100 text-green-800"
             : "bg-yellow-100 text-yellow-800"
-        }`}
+          }`}
       >
         <MapPin size={20} className="mr-2" />
         {userLocation ? (
@@ -254,27 +253,27 @@ function CartPage() {
                 Price: Rs. {item.price}
               </p>
               <div className="flex items-center gap-2">
-  {/* Decrease Button */}
-  <button
-    onClick={() =>
-      updateQuantity(item._id, Math.max(item.quantity - 1, 0))
-    }
-    className="px-2 py-1 bg-gray-200 text-black rounded hover:bg-gray-300"
-  >
-    -
-  </button>
+                {/* Decrease Button */}
+                <button
+                  onClick={() =>
+                    updateQuantity(item._id, Math.max(item.quantity - 1, 0))
+                  }
+                  className="px-2 py-1 bg-gray-200 text-black rounded hover:bg-gray-300"
+                >
+                  -
+                </button>
 
-  {/* Quantity Text */}
-  <span className="text-black">{item.quantity}</span>
+                {/* Quantity Text */}
+                <span className="text-black">{item.quantity}</span>
 
-  {/* Increase Button */}
-  <button
-    onClick={() => updateQuantity(item._id, item.quantity + 1)}
-    className="px-2 py-1 bg-gray-200 text-black rounded hover:bg-gray-300"
-  >
-    +
-  </button>
-</div>
+                {/* Increase Button */}
+                <button
+                  onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                  className="px-2 py-1 bg-gray-200 text-black rounded hover:bg-gray-300"
+                >
+                  +
+                </button>
+              </div>
 
             </div>
 
@@ -325,9 +324,8 @@ function CartPage() {
         <button
           onClick={placeOrder}
           disabled={isPlacingOrder}
-          className={`w-full py-3 ${
-            isPlacingOrder ? "bg-gray-400" : "bg-[#FC8A06] hover:bg-[#E67E22]"
-          } text-white rounded-lg flex items-center justify-center gap-2`}
+          className={`w-full py-3 ${isPlacingOrder ? "bg-gray-400" : "bg-[#FC8A06] hover:bg-[#E67E22]"
+            } text-white rounded-lg flex items-center justify-center gap-2`}
         >
           {isPlacingOrder ? (
             <>
