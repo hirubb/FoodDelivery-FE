@@ -1,51 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-
-
-
-const router = createBrowserRouter([
-
-
-  // =============================  Customer ============================= 
-
-  {
-    path: "/",
-    element: <App />,
-  },
-
-
-
-  // =============================  Delivery personel ============================= 
-
-
-
-
-
-
-
-  // =============================  Admin ========================================
-
-
-
-
-
-
-
-  // =============================  Restuarent Admin =============================
-
-
-]);
-
-
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App.jsx';
+import { CartProvider } from './context/CartContext.jsx';
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-)
+  <React.StrictMode>
+        <CartProvider>
+           <App />
+        </CartProvider>
+  </React.StrictMode>
+);
