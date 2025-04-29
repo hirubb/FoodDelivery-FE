@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     FaUser, FaCar, FaClipboardList, FaMapMarkedAlt, FaBell, FaSignOutAlt,
     FaChartLine, FaWallet
 } from 'react-icons/fa';
-
 
 import DashboardContent from './DashboardContent';
 import ProfileContent from './ProfileContent';
@@ -12,10 +11,82 @@ import OrdersContent from './OrdersContent';
 import NavigationContent from './NavigationContent';
 import EarningsContent from './EarningsContent';
 import Logo from '../../../assets/logo-color.png';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for programmatic navigation
+import { MakeDriverUnavailable } from '../DeliveryServices/DeliveryAvailabilty';
+import DeliveryRiderService from '../../../services/DeliveryRider-service'; // Added missing import
+
 
 function DeliveryRiderDashboard() {
     const [activeTab, setActiveTab] = useState('dashboard');
     const [navigationData, setNavigationData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(null);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate(); // Initialize useNavigate hook
+
+    // Function to handle logout
+    const handleLogout = async () => {
+        try {
+
+            await MakeDriverUnavailable(setLoading, setSuccess, setError);
+
+
+            localStorage.removeItem("token");
+
+
+            navigate("/login");
+        } catch (err) {
+            setError("An error occurred during logout. Please try again.");
+        }
+    };
+
+
+    const [formData, setFormData] = useState({
+        firstName: 'John',
+        lastName: 'Driver',
+        age: 30,
+        gender: "Male",
+        mobile: '(555) 123-4567',
+        email: 'john.driver@example.com',
+        password: 'password123',
+        isVerified: true,
+        profileImage: ''
+    });
+
+
+
+    // =================== Fetch driver details ===================
+    useEffect(() => {
+        const fetchDriverDetails = async () => {
+            setLoading(true);
+            try {
+                const response = await DeliveryRiderService.GetDriverDetails();
+                console.log("Driver details fetched:", response.data);
+                setFormData({
+                    ...formData,
+                    firstName: response.data.driver.firstName,
+                    lastName: response.data.driver.lastName,
+                    age: response.data.driver.age,
+                    gender: response.data.driver.gender,
+                    mobile: response.data.driver.mobile,
+                    email: response.data.driver.email,
+                    password: response.data.driver.password,
+                    profileImage: response.data.driver.profileImage,
+                });
+            } catch (err) {
+                console.error("Error fetching driver details:", err);
+                setError(err.response?.data?.message || "Failed to load driver details.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDriverDetails();
+    }, []);  // Consider adding formData to the dependency array if needed
+
+
+
+
 
     return (
         <div className="flex h-screen bg-gray-100">
@@ -67,8 +138,12 @@ function DeliveryRiderDashboard() {
                     </nav>
                 </div>
 
+                {/* Logout button */}
                 <div className="p-4">
-                    <button className="flex items-center justify-center md:justify-start w-full py-2 text-sm text-white hover:bg-gray-700 rounded transition-colors">
+                    <button
+                        className="flex items-center justify-center md:justify-start w-full py-2 text-sm text-white hover:bg-gray-700 rounded transition-colors"
+                        onClick={handleLogout}
+                    >
                         <FaSignOutAlt className="h-5 w-5" />
                         <span className="hidden md:block ml-3">Logout</span>
                     </button>
@@ -77,7 +152,6 @@ function DeliveryRiderDashboard() {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden">
-                {/* Header */}
                 <header className="bg-white shadow-sm">
                     <div className="flex items-center justify-between px-4 py-3">
                         <h1 className="text-xl font-semibold text-gray-800">
@@ -98,11 +172,11 @@ function DeliveryRiderDashboard() {
                             <div className="flex items-center">
                                 <img
                                     className="h-9 w-9 rounded-full object-cover border-2 border-orange-500"
-                                    src="https://randomuser.me/api/portraits/men/32.jpg"
+                                    src={formData.profileImage || 'https://wallpapers.com/images/hd/contact-profile-icon-orange-background-akpgd1xj0pcgm9n7.jpg'}
                                     alt="Driver"
                                 />
                                 <div className="hidden md:block ml-3">
-                                    <p className="text-sm font-medium">John Driver</p>
+                                    <p className="text-sm font-medium text-black">{formData.firstName}   {formData.lastName}</p>
                                     <p className="text-xs text-gray-500">Online</p>
                                 </div>
                             </div>
@@ -123,8 +197,6 @@ function DeliveryRiderDashboard() {
         </div>
     );
 }
-
-
 
 // Sidebar Item Component
 function SidebarItem({ icon, title, active, onClick }) {
