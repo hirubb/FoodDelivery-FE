@@ -138,9 +138,9 @@ const AppContent = () => {
           <Route
             path="/admin-dashboard"
             element={
-              <PrivateRoute roles={["Admin"]}>
+             
                 <AdminDashboard />
-              </PrivateRoute>
+              
             }
           />
 

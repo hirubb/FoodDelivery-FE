@@ -44,7 +44,8 @@ function HighestRatings() {
         </div>
 
         {/* Grid layout for the cards */}
-        <div className="grid grid-cols-6 gap-4 overflow-x-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+
           {topRestaurants.map((r, idx) => (
             <div
             key={idx}

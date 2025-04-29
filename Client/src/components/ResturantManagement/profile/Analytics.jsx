@@ -105,7 +105,7 @@ function Analytics() {
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'INR',
+      currency: 'LKR',
       maximumFractionDigits: 0
     }).format(value);
   };

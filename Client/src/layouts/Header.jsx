@@ -104,16 +104,19 @@ function Header() {
                 Login
               </Link>
             )}
-            {/* Cart Icon */}
-            <Link to="/cart" className="relative">
-              <FaShoppingCart size={24} className="text-white" />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                3
-              </span>
-            </Link>
+        
+        <>
+        {isCustomer && ( 
+          <Link to="/cart" className="relative">
+          <FaShoppingCart size={24} className="text-white" />
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+            3
+          </span>
+        </Link>
 
-
-
+        )}
+        </>
+      
             {/* Menu Icon */}
             <button
               onClick={toggleSidebar}
