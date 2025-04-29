@@ -29,26 +29,26 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
-        
+
         if (!formData.email || !formData.password) {
             setError('Please fill in all fields');
             return;
         }
-        
+
         setLoading(true);
-        
+
         try {
             const response = await login(formData.email, formData.password);
             localStorage.setItem('token', response.token);
-            
+
             if (rememberMe) {
                 localStorage.setItem('rememberedEmail', formData.email);
             } else {
                 localStorage.removeItem('rememberedEmail');
             }
-            
+
             // Redirect based on role
-            switch(response.role) {
+            switch (response.role) {
                 case 'CUSTOMER': navigate('/customer/dashboard'); break;
                 case 'Restaurant Owner': navigate('/owner/profile'); break;
                 case 'DELIVERY_PERSONNEL': navigate('/delivery/orders'); break;
@@ -69,7 +69,7 @@ export default function Login() {
                     <h2 className="text-2xl font-semibold text-gray-800">Welcome Back</h2>
                     <p className="text-gray-600">Sign in to your account</p>
                 </div>
-                
+
                 {error && (
                     <div className="flex items-center p-3 mb-6 text-red-600 rounded-md bg-red-50">
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,7 +78,7 @@ export default function Login() {
                         {error}
                     </div>
                 )}
-                
+
                 <form onSubmit={handleLogin}>
                     <div className="mb-6">
                         <label htmlFor="login-email" className="block mb-1 text-sm font-medium text-gray-700">
@@ -96,24 +96,24 @@ export default function Login() {
                             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
                         />
                     </div>
-                    
+
                     <div className="mb-6">
-                    <label htmlFor="login-password" className="block mb-1 text-sm font-medium text-gray-900">
-                        Password
-                    </label>
-                    <input
-                        id="login-password"
-                        type="password"
-                        name="password"
-                        placeholder="Enter your password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                        autoComplete="new-password"
-                        className="block w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
-                    />
+                        <label htmlFor="login-password" className="block mb-1 text-sm font-medium text-gray-900">
+                            Password
+                        </label>
+                        <input
+                            id="login-password"
+                            type="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                            autoComplete="new-password"
+                            className="block w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06] focus:border-[#FC8A06]"
+                        />
                     </div>
-                    
+
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center">
                             <input
@@ -131,7 +131,7 @@ export default function Login() {
                             Forgot password?
                         </a>
                     </div>
-                    
+
                     <button
                         type="submit"
                         disabled={loading}
@@ -148,7 +148,7 @@ export default function Login() {
                         ) : 'Sign In'}
                     </button>
                 </form>
-                
+
                 <div className="mt-6 text-sm text-center text-gray-600">
                     <p>
                         Don't have an account?{' '}

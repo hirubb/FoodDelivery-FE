@@ -103,12 +103,7 @@ export default function Restaurants() {
     <div className="max-w-6xl mx-auto p-4 font-sans bg-[#03081F] min-h-screen text-white">
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-        <div className="flex items-center gap-2 bg-[#FFFFFF10] rounded-lg p-3 hover:bg-[#FFFFFF20] transition-colors cursor-pointer">
-          <MapPin size={18} className="text-[#FC8A06]" />
-          <span className="font-medium">335 Kandy - Colombo Rd</span>
-          <span className="text-[#83858E] text-sm">· Now</span>
-          <ChevronRight size={16} className="text-[#83858E]" />
-        </div>
+
 
         <div className="relative flex-1 max-w-md">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -132,11 +127,10 @@ export default function Restaurants() {
             <button
               key={index}
               onClick={() => handleCategoryClick(category.name)}
-              className={`flex flex-col items-center p-3 rounded-lg transition-all transform hover:scale-105 ${
-                selectedCategory === category.name
+              className={`flex flex-col items-center p-3 rounded-lg transition-all transform hover:scale-105 ${selectedCategory === category.name
                   ? "bg-[#FC8A06] text-white shadow-lg shadow-[#FC8A06]/30"
                   : "bg-[#FFFFFF10] text-white hover:bg-[#FFFFFF20]"
-              }`}
+                }`}
             >
               <span className="text-2xl mb-2">{category.icon}</span>
               <span className="text-sm font-medium">{category.name}</span>

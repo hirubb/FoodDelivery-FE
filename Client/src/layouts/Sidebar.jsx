@@ -100,23 +100,27 @@ const Sidebar = ({
               <span>Track Order</span>
             </Link>
             <hr /> <br></br>
-            <Link
-              to="owner-register"
-              onClick={sidebarOpen}
-              className="flex items-center space-x-3 text-gray-700 hover:text-[#FC8A06] p-2 rounded hover:bg-gray-100"
-            >
-              <FaHotel />
-              <span>Create a Restaurant Acc</span>
-            </Link>
+            {!localStorage.getItem("token") && (
+              <>
+                <Link
+                  to="owner-register"
+                  onClick={sidebarOpen}
+                  className="flex items-center space-x-3 text-gray-700 hover:text-[#FC8A06] p-2 rounded hover:bg-gray-100"
+                >
+                  <FaHotel />
+                  <span>Create a Restaurant Acc</span>
+                </Link>
 
-            <Link
-              to="/deliveryPersonnel-SignUp"
-              onClick={sidebarOpen}
-              className="flex items-center space-x-3 text-gray-700 hover:text-[#FC8A06] p-2 rounded hover:bg-gray-100"
-            >
-              <FaBiking />
-              <span>Sign up to delivery</span>
-            </Link>
+                <Link
+                  to="#"
+                  onClick={sidebarOpen}
+                  className="flex items-center space-x-3 text-gray-700 hover:text-[#FC8A06] p-2 rounded hover:bg-gray-100"
+                >
+                  <FaBiking />
+                  <span>Sign up to delivery</span>
+                </Link>
+              </>
+            )}
 
             <hr />
             {loggedIn && (

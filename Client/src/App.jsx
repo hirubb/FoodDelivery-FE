@@ -46,6 +46,7 @@ import TestPayment from "./Pages/Payment/TestPayment";
 import UnauthorizedPage from "./Pages/UnauthorizedPage";
 import GoogleCallback from './Pages/Auth/GoogleCallback';
 
+
 // AppContent should be inside Router to use useLocation()
 const AppContent = () => {
   const location = useLocation();
@@ -86,7 +87,7 @@ const AppContent = () => {
             path="/restaurant/offers/:restaurantId"
             element={
               <PrivateRoute roles={["Restaurant Owner"]}>
-                <RestaurantOffers />{" "}
+                <RestaurantOffers />
               </PrivateRoute>
             }
           />
@@ -156,7 +157,6 @@ const AppContent = () => {
 
           {/* <Route path="/test-payment" element={<TestPayment />} /> */}
 
-
           {/* ===================== Delivery Rider Routes ===================== */}
 
           <Route path="/deliveryPersonnel" element={<DeliveryRiderHome />} />
@@ -184,6 +184,10 @@ const AppContent = () => {
 
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/google-callback" element={<GoogleCallback />} />
+
+
+
+
         </Routes>
       </main>
       {!isAuthPage && !isDliveryPersonnelSignUp && <Footer />}

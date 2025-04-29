@@ -5,7 +5,7 @@ import authService from '../../services/AuthService';
 import bannerImage1 from '../../assets/Login&Register/logo5.png';
 import bannerImage2 from '../../assets/Login&Register/logo3.png';
 import bannerImage3 from '../../assets/Login&Register/logo6.png';
-import googleIcon from '../../assets/Login&Register/google.png'; // Add this Google icon to your assets
+import googleIcon from '../../assets/Login&Register/google.png';
 
 export default function LoginPage() {
     const [formData, setFormData] = useState({
@@ -116,52 +116,11 @@ export default function LoginPage() {
                 localStorage.removeItem('rememberedEmail');
             }
 
-            // Get user role from response - check all possible locations
-            // IMPORTANT: The role could be in different places depending on user type
-            let userRole = null;
-
-            // Check direct role property
-            if (response.data.role) {
-                userRole = response.data.role;
-            }
-            // Check user object if it exists
-            else if (response.data.user && response.data.user.role) {
-                userRole = response.data.user.role;
-            }
-            // Check customer object if it exists (specific to customer login)
-            else if (response.data.customer && response.data.customer.role) {
-                userRole = response.data.customer.role;
-            }
-            // Check restaurant owner object if it exists
-            else if (response.data.restaurantOwner && response.data.restaurantOwner.role) {
-                userRole = response.data.restaurantOwner.role;
-            }
-            // Check admin object if it exists
-            else if (response.data.admin && response.data.admin.role) {
-                userRole = response.data.admin.role;
-            }
-
-            // Normalize role format if needed
-            userRole = normalizeRoleName(userRole);
-
-            console.log("Detected user role:", userRole);
+            // Get user role from response
+            const userRole = getUserRoleFromResponse(response.data);
 
             // Route based on role
-            if (userRole === 'Admin') {
-                navigate('/admin-dashboard');
-            } else if (userRole === 'RestaurantOwner') {
-                navigate('/owner/profile');
-            } else if (userRole === 'Customer') {
-                navigate('/customer-dashboard');
-            } else if (userRole === 'DeliveryPerson') {
-                navigate('/deliveryPersonnel/DriverDashboard');
-
-
-            } else {
-                // Default fallback - should rarely happen if the backend is properly configured
-                console.warn("Unknown or missing role:", userRole);
-                setError('Login successful but user role is unknown. Please contact support.');
-            }
+            routeBasedOnRole(userRole);
         } catch (err) {
             console.error("Login error:", err);
 
@@ -256,11 +215,6 @@ export default function LoginPage() {
             roleStr.toLowerCase() === 'user') {
             return 'Customer';
         }
-
-        if (roleStr.toLowerCase() === 'delivery person') {
-            return 'DeliveryPerson';
-        }
-
 
         // If no mapping found, return the original
         return roleStr;
