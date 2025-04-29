@@ -5,7 +5,7 @@ import logo from "/src/assets/logo-color.png";
 import Sidebar from "./Sidebar";
 import { UserContext } from "../context/UserContext";
 import { FaUserCircle } from "react-icons/fa";
-import { CartContext } from "../context/CartContext";
+// import { CartContext } from "../context/CartContext";
 
 
 function Header() {
@@ -35,9 +35,6 @@ function Header() {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-
-  const { getCartCount, setIsCartOpen } = useContext(CartContext);
-  const cartItemCount = getCartCount();
 
 
   return (
@@ -102,14 +99,14 @@ function Header() {
                 Login
               </Link>
             )}
-
             {/* Cart Icon */}
             <Link to="/cart" className="relative">
               <FaShoppingCart size={24} className="text-white" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                {cartItemCount > 0 ? cartItemCount : ""}
+                3
               </span>
             </Link>
+
 
 
             {/* Menu Icon */}
