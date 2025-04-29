@@ -94,6 +94,7 @@ function CartPage() {
     return itemsTotal + deliveryFee;
   };
 
+  
   // Handle place order
   const placeOrder = async () => {
     // Check for authentication
@@ -170,7 +171,6 @@ function CartPage() {
       setIsPlacingOrder(false);
     }
   };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
