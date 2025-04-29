@@ -142,6 +142,13 @@ class RestaurantService {
   deleteMenuItem(menuItemId){
     return HTTP.delete(`/menu-item/${menuItemId}`,)
   }
+  updateMenuItemWithImage(itemId, formData){
+    return HTTP.put(`/menu-item/${itemId}`,formData,{
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  }
 
   
   
