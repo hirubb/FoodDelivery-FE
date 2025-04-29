@@ -291,7 +291,7 @@ function RestaurantMenuPage() {
         {displayedItems.map((item) => (
           <div
             key={item._id}
-            className="bg-transparent rounded-2xl shadow-md border border-gray-100 overflow-hidden transform transition duration-300 hover:shadow-2xl hover:scale-[1.03]"
+            className="bg-[#FFFFFF10] rounded-2xl shadow-md border border-gray-100 overflow-hidden transform transition duration-300 hover:shadow-2xl hover:scale-[1.03]"
           >
             {item.images?.[0] && (
               <img
