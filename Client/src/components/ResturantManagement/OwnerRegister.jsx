@@ -13,7 +13,7 @@ const OwnerRegister = () => {
     password: "",
     phone: "",
     profile_image: null,
-    nic:""
+    nic: ""
   });
 
   const [preview, setPreview] = useState(null);
@@ -40,22 +40,22 @@ const OwnerRegister = () => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-  
+
     try {
       const formDataToSend = new FormData();
-  
+
       // Append all fields, including profile_image
       Object.keys(formData).forEach((key) => {
         // Check if it's the profile image field
         if (key === 'profile_image' && formData[key]) {
-          formDataToSend.append(key, formData[key], formData[key].name); 
+          formDataToSend.append(key, formData[key], formData[key].name);
         } else {
           formDataToSend.append(key, formData[key]);
         }
       });
-  
+
       const response = await restaurantService.registerRestaurantOwner(formDataToSend);
-  
+
       if (response.status === 201) {
         setError(null);
         setSuccess("Registration successful");
@@ -68,9 +68,9 @@ const OwnerRegister = () => {
       setError(error.response?.data?.message || "Registration failed.");
     }
   };
-  
+
   return (
-  <div className="flex h-auto w-[50%] mx-auto shadow-lg rounded-lg mt-44 mb-40">
+    <div className="flex h-auto w-[50%] mx-auto shadow-lg rounded-lg mt-44 mb-40">
 
 
       <div className="w-1/2 hidden lg:flex items-center justify-center bg-[#0B0E22]">
@@ -89,9 +89,9 @@ const OwnerRegister = () => {
         {success && <p className="text-green-500 text-center">{success}</p>}
 
 
-          <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
+        <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
-          <input
+            <input
               type="text"
               name="first_name"
               placeholder="First Name"
@@ -150,11 +150,11 @@ const OwnerRegister = () => {
             required
           />
 
-            <label>Profile Image</label>
-            <input type="file" accept="image/*" name="profile_image" onChange={handleFileChange} className="w-full p-2 border rounded bg-[#565b6f94]" />
-            {preview && <img src={preview} alt="Profile Preview" className="w-20 h-20 rounded-full mx-auto mt-2" />}
+          <label>Profile Image</label>
+          <input type="file" accept="image/*" name="profile_image" onChange={handleFileChange} className="w-full p-2 border rounded bg-[#565b6f94]" />
+          {preview && <img src={preview} alt="Profile Preview" className="w-20 h-20 rounded-full mx-auto mt-2" />}
 
-            {/* Submit Button */}
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-[#FC8A06] text-white font-bold p-3 rounded-md hover:bg-[#E67E22] flex items-center justify-center gap-2"
@@ -162,9 +162,9 @@ const OwnerRegister = () => {
             <span>Next Step</span>
             ➜
           </button>
-          </form>
-        </div>
-     </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

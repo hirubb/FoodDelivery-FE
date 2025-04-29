@@ -3,14 +3,14 @@ import orderService from "../../services/order-service";
 import { jwtDecode } from "jwt-decode";
 import OrderLocationMap from "../../components/OrderManagement/OrderLocationMap";
 import { useLocation, useNavigate } from "react-router-dom";
-import { 
-  ArrowLeft, 
-  Edit, 
-  ShoppingBag, 
-  ChevronDown, 
-  ChevronUp, 
-  MapPin, 
-  Clock, 
+import {
+  ArrowLeft,
+  Edit,
+  ShoppingBag,
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  Clock,
   AlertCircle,
   CheckCircle,
   X
@@ -52,7 +52,7 @@ const OrdersPage = () => {
       try {
         // Check if we have a pending order from the cart
         const pendingOrderString = localStorage.getItem("pendingOrder");
-        
+
         // If we have a pending order, use that instead of fetching
         if (pendingOrderString) {
           const pendingOrder = JSON.parse(pendingOrderString);
@@ -137,7 +137,7 @@ const OrdersPage = () => {
   const handleBackToRestaurant = () => {
     // Clear the pending order
     localStorage.removeItem("pendingOrder");
-    
+
     // Navigate back to the restaurant page
     if (order && order.restaurant_id) {
       navigate(`/restaurant/${order.restaurant_id}`);
@@ -149,19 +149,19 @@ const OrdersPage = () => {
   const handleCancelOrder = async () => {
     if (window.confirm("Are you sure you want to cancel this order?")) {
       setCancelLoading(true);
-      
+
       try {
         // If this is a pending order (not yet sent to server)
         if (!order._id) {
           // Simply clear the pending order
           localStorage.removeItem("pendingOrder");
           localStorage.removeItem("cart");
-          
+
           // Set a flag to indicate order was deleted
           sessionStorage.setItem("orderDeleted", "true");
-          
+
           setSuccessMessage("Order cancelled successfully!");
-          
+
           // Navigate after a delay
           setTimeout(() => {
             navigate("/restaurants");
@@ -174,11 +174,11 @@ const OrdersPage = () => {
 
         if (response.data.success) {
           setSuccessMessage("Order cancelled successfully!");
-          
+
           // Clear both pending order and cart
           localStorage.removeItem("pendingOrder");
           localStorage.removeItem("cart");
-          
+
           // Set a flag to indicate order was deleted
           sessionStorage.setItem("orderDeleted", "true");
 
@@ -189,26 +189,26 @@ const OrdersPage = () => {
         } else {
           setError(
             "Failed to cancel order: " +
-              (response.data.error || "Unknown error")
+            (response.data.error || "Unknown error")
           );
         }
       } catch (error) {
         console.error("Error cancelling order:", error);
         setError(
           "Failed to cancel order: " +
-            (error.response?.data?.error || error.message || "Server error")
+          (error.response?.data?.error || error.message || "Server error")
         );
       } finally {
         setCancelLoading(false);
       }
     }
   };
-  
+
   const handleEditOrder = () => {
     // Navigate back to cart page to edit the order
     navigate("/cart");
   };
-  
+
   // Handle place order
   const placeOrder = async () => {
     // Check for authentication
@@ -289,9 +289,9 @@ const OrdersPage = () => {
   };
 
   const isPendingOrder = !order?._id;
-  
+
   const getStatusBadgeColor = (status) => {
-    switch(status) {
+    switch (status) {
       case "Delivered": return "bg-green-100 text-green-800";
       case "Preparing": return "bg-blue-100 text-blue-800";
       case "On the way": return "bg-purple-100 text-purple-800";
@@ -324,7 +324,7 @@ const OrdersPage = () => {
               {successMessage || error}
             </p>
           </div>
-          <button 
+          <button
             onClick={handleCloseNotification}
             className="ml-4 text-gray-400 hover:text-gray-600"
           >
@@ -396,7 +396,7 @@ const OrdersPage = () => {
                         LKR : {order.totalAmount.toFixed(2)}
                       </p>
                     </div>
-                    
+
                     <div className="bg-gray-50 rounded-lg p-3">
                       <p className="text-gray-500 text-sm">Status</p>
                       <div className="mt-1">
@@ -405,7 +405,7 @@ const OrdersPage = () => {
                         </span>
                       </div>
                     </div>
-                    
+
                     {order.paymentStatus && (
                       <div className="bg-gray-200 rounded-lg p-3">
                         <p className="text-gray-500 text-black">Payment</p>
@@ -465,7 +465,7 @@ const OrdersPage = () => {
                         </div>
                       </div>
                     )}
-                    
+
                     {/* Delivery time estimate - example extra info */}
                     <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
                       <div className="flex items-center mb-2">
@@ -505,9 +505,8 @@ const OrdersPage = () => {
                     <button
                       onClick={placeOrder}
                       disabled={isPlacingOrder}
-                      className={`flex-1 py-3 px-4 ${
-                        isPlacingOrder ? "bg-gray-400" : "bg-orange-500 hover:bg-orange-600"
-                      } text-white rounded-lg flex items-center justify-center transition-colors shadow-md`}
+                      className={`flex-1 py-3 px-4 ${isPlacingOrder ? "bg-gray-400" : "bg-orange-500 hover:bg-orange-600"
+                        } text-white rounded-lg flex items-center justify-center transition-colors shadow-md`}
                     >
                       {isPlacingOrder ? (
                         <>
@@ -525,9 +524,8 @@ const OrdersPage = () => {
 
                   {/* Cancel button for any order */}
                   <button
-                    className={`md:flex-none md:w-auto py-3 px-6 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center transition-colors ${
-                      cancelLoading ? "opacity-75 cursor-not-allowed" : ""
-                    }`}
+                    className={`md:flex-none md:w-auto py-3 px-6 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center transition-colors ${cancelLoading ? "opacity-75 cursor-not-allowed" : ""
+                      }`}
                     onClick={handleCancelOrder}
                     disabled={cancelLoading}
                   >

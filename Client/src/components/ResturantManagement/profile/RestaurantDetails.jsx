@@ -158,7 +158,7 @@ function RestaurantDetails() {
             Add New Restaurant
           </button>
         </div>
-        
+
 
         <div className="grid grid-cols-1 gap-8">
           {restaurants.map((restaurant) => (
@@ -193,7 +193,7 @@ function RestaurantDetails() {
                     </button>
                   )}
                 </div>
-                
+
                 <div className="absolute -bottom-10 left-6 rounded-xl overflow-hidden border-4 border-[#03081F] shadow-xl">
                   <img
                     src={
@@ -204,7 +204,7 @@ function RestaurantDetails() {
                   />
                 </div>
               </div>
-              
+
 
               <div className="px-6 pt-14 pb-6">
                 <div className="flex justify-between items-start mb-6">
@@ -231,7 +231,7 @@ function RestaurantDetails() {
                         {restaurant.status || "Unknown"}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center gap-1 text-[#83858E] text-sm">
                       <MapPin size={14} />
                       <span>
@@ -247,24 +247,22 @@ function RestaurantDetails() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                <Switch
-  checked={restaurant.availability}
-  onChange={() =>
-    toggleAvailability(restaurant._id, restaurant.availability ? "available" : "unavailable")
-  }
-  className={`${
-    restaurant.availability ? "bg-green-500" : "bg-red-500"
-  } relative inline-flex items-center h-6 rounded-full w-11`}
->
-  <span className="sr-only">Availability</span>
-  <span
-    className={`${
-      restaurant.availability ? "translate-x-6" : "translate-x-1"
-    } inline-block w-4 h-4 transform bg-white rounded-full`}
-  />
-</Switch>
-                  </div>
-                
+                  <Switch
+                    checked={restaurant.availability}
+                    onChange={() =>
+                      toggleAvailability(restaurant._id, restaurant.availability ? "available" : "unavailable")
+                    }
+                    className={`${restaurant.availability ? "bg-green-500" : "bg-red-500"
+                      } relative inline-flex items-center h-6 rounded-full w-11`}
+                  >
+                    <span className="sr-only">Availability</span>
+                    <span
+                      className={`${restaurant.availability ? "translate-x-6" : "translate-x-1"
+                        } inline-block w-4 h-4 transform bg-white rounded-full`}
+                    />
+                  </Switch>
+                </div>
+
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   {editId === restaurant._id ? (
@@ -296,7 +294,7 @@ function RestaurantDetails() {
                     </>
                   )}
                 </div>
-                
+
 
                 <div className="bg-[#FFFFFF08] rounded-lg p-5">
                   <h4 className="font-medium text-white text-lg mb-2">
@@ -320,7 +318,7 @@ function RestaurantDetails() {
                   </div>
                 </div>
               </div>
-              
+
             </div>
           ))}
         </div>

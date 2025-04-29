@@ -38,7 +38,7 @@ const PaymentAddressBook = () => {
     try {
       // Get payment history for the customer
       const response = await PaymentService.getCustomerPayments();
-      
+
       if (response.data && response.data.payments) {
         // Extract unique addresses from payment history
         const paymentAddresses = extractUniqueAddresses(response.data.payments);
@@ -58,14 +58,14 @@ const PaymentAddressBook = () => {
   const extractUniqueAddresses = (payments) => {
     const uniqueAddresses = {};
     const addressList = [];
-    
+
     payments.forEach(payment => {
       if (payment.customerDetails) {
         const { address, city, country, postalCode, phone } = payment.customerDetails;
-        
+
         // Create a unique key for this address
         const addressKey = `${address}-${city}-${country}`;
-        
+
         // If this address hasn't been added yet
         if (!uniqueAddresses[addressKey] && address) {
           const addressObj = {
@@ -79,18 +79,18 @@ const PaymentAddressBook = () => {
             isDefault: addressList.length === 0, // First address is default
             orderId: payment.orderId // Reference to the original order
           };
-          
+
           uniqueAddresses[addressKey] = true;
           addressList.push(addressObj);
         }
       }
-      
+
       // Check for delivery details as well (might contain different addresses)
       if (payment.deliveryDetails) {
         const { address, city, country, postalCode, phone } = payment.deliveryDetails;
-        
+
         const addressKey = `${address}-${city}-${country}`;
-        
+
         if (!uniqueAddresses[addressKey] && address) {
           const addressObj = {
             id: addressList.length + 1,
@@ -103,13 +103,13 @@ const PaymentAddressBook = () => {
             isDefault: addressList.length === 0,
             orderId: payment.orderId
           };
-          
+
           uniqueAddresses[addressKey] = true;
           addressList.push(addressObj);
         }
       }
     });
-    
+
     return addressList;
   };
 
@@ -126,35 +126,35 @@ const PaymentAddressBook = () => {
     try {
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       const userId = userData.id;
-      
+
       if (!userId) {
         toast.error('Please log in to manage addresses');
         return;
       }
-      
+
       if (isEditing) {
         // Update existing address
-        const updatedAddresses = addresses.map(addr => 
-          addr.id === formData.addressId 
-            ? { 
-                ...addr, 
-                addressType: formData.addressType,
-                streetAddress: formData.streetAddress,
-                city: formData.city,
-                country: formData.country,
-                postalCode: formData.postalCode,
-                phone: formData.phone,
-                isDefault: formData.isDefault
-              } 
+        const updatedAddresses = addresses.map(addr =>
+          addr.id === formData.addressId
+            ? {
+              ...addr,
+              addressType: formData.addressType,
+              streetAddress: formData.streetAddress,
+              city: formData.city,
+              country: formData.country,
+              postalCode: formData.postalCode,
+              phone: formData.phone,
+              isDefault: formData.isDefault
+            }
             : formData.isDefault ? { ...addr, isDefault: false } : addr
         );
-        
+
         setAddresses(updatedAddresses);
         toast.success('Address updated successfully');
       } else {
         // Create a new orderId for this address to be used with regenerate coordinates
         const orderId = `addr_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-        
+
         // Create a payment record with this address to store coordinates
         const paymentData = {
           orderId,
@@ -173,12 +173,12 @@ const PaymentAddressBook = () => {
             postalCode: formData.postalCode
           }
         };
-        
+
         await PaymentService.initializePayment(paymentData);
-        
+
         // Optionally, trigger geocoding for this address
         await PaymentService.regenerateCoordinates(orderId);
-        
+
         // Add the new address to the list
         const newAddress = {
           id: addresses.length + 1,
@@ -191,26 +191,26 @@ const PaymentAddressBook = () => {
           isDefault: formData.isDefault,
           orderId: orderId // Store the reference to the new order ID
         };
-        
+
         // Update addresses list
         const updatedAddresses = [...addresses];
-        
+
         // If the new address is set as default, update existing addresses
         if (formData.isDefault) {
           updatedAddresses.forEach(addr => {
             addr.isDefault = false;
           });
         }
-        
+
         updatedAddresses.push(newAddress);
         setAddresses(updatedAddresses);
         toast.success('Address added successfully');
       }
-      
+
       // Reset form and close it
       resetForm();
       setShowAddForm(false);
-      
+
     } catch (err) {
       console.error('Error managing address:', err);
       toast.error(err.message || 'Failed to save address');
@@ -236,7 +236,7 @@ const PaymentAddressBook = () => {
       ...addr,
       isDefault: addr.id === addressId
     }));
-    
+
     setAddresses(updatedAddresses);
     toast.success('Default address updated');
   };
@@ -245,15 +245,15 @@ const PaymentAddressBook = () => {
     if (!window.confirm('Are you sure you want to remove this address?')) {
       return;
     }
-    
+
     // Filter out the address to delete
     const updatedAddresses = addresses.filter(addr => addr.id !== addressId);
-    
+
     // If we deleted the default address and others remain, set a new default
     if (addresses.find(a => a.id === addressId)?.isDefault && updatedAddresses.length > 0) {
       updatedAddresses[0].isDefault = true;
     }
-    
+
     setAddresses(updatedAddresses);
     toast.success('Address removed from your list');
   };
@@ -292,7 +292,7 @@ const PaymentAddressBook = () => {
       <div className="p-6 bg-white rounded-lg shadow">
         <div className="p-4 text-red-700 bg-red-100 rounded-md">
           <p>{error}</p>
-          <button 
+          <button
             onClick={() => fetchPaymentAddresses()}
             className="px-4 py-2 mt-3 text-sm text-white bg-red-600 rounded hover:bg-red-700"
           >
@@ -307,7 +307,7 @@ const PaymentAddressBook = () => {
     <div className="p-6 bg-white rounded-lg shadow">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Payment Addresses</h2>
-        <button 
+        <button
           onClick={() => {
             resetForm();
             setShowAddForm(!showAddForm);
@@ -317,7 +317,7 @@ const PaymentAddressBook = () => {
           {showAddForm ? 'Cancel' : 'Add New Address'}
         </button>
       </div>
-      
+
       {showAddForm && (
         <div className="p-4 mb-6 border border-gray-200 rounded-lg">
           <h3 className="mb-4 text-lg font-medium text-gray-800">
@@ -341,7 +341,7 @@ const PaymentAddressBook = () => {
                   <option value="Other">Other</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">Phone Number</label>
                 <input
@@ -354,7 +354,7 @@ const PaymentAddressBook = () => {
                   required
                 />
               </div>
-              
+
               <div className="md:col-span-2">
                 <label className="block mb-1 text-sm font-medium text-gray-700">Street Address</label>
                 <input
@@ -367,7 +367,7 @@ const PaymentAddressBook = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">City</label>
                 <input
@@ -380,7 +380,7 @@ const PaymentAddressBook = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">Postal Code</label>
                 <input
@@ -392,7 +392,7 @@ const PaymentAddressBook = () => {
                   placeholder="10100"
                 />
               </div>
-              
+
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">Country</label>
                 <select
@@ -406,7 +406,7 @@ const PaymentAddressBook = () => {
                   <option value="Maldives">Maldives</option>
                 </select>
               </div>
-              
+
               <div className="flex items-center md:col-span-2">
                 <input
                   type="checkbox"
@@ -420,7 +420,7 @@ const PaymentAddressBook = () => {
                   Set as default delivery address
                 </label>
               </div>
-              
+
               <div className="flex justify-end gap-3 md:col-span-2">
                 <button
                   type="button"
@@ -440,7 +440,7 @@ const PaymentAddressBook = () => {
           </form>
         </div>
       )}
-      
+
       {addresses.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-8 text-center border-2 border-gray-300 border-dashed rounded-lg bg-gray-50">
           <FaMapMarkerAlt className="w-12 h-12 mb-3 text-gray-400" />
@@ -456,18 +456,16 @@ const PaymentAddressBook = () => {
       ) : (
         <div className="space-y-4">
           {addresses.map((address) => (
-            <div 
+            <div
               key={address.id}
-              className={`flex items-center justify-between p-4 rounded-lg ${
-                address.isDefault 
-                  ? "border-2 border-orange-500 bg-orange-50" 
+              className={`flex items-center justify-between p-4 rounded-lg ${address.isDefault
+                  ? "border-2 border-orange-500 bg-orange-50"
                   : "border border-gray-200 bg-gray-50"
-              }`}
+                }`}
             >
               <div className="flex items-center">
-                <div className={`p-2 mr-4 text-white rounded-full ${
-                  address.isDefault ? "bg-orange-500" : "bg-gray-500"
-                }`}>
+                <div className={`p-2 mr-4 text-white rounded-full ${address.isDefault ? "bg-orange-500" : "bg-gray-500"
+                  }`}>
                   {addressIcons[address.addressType] || <FaMapMarkerAlt className="w-5 h-5" />}
                 </div>
                 <div>
@@ -490,20 +488,20 @@ const PaymentAddressBook = () => {
               </div>
               <div className="flex items-center space-x-2">
                 {!address.isDefault && (
-                  <button 
+                  <button
                     onClick={() => handleSetDefault(address.id)}
                     className="px-3 py-1 text-sm text-orange-600 transition-colors border border-orange-300 rounded-md hover:bg-orange-50"
                   >
                     Set as Default
                   </button>
                 )}
-                <button 
+                <button
                   onClick={() => handleEdit(address)}
                   className="px-3 py-1 text-sm text-gray-600 transition-colors border border-gray-300 rounded-md hover:bg-gray-100"
                 >
                   Edit
                 </button>
-                <button 
+                <button
                   onClick={() => handleDelete(address.id)}
                   className="px-3 py-1 text-sm text-red-600 transition-colors border border-red-200 rounded-md hover:bg-red-50"
                 >

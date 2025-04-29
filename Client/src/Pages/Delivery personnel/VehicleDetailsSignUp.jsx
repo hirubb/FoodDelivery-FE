@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowRight, FaIdCard, FaTimes, FaCheck, FaUpload, FaFileAlt, FaCarAlt, FaCertificate, FaCamera } from "react-icons/fa";
 import { motion } from 'framer-motion';
@@ -6,6 +6,7 @@ import DeliveryRiderService from "../../services/DeliveryRider-service";
 
 function VehicleDetailsForm() {
     const navigate = useNavigate();
+    const formRef = useRef(null); // Added form reference
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -57,9 +58,10 @@ function VehicleDetailsForm() {
             // Create preview URLs for vehicle images
             if (documentType === 'vehicleFrontView' || documentType === 'vehicleSideView') {
                 const previewUrl = URL.createObjectURL(file);
+                const viewType = documentType === 'vehicleFrontView' ? 'frontView' : 'sideView';
                 setVehiclePreviews(prev => ({
                     ...prev,
-                    [documentType === 'vehicleFrontView' ? 'frontView' : 'sideView']: previewUrl
+                    [viewType]: previewUrl
                 }));
             }
 
@@ -78,7 +80,6 @@ function VehicleDetailsForm() {
     };
 
     const removeFile = (documentType) => {
-
         if (documentType === 'vehicleFrontView' || documentType === 'vehicleSideView') {
             const viewType = documentType === 'vehicleFrontView' ? 'frontView' : 'sideView';
             if (vehiclePreviews[viewType]) {
@@ -143,8 +144,7 @@ function VehicleDetailsForm() {
             const response = await DeliveryRiderService.RegisterVehicleDetails(vehicleFormData);
             console.log("Vehicle Details Registration successful:", response.data);
 
-
-            navigate('/');
+            navigate('/login');
         } catch (err) {
             console.error("Registration error:", err);
             setError(
@@ -154,6 +154,14 @@ function VehicleDetailsForm() {
             );
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Function to handle button click outside the form
+    const handleButtonSubmit = () => {
+        // Programmatically submit the form using the ref
+        if (formRef.current) {
+            formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
         }
     };
 
@@ -313,7 +321,7 @@ function VehicleDetailsForm() {
                             </div>
                         )}
 
-                        <form className="space-y-4" onSubmit={handleSubmit}>
+                        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
                             {/* Vehicle Model */}
                             <div>
                                 <label className="block text-gray-700 font-medium text-sm mb-1">Vehicle Model</label>
@@ -443,8 +451,8 @@ function VehicleDetailsForm() {
                 <div className="p-4 border-t border-gray-200">
                     <div className="max-w-md mx-auto">
                         <button
-                            type="submit"
-                            onClick={handleSubmit}
+                            type="button"
+                            onClick={handleButtonSubmit}
                             disabled={loading}
                             className={`w-full ${loading ? 'bg-gray-400' : 'bg-[#FF8A00] hover:bg-opacity-90'} text-white font-bold py-2.5 md:py-3 px-4 rounded flex items-center justify-center`}
                         >

@@ -146,7 +146,7 @@ const AppContent = () => {
           />
 
           <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-          
+
           {/* <Route path="/test-payment" element={<TestPayment />} /> */}
 
           {/* ===================== Delivery Rider Routes ===================== */}
@@ -177,13 +177,13 @@ const AppContent = () => {
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/google-callback" element={<GoogleCallback />} />
 
-         
+
 
 
         </Routes>
       </main>
       {!isAuthPage && !isDliveryPersonnelSignUp && <Footer />}
-      
+
     </div>
   );
 };

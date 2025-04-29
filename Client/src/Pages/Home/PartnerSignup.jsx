@@ -38,13 +38,17 @@ const PartnerSignup = () => {
           <div className="absolute top-6 left-6 bg-white text-black font-semibold px-5 py-3 rounded-md shadow-md">
             Avail exclusive perks
           </div>
-          <div className="absolute bottom-6 left-6 text-white">
-            <p className="text-orange-400 text-lg">Signup as a rider</p>
-            <h2 className="text-3xl font-bold">Ride with us</h2>
-            <button className="mt-4 bg-orange-500 text-white px-6 py-3 rounded-lg text-lg">
-              Get Started
-            </button>
-          </div>
+
+          <Link to="/deliveryPersonnel-SignUp">
+            <div className="absolute bottom-6 left-6 text-white">
+              <p className="text-orange-400 text-lg">Signup as a rider</p>
+              <h2 className="text-3xl font-bold">Ride with us</h2>
+              <button className="mt-4 bg-orange-500 text-white px-6 py-3 rounded-lg text-lg">
+                Get Started
+              </button>
+            </div>
+          </Link>
+
         </div>
       </div>
     </div>

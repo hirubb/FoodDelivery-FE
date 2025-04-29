@@ -16,13 +16,13 @@ function Header() {
 
   let profileLink = "";
 
-  if(role === "Admin") {
+  if (role === "Admin") {
     profileLink = "/admin-dashboard"
   }
-  if(role === "Restaurant Owner"){
+  if (role === "Restaurant Owner") {
     profileLink = "/owner/profile"
   }
-  if(role === "Customer"){
+  if (role === "Customer") {
     profileLink = "/customer-dashboard"
   }
 
@@ -74,23 +74,23 @@ function Header() {
             {/* If logged in: Show profile, else show login */}
             {token && loggedIn ? (
               <Link
-              to={profileLink}
-              className="flex flex-col items-center text-[#FC8A06] hover:text-[#E67E22]"
-            >
-              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 mb-1">
-                {userImage ? (
-                  <img
-                    src={userImage}
-                    alt="User Profile"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <FaUserCircle className="text-orange-500 w-6 h-6" />
-                )}
-              </div>
-           
-              <span className="text-md font-semibold text-center ">{username}</span>
-            </Link>
+                to={profileLink}
+                className="flex flex-col items-center text-[#FC8A06] hover:text-[#E67E22]"
+              >
+                <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 mb-1">
+                  {userImage ? (
+                    <img
+                      src={userImage}
+                      alt="User Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <FaUserCircle className="text-orange-500 w-6 h-6" />
+                  )}
+                </div>
+
+                <span className="text-md font-semibold text-center ">{username}</span>
+              </Link>
             ) : (
               <Link
                 to="/login"
@@ -99,9 +99,8 @@ function Header() {
                 Login
               </Link>
             )}
-
-             {/* Cart Icon */}
-             <Link to="/cart" className="relative">
+            {/* Cart Icon */}
+            <Link to="/cart" className="relative">
               <FaShoppingCart size={24} className="text-white" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
                 3
